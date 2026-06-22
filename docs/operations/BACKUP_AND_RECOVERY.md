@@ -94,7 +94,6 @@ Diese Werte werden nach der Pilotphase evaluiert und ggf. verschärft.
 
 Detaillierte Prozeduren für die Wiederherstellung und regelmäßige Tests finden sich im [Wiederherstellungs-Testplan (RECOVERY_TEST_PLAN.md)](RECOVERY_TEST_PLAN.md).
 
-
 ### Häufigkeit
 
 Mindestens **monatlich** ein vollständiger oder Partial-Restore-Test durchführen.
