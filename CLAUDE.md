@@ -4,13 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projektstatus
 
-**Planungs- und Architekturphase. Es existiert noch kein Code.** Vorhanden: `README.md` (committet), `CLAUDE.md`, `PLAN.md`. Alles ausser `README.md` ist git-untracked (`git status`: `??`). `data/` und `scripts/` existieren, sind aber leer.
+**Planungs- und Architekturphase. Es existiert noch kein Produktivcode.** Committet: `README.md`, `CLAUDE.md`, `PLAN.md`, ein wachsender `docs/`-Baum und ein statisches Design-Kit (`unterrichtsassistenz-lsa-design-kit/`). `data/`, `scripts/`, `.github/workflows/`, `.github/ISSUE_TEMPLATE/` existieren als leere Verzeichnisse.
 
-**Stolperfalle:** `PLAN.md` verlinkt rund zwanzig `docs/`-Dateien (ADRs, `docs/architecture/*`, `docs/security/*`, `docs/rag/*`, `docs/operations/*`, `docs/decisions/*`) — **keine davon existiert** (`docs/` enthält nur leere Unterordner). Die Links sind Soll-Struktur, nicht vorhandene Dokumente. Ebenso noch nicht angelegt: `.env.example`, `package.json`, `LICENSE-DECISION.md`, `scripts/verify-docs.sh` (geplantes Doku-Gate, in der DoD referenziert).
+**`docs/` ist teilweise befüllt** — nicht mehr alle PLAN-Links sind Soll-Struktur. Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION_BOUNDARIES), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY), `docs/security/` (SECURITY, THREAT_MODEL, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY).
+
+**Stolperfalle:** Folgende von `PLAN.md` verlinkte Dokumente existieren **noch nicht** — Links sind Soll-Struktur: `docs/adr/*` (0001–0005), `docs/architecture/DATA_MODEL.md`, `docs/architecture/RAG_ARCHITECTURE.md`, `docs/rag/CITATION_STANDARD.md`, `docs/rag/SOURCE_REGISTRY.md`, `docs/decisions/OPEN_QUESTIONS.md`, `docs/operations/GITHUB_SETUP.md`. Ebenso fehlen `.env.example`, `package.json`, `LICENSE-DECISION.md`, `scripts/verify-docs.sh` (geplantes Doku-Gate, in der DoD referenziert). Vor dem Referenzieren einer Doku auf Existenz prüfen, nicht dem Link vertrauen.
 
 **`PLAN.md` ist Source of Truth** für Scope, Roadmap (M0–M4), Datenflüsse und offene Entscheidungen — vor Architekturarbeit lesen.
 
 Konsequenz: Build-/Test-/Lint-Befehle (siehe unten) sind **Sollzustand**, nicht lauffähig. Beim Anlegen der ersten Implementierung den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
+
+## Design-Kit und UI-Implementierung
+
+`unterrichtsassistenz-lsa-design-kit/` enthält statische HTML-Mockups (`dashboard.html`, `planner.html`, `worksheet-builder.html`, `correction.html`, `sources.html`, `ui-kit.html`) plus `design-tokens.json` und `handoff/CLAUDE_CODE_HANDOFF.md`. Der Handoff ist die Arbeitsanweisung für die erste UI-Implementierung in Next.js — verbindlich für diesen Schritt:
+
+- **Nur UI-Struktur**, keine echten RAG-/Korrektur-/Lehrplan-/LLM-Funktionen (Nicht-Ziele im Handoff).
+- Routen: `/dashboard`, `/planung`, `/arbeitsblaetter`, `/korrektur`, `/quelle`, `/design-system`.
+- Next.js App Router, TypeScript strict, Tailwind; Tokens zentral aus `design-tokens.json` (keine verstreuten Hex-Werte), Icons via `lucide-react` (keine Inline-SVG-Duplikate).
+- Demodaten als Mock-Factories/Repository-Interfaces trennen — keine echten Schülerdaten, Tokens oder Lehrplandokumente.
+- Desktop-Sidebar 260px, Seitenfläche `#F7F7FB`, Primärfarbe `#5D3DF5`, Kartenradius 22px, max. eine primäre Aktion pro Seitenkopf.
+- Quellen- und Unsicherheitszustände dürfen nie verdeckt werden; UI kopiert keine Bewertung automatisch in ein finales Ergebnis (menschliche Finalentscheidung wahren).
 
 ## Worum es geht
 
