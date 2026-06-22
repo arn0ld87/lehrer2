@@ -46,10 +46,23 @@ services:
     volumes:
       - ollamadata:/root/.ollama
 
-  # Separater OCR-/Extraktions-Worker — Platzhalter, bis App-Code existiert.
-  # ocr-worker:
-  #   build: ./services/ocr-worker
-  #   depends_on: [redis, minio]
+  # Separater OCR-/Extraktions-Worker (#40) — async via BullMQ (ADR 0001)
+  ocr-worker:
+    build: ./services/ocr-worker
+    depends_on:
+      - redis
+      - minio
+      - postgres
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgres://ua_lsa:change-me-locally@postgres:5432/ua_lsa}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
+      S3_BUCKET: ${S3_BUCKET:-ua-lsa-dev}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-locally}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      OCR_WORKER_AUTOSTART: "1"
 
 volumes:
   pgdata:

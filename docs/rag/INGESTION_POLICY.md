@@ -84,12 +84,26 @@ Für jedes Dokument werden vor der Extraktion folgende Felder erfasst:
 ### 3. Extraktion und OCR
 
 - **Format-Spezifisch**:
-  - PDF: Text-Extraktion (ggfs. OCR bei gescannten Dokumenten)
+  - PDF: Text-Extraktion via `pdf-parse`; bei leerem Ergebnis (Scan-PDF) → OCR-Fallback
   - Webseite: HTML-Parsing und Text-Extraktion
   - Office (DOCX, XLSX): strukturierter Text mit Erhalt der Überschriften-Hierarchie
-- **OCR-Fehler**:
+
+- **OCR-Verarbeitung (Scan-PDFs, #40)**:
+  - Erkennt `pdf-parse` bei einem PDF keinen Text, wird die Quelle **asynchron** an den
+    OCR-Worker übergeben (BullMQ-Queue `ocr`, Redis).
+  - Architektur-Grundlage: [ADR 0001 — Modularer Monolith](../adr/0001-modular-monolith-first.md) —
+    synchrone OCR-Calls in der Ingestion-Pipeline sind verboten.
+  - Der OCR-Worker (`worker/ocr-worker.ts`) rastet PDF-Seiten via `pdftoppm` (poppler) zu PNG
+    und führt Tesseract OCR durch (`-l deu+eng`, 300 DPI).
+  - OCR-Ausgabe wird durch `sanitizeOcrText` bereinigt (Steuerzeichen, HTML-Tags;
+    siehe [UPLOAD_AND_OCR_SECURITY.md §2.3](../security/UPLOAD_AND_OCR_SECURITY.md)).
+  - Liefert OCR keinen Text → `ExtractionFailedError` (fail-laut, nicht stillschweigend ignorieren).
+  - Vollständige technische Beschreibung: [./OCR_WORKER.md](./OCR_WORKER.md)
+
+- **OCR-Fehlerbehandlung**:
   - Fehlerquoten > 5 % oder erkannte Kodierungsfehler → Fehler-Issue für Maintainer
   - Nicht automatisch kürzen oder raten
+  - Fehlende Binaries (`pdftoppm`/`tesseract`) → aussagekräftiger Fehler mit Installationshinweis
 
 ### 4. Chunking und Segmentierung
 

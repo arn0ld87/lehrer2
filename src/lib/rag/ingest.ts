@@ -20,6 +20,7 @@ import type { Embedder } from "@/lib/infra/ollama";
 import { sourceRef } from "@/lib/db/schema/artifacts";
 import { ragChunk } from "@/lib/db/schema/rag";
 
+import type { OcrEngine } from "./ocr/engine";
 import { extractContent } from "./extract";
 import { chunkText } from "./chunk";
 import { ensureCollection, upsertSourceChunks, deletePoints } from "./qdrant";
@@ -78,6 +79,8 @@ export interface IngestDeps {
   store: VectorStore;
   blob: BlobStore;
   embedder: Embedder;
+  /** Optionale OCR-Engine für Scan-PDFs (wird an extractContent weitergereicht, #40) */
+  ocr?: OcrEngine;
 }
 
 /**
@@ -176,7 +179,7 @@ export async function ingestSource(
   // MIME aus sourceRef.licenseInfo? Nein — wir leiten ihn aus der URI ab.
   // Fallback auf application/octet-stream → ExtractionFailedError.
   const mime = guessMime(source.uri ?? "");
-  const text = await extractContent(source.uri ?? blobKey, raw, mime);
+  const text = await extractContent(source.uri ?? blobKey, raw, mime, deps.ocr);
 
   // ── (5) Chunking ─────────────────────────────────────────────────────────────
   const chunks = chunkText(text);
