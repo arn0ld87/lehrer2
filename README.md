@@ -59,7 +59,10 @@ Repository: `arn0ld87/lehrer2` (privat).
 
 - **[docs/security/SECURITY.md](docs/security/SECURITY.md)** — Sicherheitsarchitektur und Bedrohungsmodell
 - **[docs/security/THREAT_MODEL.md](docs/security/THREAT_MODEL.md)** — Identifizierung und Bewertung von Risiken
+- **[docs/security/ASVS_COMPLIANCE.md](docs/security/ASVS_COMPLIANCE.md)** — Review gegen OWASP ASVS
 - **[docs/security/DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md)** — Datenschutzvorkehrungen und Rechtsgrundlagen
+- **[docs/security/DATA_PROTECTION_CHECKLIST.md](docs/security/DATA_PROTECTION_CHECKLIST.md)** — Datenschutz-Checkliste
+- **[docs/security/SECURITY_FINDINGS.md](docs/security/SECURITY_FINDINGS.md)** — Identifizierte Sicherheitslücken (Review-Ergebnisse)
 - **[docs/security/RETENTION_AND_DELETION.md](docs/security/RETENTION_AND_DELETION.md)** — Aufbewahrungsrichtlinien und Löschungsverfahren
 
 ### Betrieb und Entwicklung

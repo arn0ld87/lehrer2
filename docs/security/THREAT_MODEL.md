@@ -161,7 +161,9 @@ STRIDE-Analyse über die drei kritischen Datenkreise: (1) Lehrkraft-Daten, (2) S
 ## Verweise
 
 - **Sicherheitsgrundsätze:** [./SECURITY.md](./SECURITY.md)
-- **Datenschutz & Rechtliche Grundlagen:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md) — wird separat verfasst
+- **ASVS Compliance:** [./ASVS_COMPLIANCE.md](./ASVS_COMPLIANCE.md)
+- **Datenschutz & Rechtliche Grundlagen:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md)
+- **Sicherheits-Findings:** [./SECURITY_FINDINGS.md](./SECURITY_FINDINGS.md)
 - **Aufbewahrung & Löschung:** [./RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md)
 - **Offen Fragen (Re-ID, Cloud-LLM Rechtslage, Prompt-Injection Testing):** [../decisions/OPEN_QUESTIONS.md](../decisions/OPEN_QUESTIONS.md)
 - **Local-First Design Decision:** [../adr/0004-local-first-student-data.md](../adr/0004-local-first-student-data.md)

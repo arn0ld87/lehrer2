@@ -120,7 +120,10 @@ Alle Stellen sind **fail-closed**: wenn Validierung fehlschlägt, wird kein Zugr
 ## Verweise
 
 - **Threat Model:** [./THREAT_MODEL.md](./THREAT_MODEL.md) — STRIDE-Analyse über drei Datenkreise
-- **Datenschutz:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md) — Rechtliche Grundlagen, DSGVO-Compliance (wird separat verfasst)
+- **ASVS Compliance:** [./ASVS_COMPLIANCE.md](./ASVS_COMPLIANCE.md) — Review gegen OWASP ASVS v4.0.3 (Level 2)
+- **Datenschutz:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md) — Rechtliche Grundlagen, DSGVO-Compliance
+- **Datenschutz-Checkliste:** [./DATA_PROTECTION_CHECKLIST.md](./DATA_PROTECTION_CHECKLIST.md) — DSGVO-Prüfschritte
+- **Sicherheits-Findings:** [./SECURITY_FINDINGS.md](./SECURITY_FINDINGS.md) — Identifizierte Lücken aus dem Review
 - **Aufbewahrung und Löschung:** [./RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md) — Aufbewahrungsfristen, kaskadierende Löschung
 - **Local-First Architektur:** [../adr/0004-local-first-student-data.md](../adr/0004-local-first-student-data.md) — Design Decision für Pseudonymisierung und lokale Speicherung
 - **RAG Ingestion:** [../rag/INGESTION_POLICY.md](../rag/INGESTION_POLICY.md) — Quelle-Validierung, Trust-Stufen, Widerruf
@@ -135,6 +138,7 @@ Alle Stellen sind **fail-closed**: wenn Validierung fehlschlägt, wird kein Zugr
 - [ ] CloudReleaseGrant-Validierung ist implementiert
 - [ ] Audit Logging ist aktiv und testet werden
 - [ ] Datenbank-Backups sind verschlüsselt und getestet
+- [ ] OWASP ASVS Level 2 Review durchgeführt und Findings dokumentiert
 - [ ] Penetrationstests wurden durchgeführt (mindestens STRIDE für Datenfluss)
 - [ ] Datenschutzbeauftragte hat DSB-Stellungnahme abgegeben
 - [ ] Schulleitung hat verbindliche Zustimmung gegeben

@@ -525,6 +525,8 @@ Das System gibt Empfehlungen. Lehrkraft trifft finale Entscheidung:
 
 - **[ADR 0004: Local-First Student Data](../adr/0004-local-first-student-data.md)** – Architektur-Rationale für lokale Schülerdaten.
 - **[THREAT_MODEL.md](./THREAT_MODEL.md)** – Identifizierte Sicherheits- und Datenschutz-Risiken.
+- **[ASVS_COMPLIANCE.md](./ASVS_COMPLIANCE.md)** – Review gegen OWASP ASVS.
+- **[DATA_PROTECTION_CHECKLIST.md](./DATA_PROTECTION_CHECKLIST.md)** – DSGVO-Checkliste.
 - **[RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md)** – Detailliertes Löschkonzept, Aufbewahrungsdauer, Rechtsgrundlagen.
 - **[DATA_MODEL.md](../architecture/DATA_MODEL.md)** – Entity-Relationen, Datenklassen-Mapping.
 - **[OPEN_QUESTIONS.md](../decisions/OPEN_QUESTIONS.md)** – Offene Datenschutz-Fragen, z.B. Notwendigkeit externen Audit, DSFA-Partner.
