@@ -205,7 +205,7 @@ export const sourceRef = pgTable(
     sourceType: sourceTrustEnum("source_type").notNull(),
     title: text("title").notNull(),
     uri: text("uri"), // URL or DOI
-    confidence: json("confidence"), // Float (0–1) stored as JSON for precision
+    confidence: doublePrecision("confidence"),
     ownerTeacherId: text("owner_teacher_id").references(() => user.id, {
       onDelete: "set null",
     }), // Only for USER_APPROVED
