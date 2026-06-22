@@ -15,6 +15,13 @@
       "when": 1782144694216,
       "tag": "0001_slim_the_watchers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782145253439,
+      "tag": "0002_narrow_mole_man",
+      "breakpoints": true
     }
   ]
 }
