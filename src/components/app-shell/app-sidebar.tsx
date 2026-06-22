@@ -69,7 +69,7 @@ export function AppSidebar({ open, onNavigate }: AppSidebarProps) {
                 "flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] font-semibold transition-colors",
                 active
                   ? "text-white bg-primary shadow-[0_7px_18px_rgba(93,61,245,0.22)]"
-                  : "text-[#38405B] hover:bg-primary-soft hover:text-primary",
+                  : "text-ink-nav hover:bg-primary-soft hover:text-primary",
               ].join(" ")}
             >
               <Icon name={route.icon as IconName} width={18} height={18} />
@@ -85,7 +85,7 @@ export function AppSidebar({ open, onNavigate }: AppSidebarProps) {
         <span
           aria-hidden
           className="h-[33px] w-[33px] rounded-full grid place-items-center text-white font-extrabold text-[11px]"
-          style={{ background: "linear-gradient(135deg, #E6D9D0, #93644D)" }}
+          style={{ background: "var(--gradient-avatar)" }}
         >
           {user.initials}
         </span>

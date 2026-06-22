@@ -56,13 +56,16 @@ export function WorksheetPreview() {
       {TASKS.map((t, i) => (
         <div
           key={i}
-          className="border border-[#E7E3FA] bg-[#FCFBFF] p-[15px_16px] rounded-[12px] my-3.5"
+          className="border border-task-border bg-task-bg p-[15px_16px] rounded-[12px] my-3.5"
         >
           <strong className="block text-xs mb-1.5">{t.title}</strong>
           <p className="text-[13px] leading-[1.7] m-0">{t.instruction}</p>
           <div
-            className="mt-2.5 bg-[repeating-linear-gradient(transparent_0,transparent_22px,#EDEEF4_23px)]"
-            style={{ height: t.linesHeight ?? 76 }}
+            className="mt-2.5"
+            style={{
+              height: t.linesHeight ?? 76,
+              background: "var(--gradient-lines-fill)",
+            }}
           />
         </div>
       ))}
@@ -76,13 +79,13 @@ export function WorksheetPreview() {
       <table className="w-full border-collapse mt-4 text-[11px]">
         <thead>
           <tr>
-            <th className="bg-[#F3F0FF] text-[#4C35B4] text-left text-[10px] border border-line p-2">
+            <th className="bg-rubric-th-bg text-rubric-th-fg text-left text-[10px] border border-line p-2">
               Kriterium
             </th>
-            <th className="bg-[#F3F0FF] text-[#4C35B4] text-left text-[10px] border border-line p-2">
+            <th className="bg-rubric-th-bg text-rubric-th-fg text-left text-[10px] border border-line p-2">
               Woran erkennst du es?
             </th>
-            <th className="bg-[#F3F0FF] text-[#4C35B4] text-left text-[10px] border border-line p-2">
+            <th className="bg-rubric-th-bg text-rubric-th-fg text-left text-[10px] border border-line p-2">
               Selbsteinschätzung
             </th>
           </tr>

@@ -22,7 +22,7 @@ export default function DashboardPage() {
   return (
     <>
       <AppHeader
-        title="Guten Morgen, Maria! 👋"
+        title="Guten Morgen, Jana! 👋"
         subtitle="Hier ist dein Überblick für heute."
         primaryAction={{ icon: "plus", label: "Neu erstellen" }}
       />

@@ -31,7 +31,7 @@ export function SourceTable({ entries }: { entries: SourceEntry[] }) {
         <tbody>
           {entries.map((e) => (
             <tr key={e.id} className="hover:bg-surface-2">
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 <div className="flex items-center gap-2 min-w-[260px]">
                   <span className="h-[30px] w-[30px] rounded-lg bg-info-soft text-sources grid place-items-center shrink-0">
                     <Icon name="file" width={15} height={15} />
@@ -42,23 +42,23 @@ export function SourceTable({ entries }: { entries: SourceEntry[] }) {
                   </div>
                 </div>
               </td>
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 <Badge subject={e.subject}>{SUBJECT_BADGE[e.subject]}</Badge>
                 <span className="block text-[10px] text-muted mt-1">{e.gradeRange}</span>
               </td>
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 <StatusChip trust={e.trust} />
               </td>
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 {e.version}
               </td>
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 {e.license}
               </td>
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 <StatusChip status={e.status} />
               </td>
-              <td className="py-3 px-3 border-b border-[#EEF0F5] text-[11px] align-middle">
+              <td className="py-3 px-3 border-b border-line-row text-[11px] align-middle">
                 <button
                   type="button"
                   aria-label="Weitere Aktionen"

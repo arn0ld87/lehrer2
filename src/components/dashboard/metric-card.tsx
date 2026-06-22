@@ -20,7 +20,7 @@ export function MetricCard({ metric }: { metric: DashboardMetric }) {
         <Icon name={metric.icon as IconName} width={21} height={21} />
       </span>
       <div className="flex flex-col self-stretch min-w-0">
-        <div className="text-[11px] font-bold text-[#5F6681]">{metric.kicker}</div>
+        <div className="text-[11px] font-bold text-ink-kicker">{metric.kicker}</div>
         <div className="font-display text-[25px] font-extrabold tracking-[-0.05em] leading-[1.2] mt-0.5">
           {metric.value}
         </div>

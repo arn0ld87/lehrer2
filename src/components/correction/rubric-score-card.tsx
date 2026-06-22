@@ -24,7 +24,7 @@ export function RubricScoreCard({ scores }: { scores: RubricScore[] }) {
                   {s.achieved} / {s.max}
                 </span>
               </div>
-              <div className="h-[7px] bg-[#EEF0F5] rounded-full overflow-hidden my-2">
+              <div className="h-[7px] bg-line-row rounded-full overflow-hidden my-2">
                 <div
                   className="h-full block rounded-full bg-primary"
                   style={{ width: `${pct}%` }}

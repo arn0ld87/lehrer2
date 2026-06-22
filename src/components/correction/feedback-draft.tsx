@@ -10,7 +10,7 @@ export function FeedbackDraft({ text }: { text: string }) {
         subtitle="Bearbeitbar und nicht als Urteil getarnt."
         action={<Icon name="message" width={18} height={18} className="text-muted" />}
       />
-      <p className="text-xs leading-[1.65] text-[#424A67] m-0">{text}</p>
+      <p className="text-xs leading-[1.65] text-ink-body m-0">{text}</p>
       <div className="flex gap-2.5 mt-3.5">
         <Button variant="secondary" size="small">
           Bearbeiten

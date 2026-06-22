@@ -13,7 +13,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
     "bg-primary text-white shadow-[0_8px_18px_rgba(93,61,245,0.22)] hover:bg-primary-strong active:translate-y-px",
   secondary:
-    "bg-surface text-ink border border-line-strong hover:bg-[#FAFAFD]",
+    "bg-surface text-ink border border-line-strong hover:bg-secondary-hover",
   ghost: "bg-transparent text-primary hover:text-primary-strong",
 };
 

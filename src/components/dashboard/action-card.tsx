@@ -20,26 +20,27 @@ export function ActionCard({
   actionLabel: string;
   onAction?: () => void;
 }) {
-  const surfaceClass =
+  const surfaceStyle =
     accent === "purple"
-      ? "bg-[linear-gradient(135deg,#FBFAFF_0%,#F0EAFF_100%)]"
+      ? { background: "var(--gradient-feature-purple)" }
       : accent === "green"
-        ? "bg-[linear-gradient(135deg,#FBFFFE_0%,#E9FAF4_100%)]"
-        : "bg-[linear-gradient(135deg,#FFFCFA_0%,#FFF0E8_100%)]";
+        ? { background: "var(--gradient-feature-green)" }
+        : { background: "var(--gradient-feature-orange)" };
   const btnStyle =
     accent === "green"
-      ? { background: "#0F9B7A", color: "#fff" }
+      ? { background: "var(--color-religion)", color: "var(--color-surface)" }
       : accent === "orange"
-        ? { background: "#E05A38", color: "#fff" }
+        ? { background: "var(--color-correction)", color: "var(--color-surface)" }
         : undefined;
   return (
     <article
-      className={`relative overflow-hidden p-[19px] border border-line rounded-[22px] min-h-[220px] flex flex-col ${surfaceClass}`}
+      className="relative overflow-hidden p-[19px] border border-line rounded-[22px] min-h-[220px] flex flex-col"
+      style={surfaceStyle}
     >
       <h3 className="font-display text-[17px] leading-[1.2] tracking-[-0.03em] font-extrabold m-0 mb-[7px]">
         {title}
       </h3>
-      <p className="text-xs text-[#5C647C] max-w-[250px] leading-[1.55] m-0">
+      <p className="text-xs text-ink-feature max-w-[250px] leading-[1.55] m-0">
         {description}
       </p>
       <div className="mt-auto pt-3">
@@ -63,18 +64,18 @@ export function QuickSourcesCard({ sources }: { sources: SourceQuickAccess[] }) 
       <h3 className="font-display text-[17px] tracking-[-0.03em] font-extrabold m-0">
         Lehrplan &amp; Quellen
       </h3>
-      <p className="text-xs text-[#5C647C] mt-0 mb-2">Schnellzugriff auf geprüfte Grundlagen.</p>
+      <p className="text-xs text-ink-feature mt-0 mb-2">Schnellzugriff auf geprüfte Grundlagen.</p>
       <div className="flex flex-col">
         {sources.map((s) => (
           <div
             key={s.id}
-            className="flex items-center gap-2 py-2 border-b border-[#EEF0F5] last:border-b-0"
+            className="flex items-center gap-2 py-2 border-b border-line-row last:border-b-0"
           >
             <span
               className={`h-[27px] w-[27px] rounded-lg grid place-items-center shrink-0 ${
                 s.accent === "green"
                   ? "bg-success-soft text-religion"
-                  : "bg-[#EEF2FF] text-primary"
+                  : "bg-source-quick-bg text-primary"
               }`}
             >
               <Icon name="file" width={15} height={15} />

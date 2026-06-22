@@ -59,7 +59,7 @@ function QualityRow({
   valueClass?: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5 py-2.5 border-b border-[#EEF0F5] last:border-b-0">
+    <div className="flex items-center gap-2.5 py-2.5 border-b border-line-row last:border-b-0">
       <span className={`h-8 w-8 rounded-[10px] grid place-items-center shrink-0 ${ACCENT[accent]}`}>
         <Icon name={icon} width={17} height={17} />
       </span>

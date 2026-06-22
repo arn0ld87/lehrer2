@@ -64,15 +64,15 @@ function SearchField() {
   return (
     <label
       aria-label="Suche"
-      className="hidden md:flex w-[clamp(240px,31vw,360px)] h-[42px] border border-line-strong rounded-[11px] bg-surface items-center gap-2 px-[11px] text-muted"
+      className="hidden md:flex w-[clamp(240px,31vw,360px)] h-[42px] border border-line-strong rounded-[11px] bg-surface items-center gap-2 px-[11px] text-muted focus-within:border-focus-ring focus-within:shadow-focus-ring transition-shadow"
     >
       <Icon name="search" width={18} height={18} />
       <input
         type="search"
         placeholder="Materialien, Themen, Quellen suchen"
-        className="border-0 outline-none min-w-0 w-full text-ink bg-transparent text-[13px] placeholder:text-[#9BA1B1]"
+        className="border-0 outline-none min-w-0 w-full text-ink bg-transparent text-[13px] placeholder:text-text-placeholder"
       />
-      <span className="text-[10px] bg-[#F5F6FA] border border-[#E9EBF1] rounded px-1.5 py-[3px] text-[#7C8296] whitespace-nowrap">
+      <span className="text-[10px] bg-kbd-bg border border-kbd-border rounded px-1.5 py-[3px] text-text-kbd whitespace-nowrap">
         ⌘ K
       </span>
     </label>

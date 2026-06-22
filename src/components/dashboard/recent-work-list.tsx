@@ -2,7 +2,7 @@ import { Icon, type IconName } from "../ui/icon";
 import type { RecentWork, Subject } from "@/lib/types";
 
 const SUBJECT_ICON_CLASS: Record<Subject, string> = {
-  deutsch: "bg-[#F0EAFE] text-deutsch",
+  deutsch: "bg-deutsch-soft text-deutsch",
   "evangelische-religion": "bg-success-soft text-religion",
   "katholische-religion": "bg-success-soft text-religion",
   ethik: "bg-info-soft text-info",
@@ -15,7 +15,7 @@ export function RecentWorkList({ items }: { items: RecentWork[] }) {
       {items.map((item) => (
         <div
           key={item.id}
-          className="flex items-center gap-[11px] py-2.5 border-b border-[#EEF0F5] last:border-b-0"
+          className="flex items-center gap-[11px] py-2.5 border-b border-line-row last:border-b-0"
         >
           <span
             className={`h-8 w-8 rounded-[10px] grid place-items-center shrink-0 ${SUBJECT_ICON_CLASS[item.subject]}`}

@@ -21,12 +21,11 @@ export function ActivityFeed({ items }: { items: Activity[] }) {
         <div
           key={a.id}
           className="flex gap-2.5 relative pb-3.5 last:pb-0"
-          style={i < items.length - 1 ? undefined : undefined}
         >
           {i < items.length - 1 ? (
             <span
               aria-hidden
-              className="absolute w-px bg-[#E8EBF1] left-[15px] top-9 bottom-0"
+              className="absolute w-px bg-line-feed left-[15px] top-9 bottom-0"
             />
           ) : null}
           <span

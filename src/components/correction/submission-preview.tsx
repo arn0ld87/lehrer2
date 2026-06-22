@@ -21,7 +21,7 @@ export function SubmissionPreview({
             {subjectLabel} · eingereicht am {submittedAt}
           </p>
         </div>
-        <span className="font-mono bg-[#F2F4F8] rounded-[7px] px-1.5 py-1 text-[10px] text-[#5D657C]">
+        <span className="font-mono bg-anon-bg rounded-[7px] px-1.5 py-1 text-[10px] text-text-anon">
           {pseudonym}
         </span>
       </div>
@@ -71,12 +71,12 @@ function TextLine({
       <div
         className="h-2.5 rounded-[3px] my-2.5 relative"
         style={{
-          background: `linear-gradient(90deg, #FFDDD0 65%, transparent 65%)`,
+          background: "var(--gradient-text-line-highlight)",
           width,
         }}
       >
         {label ? (
-          <span className="absolute right-0 -top-1 text-[9px] text-[#BE4B2C] bg-danger-soft rounded px-1.5 py-0.5">
+          <span className="absolute right-0 -top-1 text-[9px] text-highlight-label-fg bg-danger-soft rounded px-1.5 py-0.5">
             {label}
           </span>
         ) : null}
@@ -86,7 +86,7 @@ function TextLine({
   return (
     <div
       className="h-2.5 rounded-[3px] my-2.5"
-      style={{ background: "linear-gradient(90deg,#EBEDF3 68%,transparent 68%)", width }}
+      style={{ background: "var(--gradient-text-line)", width }}
     />
   );
 }

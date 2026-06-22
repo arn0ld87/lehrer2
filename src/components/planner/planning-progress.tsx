@@ -14,7 +14,7 @@ export function PlanningProgress({ steps }: { steps: PlanningStep[] }) {
       <div className="relative pl-[26px]">
         <span
           aria-hidden
-          className="absolute left-2 top-2.5 bottom-2.5 w-px bg-[#E4E6EE]"
+          className="absolute left-2 top-2.5 bottom-2.5 w-px bg-line-soft"
         />
         {steps.map((s) => (
           <div key={s.id} className="relative pb-[19px] last:pb-0">

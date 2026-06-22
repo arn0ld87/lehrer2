@@ -437,8 +437,8 @@ export function mockUserContext(): UserContext {
 
 export function mockUser(): MockUser {
   return {
-    initials: "MS",
-    name: "Maria Stein",
+    initials: "JZ",
+    name: "Jana Zwarg",
     role: "Lehrkraft",
   };
 }

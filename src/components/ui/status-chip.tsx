@@ -13,14 +13,14 @@ interface StatusChipProps {
 }
 
 const STATUS_CLASSES: Record<StatusKind, string> = {
-  draft: "bg-[#F0F2F7] text-[#66708A]",
-  progress: "bg-[#FFF5DF] text-[#A66100]",
-  ready: "bg-success-soft text-[#0C7D61]",
-  review: "bg-danger-soft text-[#B54425]",
-  active: "bg-success-soft text-[#0C7D61]",
-  waiting: "bg-[#FFF5DF] text-[#A66100]",
-  "pending-review": "bg-danger-soft text-[#B54425]",
-  rejected: "bg-danger-soft text-[#B54425]",
+  draft: "bg-chip-bg text-status-draft-fg",
+  progress: "bg-warning-soft text-status-progress-fg",
+  ready: "bg-success-soft text-status-ready-fg",
+  review: "bg-danger-soft text-status-review-fg",
+  active: "bg-success-soft text-status-ready-fg",
+  waiting: "bg-warning-soft text-status-progress-fg",
+  "pending-review": "bg-danger-soft text-status-review-fg",
+  rejected: "bg-danger-soft text-status-review-fg",
 };
 
 const TRUST_LABEL: Record<SourceTrust, string> = {
@@ -31,11 +31,11 @@ const TRUST_LABEL: Record<SourceTrust, string> = {
 };
 
 const TRUST_CLASS: Record<SourceTrust, string> = {
-  OFFICIAL_BINDING: "bg-success-soft text-[#0C7D61]",
-  OFFICIAL_GUIDANCE: "bg-[#FFF5DF] text-[#A66100]",
-  USER_APPROVED: "bg-[#F0F2F7] text-[#66708A]",
+  OFFICIAL_BINDING: "bg-success-soft text-status-ready-fg",
+  OFFICIAL_GUIDANCE: "bg-warning-soft text-status-progress-fg",
+  USER_APPROVED: "bg-chip-bg text-status-draft-fg",
   // UNVERIFIED darf produktiv nie im RAG stehen — Status deutlich markieren.
-  UNVERIFIED: "bg-danger-soft text-[#B54425]",
+  UNVERIFIED: "bg-danger-soft text-status-review-fg",
 };
 
 const STATUS_LABEL: Record<StatusKind, string> = {

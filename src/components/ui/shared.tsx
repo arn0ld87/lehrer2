@@ -40,7 +40,7 @@ export function Notice({
 }) {
   const toneClass =
     tone === "warning"
-      ? "bg-warning-soft border-[#F5E3BA] text-[#7A4A00]"
+      ? "bg-warning-soft border-notice-warning-border text-notice-warning-fg"
       : "bg-info-soft border-info/20 text-info";
   return (
     <div
@@ -71,16 +71,13 @@ export function SectionBanner({
   return (
     <section
       className="relative overflow-hidden rounded-[22px] text-white p-[26px] flex items-center justify-between gap-4 flex-wrap"
-      style={{
-        background:
-          "radial-gradient(circle at 87% 30%, rgba(137,109,255,0.22), transparent 22%), linear-gradient(105deg, #171A37, #2A1B70)",
-      }}
+      style={{ background: "var(--gradient-banner)" }}
     >
       <div className="relative z-1 min-w-0">
         <h2 className="font-display text-[22px] tracking-[-0.04em] font-extrabold m-0">
           {title}
         </h2>
-        <p className="text-xs text-[#D9D5FF] mt-[7px] max-w-[560px] m-0">{description}</p>
+        <p className="text-xs text-banner-p mt-[7px] max-w-[560px] m-0">{description}</p>
       </div>
       <div className="relative z-1">{action}</div>
     </section>
@@ -107,8 +104,8 @@ export function FilterButton({
         "h-[34px] px-[10px] rounded-[9px] border text-[11px] font-bold transition-colors",
         "flex items-center gap-1.5",
         active
-          ? "bg-primary-soft border-[#C9BEFF] text-[#4D30CE]"
-          : "bg-surface border-line-strong text-[#505873] hover:bg-[#FAFAFD]",
+          ? "bg-primary-soft border-filter-active-border text-filter-active-fg"
+          : "bg-surface border-line-strong text-text-filter hover:bg-secondary-hover",
       ].join(" ")}
     >
       {icon ? <Icon name={icon} width={14} height={14} /> : null}
@@ -138,7 +135,7 @@ export function IconButton({
       onClick={onClick}
       className={[
         "relative h-[42px] w-[42px] rounded-[11px] border border-line bg-surface text-ink",
-        "grid place-items-center hover:border-[#CFC8F7] hover:bg-[#FAF9FF]",
+        "grid place-items-center hover:border-icon-hover-border hover:bg-builder-active-bg",
         "transition-colors",
         className ?? "",
       ]

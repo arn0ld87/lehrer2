@@ -124,6 +124,13 @@
   --gradient-feature-purple: linear-gradient(135deg, #fbfaff 0%, #f0eaff 100%);
   --gradient-feature-green: linear-gradient(135deg, #fbfffe 0%, #e9faf4 100%);
   --gradient-feature-orange: linear-gradient(135deg, #fffcfa 0%, #fff0e8 100%);
+  --gradient-text-line: linear-gradient(90deg, #ebedf3 68%, transparent 68%);
+  --gradient-text-line-highlight: linear-gradient(90deg, #ffddd0 65%, transparent 65%);
+  --gradient-lines-fill: repeating-linear-gradient(
+    transparent 0,
+    transparent 22px,
+    #edeef4 23px
+  );
 }
 
 body {

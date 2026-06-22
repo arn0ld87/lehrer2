@@ -51,7 +51,7 @@ export function PlanningForm() {
       <div className="mt-3.5">
         <Field label="Thema der Einheit">
           <input
-            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-[#9D8AFB] focus:shadow-[0_0_0_3px_rgba(93,61,245,0.10)] transition w-full"
+            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
             defaultValue="Eine Charakterisierung schreiben"
           />
         </Field>
@@ -60,7 +60,7 @@ export function PlanningForm() {
       <div className="mt-3.5">
         <Field label="Ziel in eigenen Worten">
           <textarea
-            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-[#9D8AFB] focus:shadow-[0_0_0_3px_rgba(93,61,245,0.10)] transition w-full min-h-[94px] resize-y"
+            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full min-h-[94px] resize-y"
             defaultValue="Die Lernenden beschreiben eine literarische Figur begründet, verwenden Textbelege und formulieren einen strukturierten Charakterisierungstext."
           />
         </Field>
@@ -74,7 +74,7 @@ export function PlanningForm() {
             <Chip>LRS-Unterstützung</Chip>
             <button
               type="button"
-              className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-[#F4F5F9] text-muted border border-line hover:bg-[#ECEEF5]"
+              className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line hover:bg-chip-bg"
             >
               + Kontext
             </button>
@@ -93,7 +93,7 @@ export function PlanningForm() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="grid gap-1.5">
-      <span className="text-[11px] font-bold text-[#424A67]">{label}</span>
+      <span className="text-[11px] font-bold text-ink-body">{label}</span>
       {children}
     </label>
   );
@@ -101,7 +101,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Select({ children }: { children: React.ReactNode }) {
   return (
-    <select className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-[#9D8AFB] focus:shadow-[0_0_0_3px_rgba(93,61,245,0.10)] transition w-full appearance-none pr-[30px]">
+    <select className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full appearance-none pr-[30px]">
       {children}
     </select>
   );
@@ -109,7 +109,7 @@ function Select({ children }: { children: React.ReactNode }) {
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-[#F4F5F9] text-muted border border-line">
+    <span className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line">
       {children}
     </span>
   );

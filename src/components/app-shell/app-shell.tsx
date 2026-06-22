@@ -55,6 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             aria-label="Menü schließen"
             onClick={() => setNavOpen(false)}
             className="fixed inset-0 z-30 bg-ink/40 lg:hidden"
+          tabIndex={-1}
           />
         ) : null}
         <main className="min-w-0 w-full max-w-[1680px] mx-auto p-7 lg:p-[28px_30px_42px]">
