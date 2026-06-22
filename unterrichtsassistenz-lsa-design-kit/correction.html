@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unterrichtsassistenz LSA – Design-Prototyp">
+  <title>Korrekturassistenz · Unterrichtsassistenz LSA</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <a class="brand" href="dashboard.html">
+        <img class="brand-mark" src="assets/logo.svg" alt="">
+        <div class="brand-title">Unterrichtsassistenz<span>LSA</span></div>
+      </a>
+      <nav class="nav-group"><a class="nav-item " href="dashboard.html"><span class="nav-icon" data-icon="home"></span>Übersicht</a>
+<a class="nav-item " href="planner.html"><span class="nav-icon" data-icon="calendar"></span>Unterrichtsplanung</a>
+<a class="nav-item " href="worksheet-builder.html"><span class="nav-icon" data-icon="file"></span>Arbeitsblätter</a>
+<a class="nav-item active" href="correction.html"><span class="nav-icon" data-icon="wand"></span>Korrekturassistenz</a>
+<a class="nav-item " href="sources.html"><span class="nav-icon" data-icon="layers"></span>Quellen & Lehrpläne</a>
+<a class="nav-item " href="ui-kit.html"><span class="nav-icon" data-icon="sparkles"></span>Design-System</a></nav>
+      <section class="context-panel">
+        <div class="nav-label">Fach & Kontext</div>
+        <div class="context-card"><span class="context-symbol" data-icon="book"></span><div class="context-copy"><small>Fach</small><strong>Deutsch</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="users"></span><div class="context-copy"><small>Schulform</small><strong>Gemeinschaftsschule</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="calendar"></span><div class="context-copy"><small>Klasse</small><strong>8</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+      </section>
+      <div class="user-card"><div class="avatar">MS</div><div class="info"><strong>Maria Stein</strong><span>Lehrkraft</span></div><span class="user-caret">⌄</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button class="icon-button mobile-menu" aria-label="Menü öffnen" data-menu-toggle><span data-icon="menu" class="nav-icon"></span></button>
+          <div class="page-title"><h1>Korrekturassistenz</h1><p>Arbeite mit Kriterien, Belegen und menschlicher Finalentscheidung.</p></div>
+        </div>
+        
+      <div class="header-actions">
+        <label class="search" aria-label="Suche">
+          <span data-icon="search" class="nav-icon"></span>
+          <input placeholder="Materialien, Themen, Quellen suchen">
+          <span class="kbd">⌘ K</span>
+        </label>
+        <button class="icon-button" aria-label="Benachrichtigungen"><span data-icon="bell" class="nav-icon"></span><span class="dot"></span></button>
+        <button class="btn btn-primary" data-toast="Neue Arbeitsfläche wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Neu erstellen</button>
+      </div>
+    
+      </header>
+      
+<section class="page-grid">
+  <section class="section-banner"><div><h2>Korrekturassistenz ohne Autopilot.</h2><p>Die Anwendung strukturiert Beobachtungen, bezieht sich auf dein Raster und zeigt Unsicherheiten. Die Bewertung bleibt bei dir.</p></div><button class="btn" data-toast="Neue pseudonymisierte Arbeit wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Arbeit hinzufügen</button></section>
+  <section class="correction-layout">
+    <article class="document-preview">
+      <div class="document-header"><div><strong>Analyse: Charakterisierung</strong><p style="margin:4px 0 0;color:var(--muted);font-size:11px">Deutsch · Klasse 8 · eingereicht am 18.06.2026</p></div><span class="anon">SCHUELER_08_017</span></div>
+      <div style="margin:22px 0 12px;display:flex;justify-content:space-between;align-items:center"><span class="subject-badge deutsch">Pseudonymisiert</span><span class="status-badge review">Vorschlag prüfen</span></div>
+      <div class="text-line mid"></div><div class="text-line"></div><div class="text-line short"></div><div class="text-line highlight"></div><div class="text-line"></div><div class="text-line mid"></div><div class="text-line"></div><div class="text-line short"></div><div class="text-line highlight"></div><div class="text-line mid"></div><div class="text-line"></div><div class="text-line short"></div>
+      <div class="notice" style="margin-top:20px"><span data-icon="alert"></span><div><strong>Unklare Zuordnung erkannt.</strong><span>Die Passage ab Absatz 3 kann als Inhaltsangabe oder als Deutung gelesen werden. Kein Punktvorschlag ohne Sichtprüfung.</span></div></div>
+    </article>
+    <aside class="page-grid">
+      <section class="card card-pad">
+        <div class="card-head"><div><h2 class="card-title">Rasterbasierter Vorschlag</h2><p class="card-subtitle">Kriterien vor Textgefühl.</p></div><button class="filter">Raster v2 ⌄</button></div>
+        <div class="rubric-score">
+          <div class="score-card"><div class="score-head"><strong>Inhaltliche Erfassung</strong><span>13 / 16</span></div><div class="progress-bar"><i style="width:81%"></i></div><p>Figur und zentrale Merkmale korrekt erfasst. Zwei Deutungen bleiben unbelegt.</p></div>
+          <div class="score-card"><div class="score-head"><strong>Textbelege & Analyse</strong><span>10 / 18</span></div><div class="progress-bar"><i style="width:56%"></i></div><p>Belege vorhanden, aber teils aufgezählt statt erklärt. Ein Beleg ist nicht eindeutig.</p></div>
+          <div class="score-card"><div class="score-head"><strong>Aufbau & Kohärenz</strong><span>9 / 12</span></div><div class="progress-bar"><i style="width:75%"></i></div><p>Grundstruktur stimmig. Übergänge zwischen Absätzen könnten klarer sein.</p></div>
+          <div class="score-card"><div class="score-head"><strong>Sprache & Ausdruck</strong><span>8 / 14</span></div><div class="progress-bar"><i style="width:57%"></i></div><p>Angemessener Wortschatz. Mehrere Satzbau- und Kongruenzfehler.</p></div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:15px"><button class="btn btn-secondary btn-small" style="flex:1" data-toast="Begründungen geöffnet.">Begründungen</button><button class="btn btn-primary btn-small" style="flex:1" data-toast="Vorschlag zur manuellen Prüfung markiert.">Prüfen</button></div>
+      </section>
+      <section class="card card-pad">
+        <div class="card-head"><div><h2 class="card-title">Feedback-Entwurf</h2><p class="card-subtitle">Bearbeitbar und nicht als Urteil getarnt.</p></div><span data-icon="message" class="nav-icon"></span></div>
+        <p style="font-size:12px;line-height:1.65;margin:0;color:#424A67">Du beschreibst Jana mit mehreren passenden Merkmalen und nutzt Textstellen. Besonders gelungen ist, dass du ihre Beziehung zu ihrer Mutter erklärst. Im nächsten Schritt solltest du jeden Beleg genauer deuten: Was zeigt die Stelle über Jana?</p>
+        <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-secondary btn-small" data-toast="Feedback wird bearbeitbar geöffnet.">Bearbeiten</button><button class="btn btn-secondary btn-small" data-toast="Feedback kopiert.">Kopieren</button></div>
+      </section>
+    </aside>
+  </section>
+</section>
+
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

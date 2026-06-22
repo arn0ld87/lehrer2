@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unterrichtsassistenz LSA – Design-Prototyp">
+  <title>Quellen & Lehrpläne · Unterrichtsassistenz LSA</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <a class="brand" href="dashboard.html">
+        <img class="brand-mark" src="assets/logo.svg" alt="">
+        <div class="brand-title">Unterrichtsassistenz<span>LSA</span></div>
+      </a>
+      <nav class="nav-group"><a class="nav-item " href="dashboard.html"><span class="nav-icon" data-icon="home"></span>Übersicht</a>
+<a class="nav-item " href="planner.html"><span class="nav-icon" data-icon="calendar"></span>Unterrichtsplanung</a>
+<a class="nav-item " href="worksheet-builder.html"><span class="nav-icon" data-icon="file"></span>Arbeitsblätter</a>
+<a class="nav-item " href="correction.html"><span class="nav-icon" data-icon="wand"></span>Korrekturassistenz</a>
+<a class="nav-item active" href="sources.html"><span class="nav-icon" data-icon="layers"></span>Quellen & Lehrpläne</a>
+<a class="nav-item " href="ui-kit.html"><span class="nav-icon" data-icon="sparkles"></span>Design-System</a></nav>
+      <section class="context-panel">
+        <div class="nav-label">Fach & Kontext</div>
+        <div class="context-card"><span class="context-symbol" data-icon="book"></span><div class="context-copy"><small>Fach</small><strong>Deutsch</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="users"></span><div class="context-copy"><small>Schulform</small><strong>Gemeinschaftsschule</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="calendar"></span><div class="context-copy"><small>Klasse</small><strong>8</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+      </section>
+      <div class="user-card"><div class="avatar">MS</div><div class="info"><strong>Maria Stein</strong><span>Lehrkraft</span></div><span class="user-caret">⌄</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button class="icon-button mobile-menu" aria-label="Menü öffnen" data-menu-toggle><span data-icon="menu" class="nav-icon"></span></button>
+          <div class="page-title"><h1>Quellen & Lehrpläne</h1><p>Registriere, prüfe und versioniere die fachliche Grundlage deiner Antworten.</p></div>
+        </div>
+        
+      <div class="header-actions">
+        <label class="search" aria-label="Suche">
+          <span data-icon="search" class="nav-icon"></span>
+          <input placeholder="Materialien, Themen, Quellen suchen">
+          <span class="kbd">⌘ K</span>
+        </label>
+        <button class="icon-button" aria-label="Benachrichtigungen"><span data-icon="bell" class="nav-icon"></span><span class="dot"></span></button>
+        <button class="btn btn-primary" data-toast="Neue Arbeitsfläche wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Neu erstellen</button>
+      </div>
+    
+      </header>
+      
+<section class="page-grid">
+  <section class="section-banner"><div><h2>Quellen sind Teil des Produkts, nicht Dekoration.</h2><p>Jede Quelle braucht Herkunft, Version, Lizenzstatus, Fachkontext und nachvollziehbare Freigabe. Überraschend, aber genau so vermeidet man später Chaos.</p></div><button class="btn" data-toast="Neue Quelle wird als Kandidat erfasst."><span data-icon="plus" class="nav-icon"></span>Quelle erfassen</button></section>
+  <section class="kpi-pairs">
+    <article class="mini-kpi"><span>Verifizierte Quellen</span><strong>248</strong><span style="color:var(--success);margin-top:5px">+ 5 diese Woche</span></article>
+    <article class="mini-kpi"><span>In Lizenzprüfung</span><strong>11</strong><span style="color:var(--warning);margin-top:5px">manuelle Freigabe nötig</span></article>
+    <article class="mini-kpi"><span>RAG-Index aktuell</span><strong>99,2 %</strong><span style="color:var(--success);margin-top:5px">letzte Prüfung: heute</span></article>
+  </section>
+  <section class="card card-pad">
+    <div class="card-head"><div><h2 class="card-title">Quellenregister</h2><p class="card-subtitle">Amtliche und freigegebene Quellen mit Versionierung.</p></div><button class="btn btn-secondary btn-small" data-toast="CSV-Export vorbereitet."><span data-icon="download" class="nav-icon"></span>Register exportieren</button></div>
+    <div class="filters" style="margin-bottom:15px"><button class="filter active">Alle Quellen</button><button class="filter">Deutsch</button><button class="filter">Religion</button><button class="filter">OFFICIAL_BINDING</button><button class="filter">Prüfung erforderlich</button><button class="filter"><span data-icon="filter" class="nav-icon"></span>Weitere Filter</button></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Quelle</th><th>Fach / Kontext</th><th>Vertrauen</th><th>Version</th><th>Lizenz</th><th>Status</th><th></th></tr></thead><tbody>
+      <tr><td><div class="source-name"><div class="source-file" data-icon="file"></div><div><strong>Fachlehrplan Deutsch</strong><span>LISA Sachsen-Anhalt · amtliche Quelle</span></div></div></td><td><span class="subject-badge deutsch">Deutsch</span><br><span style="font-size:10px;color:var(--muted)">Sek. I · Klasse 5–10</span></td><td><span class="status-badge ready">OFFICIAL_BINDING</span></td><td>2024-01</td><td>geprüft</td><td><span class="status-badge ready">aktiv</span></td><td><button class="more">⋮</button></td></tr>
+      <tr><td><div class="source-name"><div class="source-file" data-icon="file"></div><div><strong>Lehrplan Evangelischer Religionsunterricht</strong><span>LISA Sachsen-Anhalt · amtliche Quelle</span></div></div></td><td><span class="subject-badge religion">Ev. Religion</span><br><span style="font-size:10px;color:var(--muted)">Sek. I · Klasse 5–10</span></td><td><span class="status-badge ready">OFFICIAL_BINDING</span></td><td>2023-08</td><td>geprüft</td><td><span class="status-badge ready">aktiv</span></td><td><button class="more">⋮</button></td></tr>
+      <tr><td><div class="source-name"><div class="source-file" data-icon="file"></div><div><strong>Niveaubestimmende Aufgabe: Schreiben</strong><span>Offizielle Handreichung · Kandidat</span></div></div></td><td><span class="subject-badge deutsch">Deutsch</span><br><span style="font-size:10px;color:var(--muted)">Sek. I · Klasse 7/8</span></td><td><span class="status-badge progress">OFFICIAL_GUIDANCE</span></td><td>2022-06</td><td>zu prüfen</td><td><span class="status-badge progress">Wartet</span></td><td><button class="more">⋮</button></td></tr>
+      <tr><td><div class="source-name"><div class="source-file" data-icon="file"></div><div><strong>Materialsammlung „Biblische Erzählungen“</strong><span>Fachkonferenz-Upload · Schule intern</span></div></div></td><td><span class="subject-badge religion">Religion</span><br><span style="font-size:10px;color:var(--muted)">Klasse 5/6</span></td><td><span class="status-badge draft">USER_APPROVED</span></td><td>2026-04</td><td>intern</td><td><span class="status-badge review">Freigabe prüfen</span></td><td><button class="more">⋮</button></td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="split">
+    <article class="card card-pad"><div class="card-head"><div><h2 class="card-title">RAG-Qualität</h2><p class="card-subtitle">Die Datenbasis wird gemessen, nicht beschworen.</p></div><span class="status-badge ready">stabil</span></div>
+      <div class="list-row"><div class="list-icon sources" data-icon="check"></div><div class="list-copy"><strong>Metadatenabdeckung</strong><span>Quelle, Version, Fach und Gültigkeit für indexierte Chunks.</span></div><strong style="font-size:13px">98,7 %</strong></div>
+      <div class="list-row"><div class="list-icon sources" data-icon="search"></div><div class="list-copy"><strong>Golden-Question-Recall</strong><span>Testfragen zu Deutsch und Religion mit belegtem Treffer.</span></div><strong style="font-size:13px">91,4 %</strong></div>
+      <div class="list-row"><div class="list-icon correction" data-icon="alert"></div><div class="list-copy"><strong>Quellen mit Prüfbedarf</strong><span>Dokumente ohne geklärte Lizenz oder aktuelle Version.</span></div><strong style="font-size:13px;color:var(--correction)">11</strong></div>
+    </article>
+    <article class="card card-pad"><div class="card-head"><div><h2 class="card-title">Governance-Check</h2><p class="card-subtitle">Relevante Regeln vor der nächsten Ingestion.</p></div></div>
+      <div class="step-list"><div class="step"><div><strong>Lizenz & Nutzung prüfen</strong><span>Kein automatischer Import ohne nachvollziehbare Berechtigung.</span></div></div><div class="step"><div><strong>Gültigkeit festhalten</strong><span>Version, Abrufdatum und Aktualität sichtbar speichern.</span></div></div><div class="step"><div><strong>Freigabe protokollieren</strong><span>Quelle erst danach für produktive Antworten aktivieren.</span></div></div></div>
+    </article>
+  </section>
+</section>
+
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unterrichtsassistenz LSA – Design-Prototyp">
+  <title>Design-System · Unterrichtsassistenz LSA</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <a class="brand" href="dashboard.html">
+        <img class="brand-mark" src="assets/logo.svg" alt="">
+        <div class="brand-title">Unterrichtsassistenz<span>LSA</span></div>
+      </a>
+      <nav class="nav-group"><a class="nav-item " href="dashboard.html"><span class="nav-icon" data-icon="home"></span>Übersicht</a>
+<a class="nav-item " href="planner.html"><span class="nav-icon" data-icon="calendar"></span>Unterrichtsplanung</a>
+<a class="nav-item " href="worksheet-builder.html"><span class="nav-icon" data-icon="file"></span>Arbeitsblätter</a>
+<a class="nav-item " href="correction.html"><span class="nav-icon" data-icon="wand"></span>Korrekturassistenz</a>
+<a class="nav-item " href="sources.html"><span class="nav-icon" data-icon="layers"></span>Quellen & Lehrpläne</a>
+<a class="nav-item active" href="ui-kit.html"><span class="nav-icon" data-icon="sparkles"></span>Design-System</a></nav>
+      <section class="context-panel">
+        <div class="nav-label">Fach & Kontext</div>
+        <div class="context-card"><span class="context-symbol" data-icon="book"></span><div class="context-copy"><small>Fach</small><strong>Deutsch</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="users"></span><div class="context-copy"><small>Schulform</small><strong>Gemeinschaftsschule</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="calendar"></span><div class="context-copy"><small>Klasse</small><strong>8</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+      </section>
+      <div class="user-card"><div class="avatar">MS</div><div class="info"><strong>Maria Stein</strong><span>Lehrkraft</span></div><span class="user-caret">⌄</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button class="icon-button mobile-menu" aria-label="Menü öffnen" data-menu-toggle><span data-icon="menu" class="nav-icon"></span></button>
+          <div class="page-title"><h1>Design-System</h1><p>Tokens, Komponenten und Regeln für eine konsistente Umsetzung.</p></div>
+        </div>
+        
+      <div class="header-actions">
+        <label class="search" aria-label="Suche">
+          <span data-icon="search" class="nav-icon"></span>
+          <input placeholder="Materialien, Themen, Quellen suchen">
+          <span class="kbd">⌘ K</span>
+        </label>
+        <button class="icon-button" aria-label="Benachrichtigungen"><span data-icon="bell" class="nav-icon"></span><span class="dot"></span></button>
+        <button class="btn btn-primary" data-toast="Neue Arbeitsfläche wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Neu erstellen</button>
+      </div>
+    
+      </header>
+      
+<section class="page-grid">
+  <section class="section-banner"><div><h2>Design-System: sachlich, warm, nicht nach EdTech-Babysprache.</h2><p>Das Interface soll Lehrkräfte entlasten und Kompetenz ausstrahlen. Kein gamifiziertes Klassenzimmer und keine Spielzeug-Illustrationen.</p></div><button class="btn" data-toast="Token-Datei liegt in design-tokens.json.">Token-Datei ansehen</button></section>
+  <section class="ui-grid">
+    <article class="card card-pad"><div class="card-head"><div><h2 class="card-title">Farbpalette</h2><p class="card-subtitle">Klare Semantik statt Zufallsfarben.</p></div></div>
+      <div class="color-swatches"><div class="swatch"><div class="swatch-color" style="background:#12162E"></div><label>Ink<span>#12162E</span></label></div><div class="swatch"><div class="swatch-color" style="background:#5D3DF5"></div><label>Primary<span>#5D3DF5</span></label></div><div class="swatch"><div class="swatch-color" style="background:#0F9B7A"></div><label>Religion<span>#0F9B7A</span></label></div><div class="swatch"><div class="swatch-color" style="background:#E05A38"></div><label>Correction<span>#E05A38</span></label></div></div>
+      <div class="color-swatches" style="margin-top:10px"><div class="swatch"><div class="swatch-color" style="background:#F7F7FB"></div><label>Canvas<span>#F7F7FB</span></label></div><div class="swatch"><div class="swatch-color" style="background:#EFEAFF"></div><label>Primary soft<span>#EFEAFF</span></label></div><div class="swatch"><div class="swatch-color" style="background:#E7F9F4"></div><label>Success soft<span>#E7F9F4</span></label></div><div class="swatch"><div class="swatch-color" style="background:#FFF0E8"></div><label>Warning soft<span>#FFF0E8</span></label></div></div>
+    </article>
+    <article class="card card-pad"><div class="card-head"><div><h2 class="card-title">Typografie</h2><p class="card-subtitle">Dichte Informationen, gut lesbar.</p></div></div>
+      <div class="type-specimen"><h1>Klare Entscheidungen brauchen klare Informationen.</h1><h2>Abschnittsüberschrift</h2><h3>Komponentenüberschrift</h3><p>Fließtext ist bewusst unaufgeregt: gute Lesbarkeit bei Tabellen, Korrekturen, Quellen und längeren Arbeitsaufträgen.</p><span class="chip">Inter / Manrope</span></div>
+    </article>
+    <article class="card card-pad"><div class="card-head"><div><h2 class="card-title">Buttons & Status</h2><p class="card-subtitle">Stark für Handlungen, leise für Alternativen.</p></div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:9px"><button class="btn btn-primary">Primäre Aktion</button><button class="btn btn-secondary">Sekundär</button><button class="btn btn-ghost">Textaktion</button></div>
+      <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:15px"><span class="status-badge draft">Entwurf</span><span class="status-badge progress">Prüfung</span><span class="status-badge ready">Freigegeben</span><span class="status-badge review">Unsicherheit</span></div>
+    </article>
+    <article class="card card-pad"><div class="card-head"><div><h2 class="card-title">Verhaltensregeln</h2><p class="card-subtitle">Was das Design bewusst vermeidet.</p></div></div>
+      <div class="step-list"><div class="step"><div><strong>Quellen sind sichtbar</strong><span>Keine versteckten Belege hinter einem Tool-Icon.</span></div></div><div class="step"><div><strong>Unsicherheit bekommt Raum</strong><span>Unklare KI-Ergebnisse werden markiert statt glattgebügelt.</span></div></div><div class="step"><div><strong>Korrektur bleibt nüchtern</strong><span>Keine Punkteskalen als Gamification, keine emotionalen Urteile.</span></div></div></div>
+    </article>
+  </section>
+</section>
+
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

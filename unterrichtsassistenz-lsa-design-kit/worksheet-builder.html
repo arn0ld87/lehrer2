@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unterrichtsassistenz LSA – Design-Prototyp">
+  <title>Arbeitsblätter · Unterrichtsassistenz LSA</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <a class="brand" href="dashboard.html">
+        <img class="brand-mark" src="assets/logo.svg" alt="">
+        <div class="brand-title">Unterrichtsassistenz<span>LSA</span></div>
+      </a>
+      <nav class="nav-group"><a class="nav-item " href="dashboard.html"><span class="nav-icon" data-icon="home"></span>Übersicht</a>
+<a class="nav-item " href="planner.html"><span class="nav-icon" data-icon="calendar"></span>Unterrichtsplanung</a>
+<a class="nav-item active" href="worksheet-builder.html"><span class="nav-icon" data-icon="file"></span>Arbeitsblätter</a>
+<a class="nav-item " href="correction.html"><span class="nav-icon" data-icon="wand"></span>Korrekturassistenz</a>
+<a class="nav-item " href="sources.html"><span class="nav-icon" data-icon="layers"></span>Quellen & Lehrpläne</a>
+<a class="nav-item " href="ui-kit.html"><span class="nav-icon" data-icon="sparkles"></span>Design-System</a></nav>
+      <section class="context-panel">
+        <div class="nav-label">Fach & Kontext</div>
+        <div class="context-card"><span class="context-symbol" data-icon="book"></span><div class="context-copy"><small>Fach</small><strong>Deutsch</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="users"></span><div class="context-copy"><small>Schulform</small><strong>Gemeinschaftsschule</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="calendar"></span><div class="context-copy"><small>Klasse</small><strong>8</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+      </section>
+      <div class="user-card"><div class="avatar">MS</div><div class="info"><strong>Maria Stein</strong><span>Lehrkraft</span></div><span class="user-caret">⌄</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button class="icon-button mobile-menu" aria-label="Menü öffnen" data-menu-toggle><span data-icon="menu" class="nav-icon"></span></button>
+          <div class="page-title"><h1>Arbeitsblätter</h1><p>Erstelle Material, das du fachlich verantworten und wirklich einsetzen kannst.</p></div>
+        </div>
+        
+      <div class="header-actions">
+        <label class="search" aria-label="Suche">
+          <span data-icon="search" class="nav-icon"></span>
+          <input placeholder="Materialien, Themen, Quellen suchen">
+          <span class="kbd">⌘ K</span>
+        </label>
+        <button class="icon-button" aria-label="Benachrichtigungen"><span data-icon="bell" class="nav-icon"></span><span class="dot"></span></button>
+        <button class="btn btn-primary" data-toast="Neue Arbeitsfläche wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Neu erstellen</button>
+      </div>
+    
+      </header>
+      
+<section class="page-grid">
+  <section class="section-banner"><div><h2>Arbeitsblätter, die nach Unterricht aussehen.</h2><p>Kein generischer KI-Zettel, sondern klar gegliedertes Material mit Differenzierung, Lösungen und sinnvoller Typografie.</p></div><button class="btn" data-toast="PDF-Entwurf wird exportiert."><span data-icon="download" class="nav-icon"></span>Als PDF exportieren</button></section>
+  <section class="worksheet-layout">
+    <aside class="builder-panel card card-pad">
+      <div class="card-head"><div><h2 class="card-title">Arbeitsblatt-Builder</h2><p class="card-subtitle">Inhalte und Hilfen konfigurieren.</p></div></div>
+      <div class="stack">
+        <label class="builder-option active"><input type="radio" checked name="type"><div><strong>Übungsblatt</strong><span>Aufgaben mit Lösungen und Hilfen.</span></div></label>
+        <label class="builder-option"><input type="radio" name="type"><div><strong>Lernstationen</strong><span>Material für selbstständige Arbeitsphasen.</span></div></label>
+        <label class="builder-option"><input type="radio" name="type"><div><strong>Diagnosebogen</strong><span>Kurze Lernstandserhebung mit Raster.</span></div></label>
+      </div>
+      <div class="field" style="margin-top:16px"><label>Fach</label><select class="select"><option>Deutsch</option><option>Religion</option></select></div>
+      <div class="field" style="margin-top:12px"><label>Differenzierung</label><select class="select"><option>Basis + Erweiterung + Hilfen</option><option>Einheitliches Niveau</option><option>Fördermaterial</option></select></div>
+      <div class="field" style="margin-top:12px"><label>Sprache & Ton</label><select class="select"><option>Klar, altersangemessen</option><option>Einfach und entlastend</option><option>Anspruchsvoll und analytisch</option></select></div>
+      <div class="notice" style="margin-top:16px"><span data-icon="lock"></span><div><strong>Export bleibt im Entwurfsmodus.</strong><span>Prüfe Quellen, Aufgabenstellung und Lösung vor Verwendung.</span></div></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:15px" data-toast="Vorschau aktualisiert.">Vorschau aktualisieren</button>
+    </aside>
+    <section class="paper" aria-label="Arbeitsblatt-Vorschau">
+      <div class="paper-topline"><span>Deutsch · Klasse 8 · Gemeinschaftsschule</span><span>Name: ______________________</span></div>
+      <h1>Eine Charakterisierung schreiben</h1>
+      <div class="meta"><span class="subject-badge deutsch">Deutsch</span><span class="chip">45 Minuten</span><span class="chip">Basis + Erweiterung</span></div>
+      <p>Du untersuchst die Figur <strong>Jana</strong> aus dem Auszug. Beschreibe ihre Eigenschaften nicht nur mit Adjektiven, sondern belege sie mit passenden Stellen aus dem Text.</p>
+      <div class="task"><strong>Aufgabe 1 · Figur wahrnehmen</strong><p>Markiere Aussagen, Handlungen und Gedanken, die etwas über Jana zeigen. Notiere zu jeder Markierung ein mögliches Merkmal.</p><div class="lines"></div></div>
+      <div class="task"><strong>Aufgabe 2 · Textbelege ordnen</strong><p>Sortiere deine Belege in die Kategorien <em>Aussehen, Verhalten, Sprache, Beziehungen</em>. Entscheide, welche Kategorie für deine Charakterisierung besonders wichtig ist.</p><div class="lines"></div></div>
+      <div class="task"><strong>Aufgabe 3 · Charakterisierung schreiben</strong><p>Schreibe einen zusammenhängenden Text. Nutze eine Einleitung, ordne deine Aussagen sinnvoll und belege mindestens drei Merkmale mit Textstellen.</p><div class="lines" style="height:110px"></div></div>
+      <h2>Hilfekarte</h2>
+      <p><strong>Satzstarter:</strong> „Jana wirkt …, weil …“ · „Dies zeigt sich besonders, als …“ · „Dadurch wird deutlich, dass …“</p>
+      <table class="rubric"><thead><tr><th>Kriterium</th><th>Woran erkennst du es?</th><th>Selbsteinschätzung</th></tr></thead><tbody><tr><td>Textbelege</td><td>Du erklärst mindestens drei Textstellen.</td><td>□ sicher &nbsp; □ teilweise &nbsp; □ noch üben</td></tr><tr><td>Aufbau</td><td>Dein Text hat Einleitung, Hauptteil und Schluss.</td><td>□ sicher &nbsp; □ teilweise &nbsp; □ noch üben</td></tr><tr><td>Sprache</td><td>Du verwendest treffende Verben und Adjektive.</td><td>□ sicher &nbsp; □ teilweise &nbsp; □ noch üben</td></tr></tbody></table>
+    </section>
+  </section>
+</section>
+
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

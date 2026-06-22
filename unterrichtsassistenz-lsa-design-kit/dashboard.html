@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unterrichtsassistenz LSA – Design-Prototyp">
+  <title>Guten Morgen, Maria! 👋 · Unterrichtsassistenz LSA</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <a class="brand" href="dashboard.html">
+        <img class="brand-mark" src="assets/logo.svg" alt="">
+        <div class="brand-title">Unterrichtsassistenz<span>LSA</span></div>
+      </a>
+      <nav class="nav-group"><a class="nav-item active" href="dashboard.html"><span class="nav-icon" data-icon="home"></span>Übersicht</a>
+<a class="nav-item " href="planner.html"><span class="nav-icon" data-icon="calendar"></span>Unterrichtsplanung</a>
+<a class="nav-item " href="worksheet-builder.html"><span class="nav-icon" data-icon="file"></span>Arbeitsblätter</a>
+<a class="nav-item " href="correction.html"><span class="nav-icon" data-icon="wand"></span>Korrekturassistenz</a>
+<a class="nav-item " href="sources.html"><span class="nav-icon" data-icon="layers"></span>Quellen & Lehrpläne</a>
+<a class="nav-item " href="ui-kit.html"><span class="nav-icon" data-icon="sparkles"></span>Design-System</a></nav>
+      <section class="context-panel">
+        <div class="nav-label">Fach & Kontext</div>
+        <div class="context-card"><span class="context-symbol" data-icon="book"></span><div class="context-copy"><small>Fach</small><strong>Deutsch</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="users"></span><div class="context-copy"><small>Schulform</small><strong>Gemeinschaftsschule</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="calendar"></span><div class="context-copy"><small>Klasse</small><strong>8</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+      </section>
+      <div class="user-card"><div class="avatar">MS</div><div class="info"><strong>Maria Stein</strong><span>Lehrkraft</span></div><span class="user-caret">⌄</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button class="icon-button mobile-menu" aria-label="Menü öffnen" data-menu-toggle><span data-icon="menu" class="nav-icon"></span></button>
+          <div class="page-title"><h1>Guten Morgen, Maria! 👋</h1><p>Hier ist dein Überblick für heute.</p></div>
+        </div>
+        
+      <div class="header-actions">
+        <label class="search" aria-label="Suche">
+          <span data-icon="search" class="nav-icon"></span>
+          <input placeholder="Materialien, Themen, Quellen suchen">
+          <span class="kbd">⌘ K</span>
+        </label>
+        <button class="icon-button" aria-label="Benachrichtigungen"><span data-icon="bell" class="nav-icon"></span><span class="dot"></span></button>
+        <button class="btn btn-primary" data-toast="Neue Arbeitsfläche wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Neu erstellen</button>
+      </div>
+    
+      </header>
+      
+<section class="page-grid">
+  <div class="kpi-grid">
+    <article class="card card-pad stat">
+      <div class="stat-icon purple" data-icon="calendar"></div>
+      <div style="display:flex;flex-direction:column;align-self:stretch"><div class="stat-kicker">Heute geplant</div><div class="stat-value">2</div><div class="stat-foot">Unterrichtseinheiten</div><a class="inline-link" href="planner.html">Plan ansehen →</a></div>
+    </article>
+    <article class="card card-pad stat">
+      <div class="stat-icon green" data-icon="file"></div>
+      <div style="display:flex;flex-direction:column;align-self:stretch"><div class="stat-kicker">Arbeitsblätter erstellt</div><div class="stat-value">5</div><div class="stat-foot">in dieser Woche</div><a class="inline-link" href="worksheet-builder.html">Arbeitsblätter →</a></div>
+    </article>
+    <article class="card card-pad stat">
+      <div class="stat-icon orange" data-icon="wand"></div>
+      <div style="display:flex;flex-direction:column;align-self:stretch"><div class="stat-kicker">Korrekturen offen</div><div class="stat-value">12</div><div class="stat-foot">zur Bearbeitung</div><a class="inline-link" href="correction.html">Korrekturen →</a></div>
+    </article>
+    <article class="card card-pad stat">
+      <div class="stat-icon blue" data-icon="layers"></div>
+      <div style="display:flex;flex-direction:column;align-self:stretch"><div class="stat-kicker">Quellen im System</div><div class="stat-value">248</div><div class="stat-foot">verifizierte Quellen</div><a class="inline-link" href="sources.html">Quellen durchsuchen →</a></div>
+    </article>
+  </div>
+
+  <div class="split">
+    <section class="card card-pad">
+      <div class="card-head">
+        <div><h2 class="card-title">Weiterarbeiten</h2><p class="card-subtitle">Kontextbezogene Entwürfe und zuletzt geöffnete Inhalte.</p></div>
+        <div class="tabs"><button class="tab active" data-tab>Zuletzt bearbeitet</button><button class="tab" data-tab>Geplant</button><button class="tab" data-tab>Favoriten</button></div>
+      </div>
+      <div class="list-row"><div class="list-icon deutsch" data-icon="calendar"></div><div class="list-copy"><strong>Eine Charakterisierung schreiben</strong><span>Unterrichtseinheit · Deutsch · Klasse 8</span></div><span class="row-meta">Geändert vor 2 Std.</span><button class="more">⋮</button></div>
+      <div class="list-row"><div class="list-icon religion" data-icon="file"></div><div class="list-copy"><strong>Balladen untersuchen – Differenzierte Aufgaben</strong><span>Arbeitsblatt · Deutsch · Klasse 7/8</span></div><span class="row-meta">Gestern</span><button class="more">⋮</button></div>
+      <div class="list-row"><div class="list-icon correction" data-icon="wand"></div><div class="list-copy"><strong>Gedankenrede analysieren</strong><span>Unterrichtseinheit · Deutsch · Klasse 9</span></div><span class="row-meta">vor 2 Tagen</span><button class="more">⋮</button></div>
+      <div class="list-row"><div class="list-icon religion" data-icon="file"></div><div class="list-copy"><strong>Erwartungshorizont: Kurzgeschichte</strong><span>Bewertungsraster · Deutsch · Klasse 8</span></div><span class="row-meta">vor 3 Tagen</span><button class="more">⋮</button></div>
+      <a class="inline-link" style="margin-top:14px" href="planner.html">Alle Entwürfe anzeigen →</a>
+    </section>
+
+    <section class="card card-pad">
+      <div class="card-head"><div><h2 class="card-title">Aktivitäten</h2><p class="card-subtitle">Nachvollziehbar, nicht mystisch.</p></div><button class="filter">Alle ⌄</button></div>
+      <div class="activity"><div class="activity-icon ok" data-icon="check"></div><div class="activity-copy"><strong>Quellen-Update abgeschlossen</strong><span>5 neue Quellen wurden geprüft und vorgeschlagen.</span></div><time>vor 1 Std.</time></div>
+      <div class="activity"><div class="activity-icon warn" data-icon="wand"></div><div class="activity-copy"><strong>Korrekturen bereit zur Prüfung</strong><span>12 Arbeiten wurden strukturiert ausgewertet.</span></div><time>vor 3 Std.</time></div>
+      <div class="activity"><div class="activity-icon info" data-icon="calendar"></div><div class="activity-copy"><strong>Planung gespeichert</strong><span>„Balladen im Wandel der Zeit“ wurde gesichert.</span></div><time>gestern</time></div>
+      <div class="activity"><div class="activity-icon info" data-icon="file"></div><div class="activity-copy"><strong>Arbeitsblatt exportiert</strong><span>„Rechtschreibung – Groß-/Kleinschreibung“ als PDF.</span></div><time>gestern</time></div>
+      <a class="inline-link" style="margin-top:6px" href="sources.html">Alle Aktivitäten →</a>
+    </section>
+  </div>
+
+  <div class="feature-grid">
+    <article class="feature purple"><h3>Unterricht planen</h3><p>Erstelle lehrplanorientierte Einheiten mit Zielen, Methoden und belegten Kompetenzen.</p><button class="btn btn-primary btn-small" data-toast="Planungsassistent geöffnet.">Neue Einheit planen <span>→</span></button><div class="feature-illustration" aria-hidden="true"><svg viewBox="0 0 145 118" fill="none"><rect x="42" y="20" width="62" height="80" rx="10" fill="#DDD4FF"/><rect x="50" y="30" width="46" height="6" rx="3" fill="#A994FF"/><rect x="50" y="44" width="39" height="6" rx="3" fill="#C1B4FF"/><path d="m51 62 4 4 8-8M51 78l4 4 8-8" stroke="#5D3DF5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="106" y="58" width="23" height="42" rx="6" fill="#A994FF"/><path d="M18 99c11-20 25-20 33 0" stroke="#9D86F8" stroke-width="4" stroke-linecap="round"/><path d="M26 92c0-11 6-20 15-26" stroke="#9D86F8" stroke-width="4" stroke-linecap="round"/></svg></div></article>
+    <article class="feature green"><h3>Arbeitsblatt erstellen</h3><p>Erzeuge differenzierte Aufgaben, Hilfen und Lösungen, die du noch selbst verantwortest.</p><button class="btn btn-small" style="background:#0F9B7A;color:#fff" data-toast="Arbeitsblatt-Builder geöffnet.">Arbeitsblatt erstellen <span>→</span></button><div class="feature-illustration" aria-hidden="true"><svg viewBox="0 0 145 118" fill="none"><rect x="43" y="17" width="64" height="85" rx="10" fill="#D3F4E9"/><rect x="52" y="30" width="47" height="7" rx="3.5" fill="#78D6BA"/><rect x="52" y="46" width="39" height="7" rx="3.5" fill="#A6E8D4"/><rect x="52" y="62" width="46" height="7" rx="3.5" fill="#A6E8D4"/><rect x="21" y="77" width="36" height="28" rx="8" fill="#9CE2CB"/><circle cx="34" cy="89" r="5" fill="#E7F9F4"/><path d="M49 101 37 91l-12 10" stroke="#46BE99" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="m102 93 26-30" stroke="#D7953C" stroke-width="6" stroke-linecap="round"/><path d="m126 60 4 4" stroke="#5C4726" stroke-width="7" stroke-linecap="round"/></svg></div></article>
+    <article class="feature orange"><h3>Korrektur unterstützen lassen</h3><p>Lade pseudonymisierte Arbeiten hoch und erhalte strukturierte, überprüfbare Vorschläge.</p><button class="btn btn-small" style="background:#E05A38;color:#fff" data-toast="Korrekturworkflow geöffnet.">Korrekturen öffnen <span>→</span></button><div class="feature-illustration" aria-hidden="true"><svg viewBox="0 0 145 118" fill="none"><rect x="39" y="19" width="67" height="84" rx="10" fill="#FFE1D3"/><rect x="49" y="32" width="46" height="7" rx="3.5" fill="#FFA482"/><rect x="49" y="49" width="38" height="7" rx="3.5" fill="#FFC1AA"/><path d="m50 68 5 5 9-10M50 84l5 5 9-10" stroke="#E05A38" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="99" y="76" width="34" height="25" rx="12.5" fill="#FFB89C"/><circle cx="109" cy="88" r="2.4" fill="#fff"/><circle cx="117" cy="88" r="2.4" fill="#fff"/><circle cx="125" cy="88" r="2.4" fill="#fff"/></svg></div></article>
+    <section class="feature quick-sources"><h3>Lehrplan & Quellen</h3><p style="margin-bottom:9px">Schnellzugriff auf geprüfte Grundlagen.</p>
+      <div class="source-quick"><div class="source-icon" data-icon="file"></div><div class="copy"><strong>Lehrplan Deutsch (LSA)</strong><span>Gemeinschaftsschule · Klassen 5–10</span></div><span data-icon="external" class="nav-icon"></span></div>
+      <div class="source-quick"><div class="source-icon green" data-icon="file"></div><div class="copy"><strong>Lehrplan Evangelische Religion</strong><span>Gemeinschaftsschule · Klassen 5–10</span></div><span data-icon="external" class="nav-icon"></span></div>
+      <div class="source-quick"><div class="source-icon green" data-icon="file"></div><div class="copy"><strong>Lehrplan Katholische Religion</strong><span>Gemeinschaftsschule · Klassen 5–10</span></div><span data-icon="external" class="nav-icon"></span></div>
+      <a class="inline-link" style="margin-top:12px" href="sources.html">Alle Lehrpläne & Quellen →</a>
+    </section>
+  </div>
+
+  <section class="trust-row">
+    <div class="trust"><div class="trust-icon" data-icon="shield"></div><div><strong>Datenschutz hat Priorität</strong><span>Local-first. Deine Daten bleiben kontrollierbar.</span></div></div>
+    <div class="trust"><div class="trust-icon" data-icon="file"></div><div><strong>Quellen transparent</strong><span>Jede Antwort ist mit Fundstellen belegbar.</span></div></div>
+    <div class="trust"><div class="trust-icon" data-icon="user"></div><div><strong>Lehrkraft entscheidet</strong><span>KI liefert Vorschläge, Du triffst Entscheidungen.</span></div></div>
+  </section>
+</section>
+
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

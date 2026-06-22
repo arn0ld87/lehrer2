@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unterrichtsassistenz LSA – Design-Prototyp">
+  <title>Unterrichtsplanung · Unterrichtsassistenz LSA</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <a class="brand" href="dashboard.html">
+        <img class="brand-mark" src="assets/logo.svg" alt="">
+        <div class="brand-title">Unterrichtsassistenz<span>LSA</span></div>
+      </a>
+      <nav class="nav-group"><a class="nav-item " href="dashboard.html"><span class="nav-icon" data-icon="home"></span>Übersicht</a>
+<a class="nav-item active" href="planner.html"><span class="nav-icon" data-icon="calendar"></span>Unterrichtsplanung</a>
+<a class="nav-item " href="worksheet-builder.html"><span class="nav-icon" data-icon="file"></span>Arbeitsblätter</a>
+<a class="nav-item " href="correction.html"><span class="nav-icon" data-icon="wand"></span>Korrekturassistenz</a>
+<a class="nav-item " href="sources.html"><span class="nav-icon" data-icon="layers"></span>Quellen & Lehrpläne</a>
+<a class="nav-item " href="ui-kit.html"><span class="nav-icon" data-icon="sparkles"></span>Design-System</a></nav>
+      <section class="context-panel">
+        <div class="nav-label">Fach & Kontext</div>
+        <div class="context-card"><span class="context-symbol" data-icon="book"></span><div class="context-copy"><small>Fach</small><strong>Deutsch</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="users"></span><div class="context-copy"><small>Schulform</small><strong>Gemeinschaftsschule</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+        <div class="context-card"><span class="context-symbol" data-icon="calendar"></span><div class="context-copy"><small>Klasse</small><strong>8</strong></div><span data-icon="chevron" class="nav-icon"></span></div>
+      </section>
+      <div class="user-card"><div class="avatar">MS</div><div class="info"><strong>Maria Stein</strong><span>Lehrkraft</span></div><span class="user-caret">⌄</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button class="icon-button mobile-menu" aria-label="Menü öffnen" data-menu-toggle><span data-icon="menu" class="nav-icon"></span></button>
+          <div class="page-title"><h1>Unterrichtsplanung</h1><p>Plane lehrplanorientiert, passe an und behalte die Kontrolle.</p></div>
+        </div>
+        
+      <div class="header-actions">
+        <label class="search" aria-label="Suche">
+          <span data-icon="search" class="nav-icon"></span>
+          <input placeholder="Materialien, Themen, Quellen suchen">
+          <span class="kbd">⌘ K</span>
+        </label>
+        <button class="icon-button" aria-label="Benachrichtigungen"><span data-icon="bell" class="nav-icon"></span><span class="dot"></span></button>
+        <button class="btn btn-primary" data-toast="Neue Arbeitsfläche wird vorbereitet."><span data-icon="plus" class="nav-icon"></span>Neu erstellen</button>
+      </div>
+    
+      </header>
+      
+<section class="page-grid">
+  <section class="section-banner">
+    <div><h2>Aus einer Idee wird eine nachvollziehbare Unterrichtseinheit.</h2><p>Kompetenzen, Methoden, Differenzierung und Quellen werden an einer Stelle zusammengeführt. Keine Zettelarchäologie mehr.</p></div>
+    <button class="btn" data-toast="Vorlage „Deutsch Klasse 8“ angewendet.">Vorlage verwenden</button>
+  </section>
+
+  <section class="planner-grid">
+    <form class="card card-pad">
+      <div class="card-head"><div><h2 class="card-title">Neue Unterrichtseinheit</h2><p class="card-subtitle">Rahmendaten zuerst, danach entstehen Ziele und Stundenlogik.</p></div><span class="status-badge draft">Entwurf</span></div>
+      <div class="form-grid">
+        <div class="field"><label for="subject">Fach</label><select class="select" id="subject"><option>Deutsch</option><option>Evangelische Religion</option><option>Katholische Religion</option></select></div>
+        <div class="field"><label for="grade">Klasse</label><select class="select" id="grade"><option>8</option><option>7</option><option>9</option></select></div>
+        <div class="field"><label for="course">Bildungsgang</label><select class="select" id="course"><option>Gemeinschaftsschule</option><option>Gymnasialer Bildungsgang</option></select></div>
+        <div class="field"><label for="duration">Zeitrahmen</label><select class="select" id="duration"><option>4 Unterrichtsstunden</option><option>6 Unterrichtsstunden</option><option>8 Unterrichtsstunden</option></select></div>
+      </div>
+      <div class="field" style="margin-top:14px"><label for="topic">Thema der Einheit</label><input class="input" id="topic" value="Eine Charakterisierung schreiben" /></div>
+      <div class="field" style="margin-top:14px"><label for="goal">Ziel in eigenen Worten</label><textarea class="textarea" id="goal">Die Lernenden beschreiben eine literarische Figur begründet, verwenden Textbelege und formulieren einen strukturierten Charakterisierungstext.</textarea></div>
+      <div class="field" style="margin-top:14px"><label>Besondere Rahmenbedingungen</label><div class="chips"><span class="chip">45 Minuten</span> <span class="chip">heterogene Lerngruppe</span> <span class="chip">LRS-Unterstützung</span> <button class="chip" type="button" data-toast="Kontext kann ergänzt werden.">+ Kontext</button></div></div>
+      <div style="display:flex;gap:9px;justify-content:flex-end;margin-top:20px"><button type="button" class="btn btn-secondary" data-toast="Entwurf lokal gespeichert.">Entwurf speichern</button><button type="button" class="btn btn-primary" data-toast="Strukturvorschlag erstellt.">Struktur vorschlagen</button></div>
+    </form>
+
+    <aside class="card card-pad">
+      <div class="card-head"><div><h2 class="card-title">Planungsfortschritt</h2><p class="card-subtitle">Nachvollziehbar statt „KI sagt schon irgendwas“.</p></div><span class="status-badge progress">2 / 5</span></div>
+      <div class="timeline">
+        <div class="timeline-item done"><h4>Rahmendaten</h4><p>Fach, Klasse, Bildungsgang und Zeitfenster sind gesetzt.</p></div>
+        <div class="timeline-item"><h4>Lehrplanbezug</h4><p>Kompetenzen werden mit Fundstellen abgeglichen.</p></div>
+        <div class="timeline-item"><h4>Stundenlogik</h4><p>Phasen, Methoden und Materialien werden vorgeschlagen.</p></div>
+        <div class="timeline-item"><h4>Differenzierung</h4><p>Hilfen und Erweiterungen werden ergänzt.</p></div>
+        <div class="timeline-item"><h4>Prüfung & Export</h4><p>Du kontrollierst die Einheit vor dem Export.</p></div>
+      </div>
+      <div class="notice"><span data-icon="shield"></span><div><strong>Quellenmodus ist aktiv.</strong><span>Lehrplanbehauptungen werden nur mit Quellenbeleg erzeugt.</span></div></div>
+    </aside>
+  </section>
+
+  <section class="split">
+    <article class="card card-pad">
+      <div class="card-head"><div><h2 class="card-title">Vorgeschlagene Struktur</h2><p class="card-subtitle">Noch ein Entwurf. Also prüfbar, anpassbar und nicht magisch.</p></div><button class="btn btn-secondary btn-small" data-toast="Struktur angepasst.">Bearbeiten</button></div>
+      <div class="step-list">
+        <div class="step"><div><strong>1. Einstieg: Figurenwirkung wahrnehmen</strong><span>Impulsbild, Zitatkarten, erste Hypothesen zur Figur. 45 Minuten.</span></div></div>
+        <div class="step"><div><strong>2. Textbelege gezielt erschließen</strong><span>Lesestrategie und Markierhilfe für Aussagen, Handlungen und Beziehungen.</span></div></div>
+        <div class="step"><div><strong>3. Merkmale einer Charakterisierung sichern</strong><span>Aufbaukarten, sprachliche Mittel, Satzstarter und Mini-Beispiele.</span></div></div>
+        <div class="step"><div><strong>4. Eigenen Text planen, schreiben und überarbeiten</strong><span>Checkliste, Peer-Feedback und differenzierte Schreibkonferenz.</span></div></div>
+      </div>
+    </article>
+    <article class="card card-pad">
+      <div class="card-head"><div><h2 class="card-title">Curriculum-Fit</h2><p class="card-subtitle">Entwurfsbezug, noch keine rechtliche Zusicherung.</p></div><span class="subject-badge deutsch">Deutsch</span></div>
+      <div class="list-row"><div class="list-icon sources" data-icon="book"></div><div class="list-copy"><strong>Schreiben: Texte planen und gestalten</strong><span>Lehrplan-Kandidat · Seite / Abschnitt wird bei Freigabe belegt.</span></div><span class="status-badge ready">belegt</span></div>
+      <div class="list-row"><div class="list-icon sources" data-icon="book"></div><div class="list-copy"><strong>Lesen: Texte verstehen und nutzen</strong><span>Kompetenzbezug für Textbelege und Figurenanalyse.</span></div><span class="status-badge ready">belegt</span></div>
+      <div class="list-row"><div class="list-icon sources" data-icon="alert"></div><div class="list-copy"><strong>Differenzierung: LRS-Scaffolding</strong><span>Methodischer Vorschlag, noch ohne offizielle Quellenbindung.</span></div><span class="status-badge review">prüfen</span></div>
+      <a class="inline-link" style="margin-top:14px" href="sources.html">Quellen und Fundstellen prüfen →</a>
+    </article>
+  </section>
+</section>
+
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
