@@ -41,7 +41,7 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 - **NEVER** verbindliche Noten vergeben oder Bewertungsvorschläge automatisch in finale Ergebnisse übernehmen — menschliche Finalentscheidung wahren.
 - **NEVER** `UNVERIFIED`-Quellen produktiv im RAG einsetzen.
 - **NEVER** Religion pauschal modellieren — ev./kath./konfessionssensibel trennen; Ethik als eigenes Fach.
-- **NEVER** Auth-Lösung oder Export-Stack ad hoc festlegen — beides offen, per ADR in `docs/adr/` entscheiden.
+- **NEVER** Auth-Lösung oder Export-Stack ad hoc festlegen — Vorschlag liegt als ADR 0007 (Auth) / 0008 (Export) im Status _Proposed_ vor; Annahme nur per Maintainer-Review, nicht eigenmächtig abweichen.
 - **NEVER** einem PLAN/Dok-Link vertrauen, ohne Existenz zu prüfen (Teil der Links ist Soll-Struktur).
 - Sicherheitsrelevante Änderungen als `type: security` Issue führen und nachvollziehbar dokumentieren.
 
@@ -55,19 +55,19 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## What to read before modifying (Pointer)
 
-| Bereich                                                                                 | Zuerst lesen                                                                                             |
-| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Scope, Roadmap, Datenflüsse                                                             | `PLAN.md`                                                                                                |
-| Architektur, Integrationsgrenzen                                                        | `docs/architecture/ARCHITECTURE.md`, `INTEGRATION_BOUNDARIES.md`, `DATA_MODEL.md`, `RAG_ARCHITECTURE.md` |
-| Entscheidungen (Modular Monolith, LLM-Schicht, Source-Governance, Local-first, Drizzle) | `docs/adr/0001`–`0005`                                                                                   |
-| Offene Entscheidungen                                                                   | `docs/decisions/OPEN_QUESTIONS.md`                                                                       |
-| Datenschutz, Drohmodell, Löschung                                                       | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `DATA_PROTECTION.md`, `RETENTION_AND_DELETION.md`        |
-| RAG-Ingestion, Evaluierung                                                              | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md`, `CITATION_STANDARD.md`, `SOURCE_REGISTRY.md`       |
-| Produktvision, MVP, Akzeptanz, User Flows                                               | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md`              |
-| CI/CD, Entwicklung, Backup                                                              | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`                                   |
-| Erste UI-Implementierung in Next.js                                                     | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich)                       |
-| Design-Tokens                                                                           | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte)                   |
-| Design-System (Doku)                                                                    | `docs/design/DESIGN_SYSTEM.md`                                                                           |
+| Bereich                                                                                                                                | Zuerst lesen                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Scope, Roadmap, Datenflüsse                                                                                                            | `PLAN.md`                                                                                                |
+| Architektur, Integrationsgrenzen                                                                                                       | `docs/architecture/ARCHITECTURE.md`, `INTEGRATION_BOUNDARIES.md`, `DATA_MODEL.md`, `RAG_ARCHITECTURE.md` |
+| Entscheidungen (Modular Monolith, LLM-Schicht, Source-Governance, Local-first, Drizzle, Curriculum, Auth, Export, Pseudonym-Retention) | `docs/adr/0001`–`0009` (0007/0008 Status _Proposed_)                                                     |
+| Offene Entscheidungen                                                                                                                  | `docs/decisions/OPEN_QUESTIONS.md`                                                                       |
+| Datenschutz, Drohmodell, Löschung                                                                                                      | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `DATA_PROTECTION.md`, `RETENTION_AND_DELETION.md`        |
+| RAG-Ingestion, Evaluierung                                                                                                             | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md`, `CITATION_STANDARD.md`, `SOURCE_REGISTRY.md`       |
+| Produktvision, MVP, Akzeptanz, User Flows                                                                                              | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md`              |
+| CI/CD, Entwicklung, Backup                                                                                                             | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`, `GITHUB_SETUP.md`                |
+| Erste UI-Implementierung in Next.js                                                                                                    | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich)                       |
+| Design-Tokens                                                                                                                          | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte)                   |
+| Design-System (Doku)                                                                                                                   | `docs/design/DESIGN_SYSTEM.md`                                                                           |
 
 ## Project structure
 
@@ -89,5 +89,6 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## Notes
 
-- `docs/operations/GITHUB_SETUP.md` ist in `PLAN.md`/`README.md` verlinkt, existiert aber **noch nicht** — vor Referenzierung prüfen. Alle übrigen früher fehlenden Dokumente (DATA_MODEL, RAG_ARCHITECTURE, CITATION_STANDARD, SOURCE_REGISTRY) existieren inzwischen.
-- `.env.example`, `package.json`, `scripts/verify-docs.sh` existieren inzwischen; `package.json` definiert bislang nur `format`, `format:check`, `verify:docs`.
+- Alle in `PLAN.md`/`README.md` verlinkten Dokumente existieren inzwischen (zuletzt ergänzt: `docs/operations/GITHUB_SETUP.md`). Bei neuen Links dennoch vor Referenzierung auf Existenz prüfen.
+- `.env.example`, `package.json`, `scripts/verify-docs.sh` existieren; `package.json` definiert bislang nur `format`, `format:check`, `verify:docs`.
+- Paketmanager ist **`pnpm`**: `pnpm-lock.yaml` ist vorhanden und in `package.json` via `packageManager`-Feld (`pnpm@10.x`) + `engines.pnpm` gepinnt. `package-lock.json` wurde entfernt — kein npm/yarn verwenden.

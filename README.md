@@ -40,8 +40,13 @@ Repository: `arn0ld87/lehrer2` (privat).
 
 - **[docs/adr/0001-modular-monolith-first.md](docs/adr/0001-modular-monolith-first.md)** — Modular Monolith statt Microservices für MVP
 - **[docs/adr/0002-provider-agnostic-llm-layer.md](docs/adr/0002-provider-agnostic-llm-layer.md)** — Abstraktion über LLM-Provider (lokal/Cloud)
+- **[docs/adr/0003-source-governance-before-ingestion.md](docs/adr/0003-source-governance-before-ingestion.md)** — Quellen-Governance vor jeder Ingestion
 - **[docs/adr/0004-local-first-student-data.md](docs/adr/0004-local-first-student-data.md)** — Lokale Speicherung und Pseudonymisierung vor Cloud-Übertragung
 - **[docs/adr/0005-orm-drizzle.md](docs/adr/0005-orm-drizzle.md)** — Drizzle ORM für PostgreSQL
+- **[docs/adr/0006-curriculum-modeling.md](docs/adr/0006-curriculum-modeling.md)** — Curriculum-Modellierung: Sek-II-Scope, Konfessionsstrang, Ethik als eigenes Fach
+- **[docs/adr/0007-auth-solution.md](docs/adr/0007-auth-solution.md)** — Authentifizierung (Status _Proposed_; Empfehlung Better Auth)
+- **[docs/adr/0008-document-export-stack.md](docs/adr/0008-document-export-stack.md)** — DOCX/PDF-Export-Stack (Status _Proposed_; Empfehlung docx + pdfkit)
+- **[docs/adr/0009-pseudonym-retention.md](docs/adr/0009-pseudonym-retention.md)** — Pseudonym-Stabilität und Mapping-Löschung (DSGVO Art. 17)
 
 ### RAG und Quellengovernance
 
