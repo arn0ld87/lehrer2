@@ -36,7 +36,7 @@ export const correctionDraft = pgTable("correction_draft", {
   rubricId: uuid("rubric_id").references(() => rubric.id, { onDelete: "set null" }),
 
   // KI-Vorschlag (strukturiert gemäß FEEDBACK_FORMAT.md)
-  aiSuggestion: jsonb("ai_suggestion").notNull(),
+  aiSuggestion: jsonb("ai_suggestion").$type<FeedbackStatement[]>().notNull(),
 
   // Herkunft & Audit
   provenance: jsonb("provenance").notNull(),
