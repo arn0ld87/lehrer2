@@ -12,13 +12,13 @@ Dieses Dokument listet die im Rahmen des Security-Reviews (ASVS & Datenschutz) i
 - **Priorität:** Hoch (p1)
 - **Status:** Offen
 
-## 2. Redaction-Service & Guard-Assertion fehlen (ASVS V5, V12)
+## 2. Redaction-Service & Guard-Assertion (ASVS V5, V12)
 
-- **Beschreibung:** Der Kern-Datenschutzmechanismus (Pseudonymisierung vor LLM-Call) ist spezifiziert, aber noch nicht implementiert. Die "fail-closed" Invariante kann derzeit nicht technisch erzwungen werden.
+- **Beschreibung:** Der Kern-Datenschutzmechanismus (Pseudonymisierung vor LLM-Call) ist detailliert spezifiziert (siehe `docs/security/REDACTION_AND_GUARD_SPEC.md`). Die technische Implementierung steht noch aus.
 - **Risiko:** Unbeabsichtigte Übertragung von Klarnamen (PII) an Cloud-Provider bei Fehlkonfiguration oder Prompt-Injection.
-- **Maßnahme:** Implementierung des `RedactionService` und der `Guard-Assertion` (wie in `DATA_PROTECTION.md` Kap. 3 beschrieben) mit hoher Testabdeckung.
+- **Maßnahme:** Implementierung des `RedactionService` und der `Guard-Assertion` gemäß Spezifikation mit hoher Testabdeckung.
 - **Priorität:** Hoch (p1)
-- **Status:** Offen
+- **Status:** Spezifiziert; Implementierung ausstehend
 
 ## 3. Fehlendes automatisiertes Dependency-Scanning (ASVS V14)
 

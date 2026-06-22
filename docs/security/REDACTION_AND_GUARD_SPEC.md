@@ -58,7 +58,7 @@ function guardAssertion(payload: string, dataClass: DataClass): boolean {
     /\b[A-ZÄÖÜ][a-zäöü]+ [A-ZÄÖÜ][a-zäöü]+\b/, // Name-Pattern
     /\d{2,4}-\d{2}-\d{2}/, // ISO-Datum
     /\d{5} [A-ZÄÖÜ]/, // PLZ
-    /(?i)lrs|dyskalkulie|adhs/, // Sensible Begriffe
+    /lrs|dyskalkulie|adhs/i, // Sensible Begriffe
   ];
 
   for (const pattern of piiPatterns) {
