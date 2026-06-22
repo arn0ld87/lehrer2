@@ -3,6 +3,7 @@ import { correctionStatusEnum } from "../enums";
 import { artifactTimestamps } from "../columns";
 import { task, rubric } from "./artifacts";
 import { user } from "./auth";
+import type { FeedbackStatement, FeedbackHistoryEntry } from "../../types";
 
 /**
  * StudentSubmission (Schülereingabe)
