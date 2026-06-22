@@ -524,6 +524,7 @@ Das System gibt Empfehlungen. Lehrkraft trifft finale Entscheidung:
 ## 12. Verweise und weiterführende Dokumente
 
 - **[ADR 0004: Local-First Student Data](../adr/0004-local-first-student-data.md)** – Architektur-Rationale für lokale Schülerdaten.
+- **[REDACTION_AND_GUARD_SPEC.md](./REDACTION_AND_GUARD_SPEC.md)** – Technische Spezifikation für Pseudonymisierung, Redaction und fail-closed Guards.
 - **[THREAT_MODEL.md](./THREAT_MODEL.md)** – Identifizierte Sicherheits- und Datenschutz-Risiken.
 - **[ASVS_COMPLIANCE.md](./ASVS_COMPLIANCE.md)** – Review gegen OWASP ASVS.
 - **[DATA_PROTECTION_CHECKLIST.md](./DATA_PROTECTION_CHECKLIST.md)** – DSGVO-Checkliste.
