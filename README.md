@@ -69,6 +69,7 @@ Repository: `arn0ld87/lehrer2` (privat).
 
 - **[docs/operations/DEVELOPMENT.md](docs/operations/DEVELOPMENT.md)** — Lokale Entwicklung starten (Quickstart)
 - **[docs/operations/GITHUB_SETUP.md](docs/operations/GITHUB_SETUP.md)** — Workflow, Branches und PR-Prozess
+- **[docs/operations/PILOT_PLAN.md](docs/operations/PILOT_PLAN.md)** — Pilotplan mit synthetischen Testdaten und Feedbackprozess
 - **[docs/operations/CI_CD.md](docs/operations/CI_CD.md)** — CI/CD-Pipeline und Automation
 - **[docs/operations/BACKUP_AND_RECOVERY.md](docs/operations/BACKUP_AND_RECOVERY.md)** — Backup, Disaster Recovery und Datenintegrität
 
