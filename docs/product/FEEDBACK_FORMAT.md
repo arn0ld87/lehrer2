@@ -6,12 +6,12 @@ Dieses Dokument spezifiziert das Feedbackformat für die Unterrichtsassistenz LS
 
 Ein Feedback besteht aus einer Liste von Aussagen (Statements). Jede Aussage folgt dieser Struktur:
 
-| Komponente | Beschreibung |
-| :--- | :--- |
-| **Aussage (Text)** | Die eigentliche Rückmeldung (Lob, Kritik, Hinweis). |
-| **Belege (Evidence)** | Liste von Referenzen auf Quellen (Lehrplan, Handreichung) oder Stellen im Schülertext. |
-| **Sicherheit (Confidence)** | Metrik und Begründung der KI-Sicherheit (High, Medium, Low). |
-| **Status** | Kennzeichnung, ob es sich um einen reinen KI-Entwurf oder eine menschlich geprüfte Aussage handelt. |
+| Komponente                  | Beschreibung                                                                                        |
+| :-------------------------- | :-------------------------------------------------------------------------------------------------- |
+| **Aussage (Text)**          | Die eigentliche Rückmeldung (Lob, Kritik, Hinweis).                                                 |
+| **Belege (Evidence)**       | Liste von Referenzen auf Quellen (Lehrplan, Handreichung) oder Stellen im Schülertext.              |
+| **Sicherheit (Confidence)** | Metrik und Begründung der KI-Sicherheit (High, Medium, Low).                                        |
+| **Status**                  | Kennzeichnung, ob es sich um einen reinen KI-Entwurf oder eine menschlich geprüfte Aussage handelt. |
 
 ### Beispiel (JSON-Struktur)
 
@@ -50,11 +50,11 @@ Jede fachliche Aussage MUSS belegt sein. Wir unterscheiden zwei Arten von Belege
 
 Unsicherheit darf nie versteckt werden (AGENTS.md). Das System markiert Aussagen mit geringer Sicherheit visuell.
 
-| Level | Kriterium | UI-Darstellung |
-| :--- | :--- | :--- |
-| **HIGH** | Eindeutige Faktenlage, klare Belege. | Normale Darstellung. |
-| **MEDIUM** | Interpretation möglich, Belege nicht 100% deckungsgleich. | Hinweis-Icon (Info). |
-| **LOW** | Hypothetisch, keine direkten Belege gefunden, Modell "halluziniert" eventuell. | Warn-Icon + Farbliche Markierung (Gelb/Orange) + Text "Bitte prüfen". |
+| Level      | Kriterium                                                                      | UI-Darstellung                                                        |
+| :--------- | :----------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| **HIGH**   | Eindeutige Faktenlage, klare Belege.                                           | Normale Darstellung.                                                  |
+| **MEDIUM** | Interpretation möglich, Belege nicht 100% deckungsgleich.                      | Hinweis-Icon (Info).                                                  |
+| **LOW**    | Hypothetisch, keine direkten Belege gefunden, Modell "halluziniert" eventuell. | Warn-Icon + Farbliche Markierung (Gelb/Orange) + Text "Bitte prüfen". |
 
 **Regel:** Aussagen mit `LOW` Confidence müssen von der Lehrkraft zwingend manuell bestätigt oder korrigiert werden, bevor sie für Schüler sichtbar werden.
 
@@ -90,11 +90,11 @@ Der Weg vom ersten KI-Entwurf bis zum finalen Feedback für den Schüler wird l�
 
 ## 5. Nicht-Ziele (Abgrenzung)
 
--   **Keine Notenautomatik:** Das System berechnet keine finalen Noten. Es liefert Punktvorschläge basierend auf dem Raster, die finale Bewertung obliegt der Lehrkraft.
--   **Kein Direktversand:** Feedback wird nie automatisiert an Schüler versendet. Die Lehrkraft bleibt das Gate.
+- **Keine Notenautomatik:** Das System berechnet keine finalen Noten. Es liefert Punktvorschläge basierend auf dem Raster, die finale Bewertung obliegt der Lehrkraft.
+- **Kein Direktversand:** Feedback wird nie automatisiert an Schüler versendet. Die Lehrkraft bleibt das Gate.
 
 ## Verweise
 
--   [CITATION_STANDARD](../rag/CITATION_STANDARD.md) — Format der Quellennachweise.
--   [DATA_MODEL](../architecture/DATA_MODEL.md) — Persistenz der Korrekturdaten.
--   [AGENTS.md](../../AGENTS.md) — Prinzip "Unsicherheit nie verdecken".
+- [CITATION_STANDARD](../rag/CITATION_STANDARD.md) — Format der Quellennachweise.
+- [DATA_MODEL](../architecture/DATA_MODEL.md) — Persistenz der Korrekturdaten.
+- [AGENTS.md](../../AGENTS.md) — Prinzip "Unsicherheit nie verdecken".

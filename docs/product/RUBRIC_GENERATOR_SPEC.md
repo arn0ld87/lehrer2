@@ -34,16 +34,18 @@ Der Prozess der Generierung folgt einem vierstufigen Flow:
 Der Generator befüllt die in `src/lib/db/schema/artifacts.ts` definierten Strukturen:
 
 ### ExpectationHorizon (`expectation_horizon`)
+
 - `model_solution`: Ein ausführlicher Textvorschlag der Musterlösung.
 - `acceptance_criteria` (JSON): Eine Liste von atomaren Anforderungen (z.B. "Nennt drei Schichten des Waldbodens").
 - `partial_credit_rules` (JSON): Regeln, wie Teilpunkte bei unvollständiger Erfüllung vergeben werden.
 
 ### Rubric (`rubric` & `rubric_criterion`)
+
 - `scale_type`: `ANALYTIC` (Kriterien einzeln) oder `HOLISTIC` (Gesamteindruck).
 - `rubric_criterion`:
-    - `label`: Name des Kriteriums (z.B. "Fachsprachliche Präzision").
-    - `weight`: Gewichtung des Kriteriums am Gesamtgewicht.
-    - `level_descriptors` (JSON Array): Deskriptoren pro Niveau (z.B. 4 Stufen von "nicht erfüllt" bis "übertroffen").
+  - `label`: Name des Kriteriums (z.B. "Fachsprachliche Präzision").
+  - `weight`: Gewichtung des Kriteriums am Gesamtgewicht.
+  - `level_descriptors` (JSON Array): Deskriptoren pro Niveau (z.B. 4 Stufen von "nicht erfüllt" bis "übertroffen").
 
 ## 4. Korrelation mit dem Korrekturworkflow (M3)
 
@@ -56,8 +58,8 @@ Das generierte und manuell freigegebene Raster ist die zwingende Voraussetzung f
 
 ## 5. Risiken und Minderungsstrategien
 
-| Risiko | Strategie |
-| :--- | :--- |
-| Hoher Nachbearbeitungsaufwand | Bereitstellung von hochwertigen Vorlagen und schnellen Editier-Funktionen (Inline-Edit). |
+| Risiko                               | Strategie                                                                                          |
+| :----------------------------------- | :------------------------------------------------------------------------------------------------- |
+| Hoher Nachbearbeitungsaufwand        | Bereitstellung von hochwertigen Vorlagen und schnellen Editier-Funktionen (Inline-Edit).           |
 | Unkritische Übernahme von KI-Fehlern | Visuelle Hervorhebung von `LOW` Confidence Bereichen und Pflicht-Checkbox für "Gelesen & Geprüft". |
-| Divergenz zum Lehrplan | Erzwingung von RAG-Belegen für jedes generierte Kriterium. |
+| Divergenz zum Lehrplan               | Erzwingung von RAG-Belegen für jedes generierte Kriterium.                                         |
