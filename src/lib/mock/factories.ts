@@ -10,6 +10,8 @@ import type {
   Activity,
   CurriculumFit,
   DashboardMetric,
+  FeedbackHistoryEntry,
+  FeedbackStatement,
   MockUser,
   PlanningStep,
   RagQuality,
@@ -312,6 +314,10 @@ export function mockRubricScores(): RubricScore[] {
       achieved: 13,
       max: 16,
       note: "Figur und zentrale Merkmale korrekt erfasst. Zwei Deutungen bleiben unbelegt.",
+      confidence: {
+        level: "HIGH",
+        reasoning: "Eindeutige Übereinstimmung mit dem Erwartungshorizont.",
+      },
     },
     {
       id: "r-2",
@@ -319,6 +325,10 @@ export function mockRubricScores(): RubricScore[] {
       achieved: 10,
       max: 18,
       note: "Belege vorhanden, aber teils aufgezählt statt erklärt. Ein Beleg ist nicht eindeutig.",
+      confidence: {
+        level: "MEDIUM",
+        reasoning: "Zuordnung eines Belegs ist interpretierbar.",
+      },
     },
     {
       id: "r-3",
@@ -326,6 +336,10 @@ export function mockRubricScores(): RubricScore[] {
       achieved: 9,
       max: 12,
       note: "Grundstruktur stimmig. Übergänge zwischen Absätzen könnten klarer sein.",
+      confidence: {
+        level: "HIGH",
+        reasoning: "Strukturelle Merkmale sind klar identifizierbar.",
+      },
     },
     {
       id: "r-4",
@@ -333,6 +347,10 @@ export function mockRubricScores(): RubricScore[] {
       achieved: 8,
       max: 14,
       note: "Angemessener Wortschatz. Mehrere Satzbau- und Kongruenzfehler.",
+      confidence: {
+        level: "LOW",
+        reasoning: "Häufung von Fehlern erschwert die automatisierte Analyse.",
+      },
     },
   ];
 }
@@ -343,6 +361,75 @@ export function mockFeedbackDraft(): string {
     "Besonders gelungen ist, dass du ihre Beziehung zu ihrer Mutter erklärst. " +
     "Im nächsten Schritt solltest du jeden Beleg genauer deuten: Was zeigt die Stelle über Jana?"
   );
+}
+
+export function mockFeedbackStatements(): FeedbackStatement[] {
+  return [
+    {
+      id: "stmt-1",
+      text: "Du beschreibst Jana mit mehreren passenden Merkmalen und nutzt Textstellen.",
+      evidence: [
+        {
+          type: "STUDENT_TEXT",
+          reference: "Zeile 5-8",
+          content: "...sie war eher still und zurückhaltend...",
+        },
+      ],
+      confidence: {
+        level: "HIGH",
+        reasoning: "Direkter Beleg im Text gefunden.",
+      },
+      status: "AI_GENERATED",
+    },
+    {
+      id: "stmt-2",
+      text: "Besonders gelungen ist, dass du ihre Beziehung zu ihrer Mutter erklärst.",
+      evidence: [
+        {
+          type: "STUDENT_TEXT",
+          reference: "Zeile 15-20",
+        },
+        {
+          type: "CURRICULUM",
+          reference: "Kriterium 2: Beziehungsanalyse",
+          label: "Erwartungshorizont",
+        },
+      ],
+      confidence: {
+        level: "MEDIUM",
+        reasoning: "Interpretation der emotionalen Ebene ist fundiert, aber subjektiv.",
+      },
+      status: "AI_GENERATED",
+    },
+    {
+      id: "stmt-3",
+      text: "Im nächsten Schritt solltest du jeden Beleg genauer deuten: Was zeigt die Stelle über Jana?",
+      evidence: [],
+      confidence: {
+        level: "HIGH",
+        reasoning: "Methodischer Standardhinweis bei fehlender Deutungstiefe.",
+      },
+      status: "HUMAN_APPROVED",
+    },
+  ];
+}
+
+export function mockFeedbackHistory(): FeedbackHistoryEntry[] {
+  return [
+    {
+      timestamp: "vor 2 Std.",
+      actor: "AI (qwen2.5-14b)",
+      action: "CREATE_DRAFT",
+      changeSummary: "Initialer Korrekturvorschlag generiert.",
+    },
+    {
+      timestamp: "vor 1 Std.",
+      actor: "Jana Zwarg (Lehrkraft)",
+      action: "EDIT_STATEMENT",
+      targetId: "stmt-3",
+      changeSummary: "Didaktischen Hinweis präzisiert.",
+    },
+  ];
 }
 
 /* ------------------------------------------------------------------- Sources */

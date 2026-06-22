@@ -6,6 +6,7 @@ import { SectionBanner } from "@/components/ui/shared";
 import { SubmissionPreview } from "@/components/correction/submission-preview";
 import { RubricScoreCard } from "@/components/correction/rubric-score-card";
 import { FeedbackDraft } from "@/components/correction/feedback-draft";
+import { CorrectionHistory } from "@/components/correction/correction-history";
 import { mockCorrectionRepository } from "@/lib/mock";
 
 export const metadata: Metadata = { title: "Korrekturassistenz" };
@@ -14,7 +15,8 @@ export default function CorrectionPage() {
   const repo = mockCorrectionRepository;
   const meta = repo.submissionMeta();
   const scores = repo.rubricScores();
-  const feedback = repo.feedbackDraft();
+  const feedbackStatements = repo.feedbackStatements();
+  const history = repo.history();
 
   return (
     <>
@@ -43,9 +45,10 @@ export default function CorrectionPage() {
             submittedAt={meta.submittedAt}
             pseudonym={meta.pseudonym}
           />
-          <div className="grid gap-5">
+          <div className="grid gap-5 content-start">
             <RubricScoreCard scores={scores} />
-            <FeedbackDraft text={feedback} />
+            <FeedbackDraft statements={feedbackStatements} />
+            <CorrectionHistory entries={history} />
           </div>
         </div>
       </div>
