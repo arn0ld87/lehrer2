@@ -126,15 +126,14 @@ export class QdrantStore implements VectorStore {
     const qdrantFilter = this.buildQdrantFilter(filter);
 
     const url = `${this.url}/collections/${this.collection}/points/search`;
+    const body: Record<string, unknown> = { vector, limit, with_payload: true };
+    // Leeren Filter NICHT mitsenden — Qdrant lehnt einen leeren/match_all-Filter
+    // als Bad Request ab. Ohne filter-Feld sucht Qdrant über alle Punkte.
+    if (qdrantFilter) body.filter = qdrantFilter;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        vector,
-        filter: qdrantFilter,
-        limit,
-        with_payload: true,
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -152,6 +151,15 @@ export class QdrantStore implements VectorStore {
    */
   async deleteByFilter(filter: SearchFilter): Promise<void> {
     const qdrantFilter = this.buildQdrantFilter(filter);
+
+    // Schutz fail-closed: ohne konkrete Filterklausel würde delete ALLE Punkte
+    // der Collection treffen. deleteByFilter wird produktiv nur mit Klausel
+    // (z. B. sourceId) aufgerufen; ein leerer Filter ist hier ein Programmierfehler.
+    if (!qdrantFilter) {
+      throw new Error(
+        "QdrantStore.deleteByFilter: leerer Filter — würde die gesamte Collection löschen (abgelehnt)",
+      );
+    }
 
     const url = `${this.url}/collections/${this.collection}/points/delete?wait=true`;
     const response = await fetch(url, {
@@ -184,9 +192,11 @@ export class QdrantStore implements VectorStore {
   }
 
   /**
-   * Übersetzt SearchFilter zu Qdrant-Filter-Syntax
+   * Übersetzt SearchFilter zu Qdrant-Filter-Syntax.
+   * Gibt `undefined` zurück, wenn keine Filterklausel vorliegt — der Aufrufer
+   * lässt das filter-Feld dann weg (Qdrant akzeptiert keinen leeren Filter).
    */
-  private buildQdrantFilter(filter: SearchFilter): Record<string, unknown> {
+  private buildQdrantFilter(filter: SearchFilter): Record<string, unknown> | undefined {
     const must: Array<Record<string, unknown>> = [];
     const mustNot: Array<Record<string, unknown>> = [];
 
@@ -222,7 +232,7 @@ export class QdrantStore implements VectorStore {
     if (must.length > 0) result.must = must;
     if (mustNot.length > 0) result.must_not = mustNot;
 
-    return Object.keys(result).length > 0 ? result : { match_all: {} };
+    return Object.keys(result).length > 0 ? result : undefined;
   }
 }
 

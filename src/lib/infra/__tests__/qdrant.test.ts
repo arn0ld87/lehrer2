@@ -519,12 +519,5 @@ describe("FakeVectorStore", () => {
   });
 });
 
-// QdrantStore contract tests — only run if QDRANT_TEST==="1"
-describe.skipIf(process.env.QDRANT_TEST !== "1")("QdrantStore (contract tests)", () => {
-  // Contract tests for real Qdrant instance would go here
-  // Requires QDRANT_TEST environment variable to be set to "1"
-  // Tests would verify HTTP endpoint availability and API contract
-  it("placeholder: QdrantStore contract tests skipped by default", () => {
-    expect(process.env.QDRANT_TEST).not.toBe("1");
-  });
-});
+// Echter QdrantStore-Contract-/E2E-Test (gegen reales Qdrant via Testcontainers):
+// siehe qdrant.e2e.test.ts — env-gegated über QDRANT_TEST=1 (#45).
