@@ -635,5 +635,6 @@ Alle Adapter implementieren das gleiche **Redaction + Approval-Pattern**.
 
 - [../security/DATA_PROTECTION.md](../security/DATA_PROTECTION.md) — Redaction-Implementierung, Approval-Workflow
 - [../adr/0002-provider-agnostic-llm-layer.md](../adr/0002-provider-agnostic-llm-layer.md) — Entscheidung für Adapter-Pattern
+- [../security/UPLOAD_AND_OCR_SECURITY.md](../security/UPLOAD_AND_OCR_SECURITY.md) — Sicherheitsanforderungen für Upload und OCR.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — Komponentenübersicht
 - [RAG_ARCHITECTURE.md](RAG_ARCHITECTURE.md) — Trust-Levels, Citation-Standards

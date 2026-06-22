@@ -300,6 +300,7 @@ Die folgenden Aufbewahrungsfristen und Lösch-Aspekte müssen mit Schulleitung u
 - **Sicherheitsgrundsätze:** [./SECURITY.md](./SECURITY.md)
 - **Threat Model:** [./THREAT_MODEL.md](./THREAT_MODEL.md) — Restrisiken (Re-Identifikation, Cloud-LLM, Prompt Injection)
 - **Datenschutz & Rechtliche Grundlagen:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md) — wird separat verfasst
+- **Upload & OCR Sicherheit:** [./UPLOAD_AND_OCR_SECURITY.md](./UPLOAD_AND_OCR_SECURITY.md)
 - **Offen Fragen & Entscheidungspunkte:** [../decisions/OPEN_QUESTIONS.md](../decisions/OPEN_QUESTIONS.md)
 - **RAG Ingestion & Quelle-Widerruf:** [../rag/INGESTION_POLICY.md](../rag/INGESTION_POLICY.md)
 - **Local-First Design:** [../adr/0004-local-first-student-data.md](../adr/0004-local-first-student-data.md)

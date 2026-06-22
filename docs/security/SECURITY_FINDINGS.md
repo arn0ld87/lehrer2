@@ -16,9 +16,9 @@ Dieses Dokument listet die im Rahmen des Security-Reviews (ASVS & Datenschutz) i
 
 - **Beschreibung:** Der Kern-Datenschutzmechanismus (Pseudonymisierung vor LLM-Call) ist spezifiziert, aber noch nicht implementiert. Die "fail-closed" Invariante kann derzeit nicht technisch erzwungen werden.
 - **Risiko:** Unbeabsichtigte Übertragung von Klarnamen (PII) an Cloud-Provider bei Fehlkonfiguration oder Prompt-Injection.
-- **Maßnahme:** Implementierung des `RedactionService` und der `Guard-Assertion` (wie in `DATA_PROTECTION.md` Kap. 3 beschrieben) mit hoher Testabdeckung.
+- **Maßnahme:** Implementierung des `RedactionService` und der `Guard-Assertion` (wie in `DATA_PROTECTION.md` Kap. 3 beschrieben) mit hoher Testabdeckung. Spezifikation für Upload/OCR siehe `UPLOAD_AND_OCR_SECURITY.md`.
 - **Priorität:** Hoch (p1)
-- **Status:** Offen
+- **Status:** Spezifiziert
 
 ## 3. Fehlendes automatisiertes Dependency-Scanning (ASVS V14)
 
@@ -40,6 +40,6 @@ Dieses Dokument listet die im Rahmen des Security-Reviews (ASVS & Datenschutz) i
 
 - **Beschreibung:** Mechanismen zur Verhinderung von DoS-Angriffen durch massive Uploads oder API-Anfragen sind zwar im Threat Model geplant, aber noch nicht implementiert.
 - **Risiko:** Systeminstabilität oder hohe Cloud-Kosten durch Denial-of-Service.
-- **Maßnahme:** Implementierung von Rate-Limiting (z. B. via Redis/BullMQ oder API-Gateway) pro Lehrkraft/Schule.
+- **Maßnahme:** Implementierung von Rate-Limiting (z. B. via Redis/BullMQ oder API-Gateway) pro Lehrkraft/Schule. Spezifikation für Uploads siehe `UPLOAD_AND_OCR_SECURITY.md`.
 - **Priorität:** Mittel (p2)
-- **Status:** Offen
+- **Status:** Spezifiziert

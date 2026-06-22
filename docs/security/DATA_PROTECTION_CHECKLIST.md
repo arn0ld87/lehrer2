@@ -11,6 +11,7 @@ Diese Checkliste dient der Überprüfung der DSGVO-Konformität und der Einhaltu
 - [ ] **Datenminimierung:** Es werden nur notwendige Daten erhoben; Redaction-Schritt entfernt PII vor LLM-Verarbeitung.
 - [ ] **Richtigkeit:** Lehrkraft hat Letztentscheidung und kann KI-Vorschläge korrigieren.
 - [ ] **Speicherbegrenzung:** Löschkonzept in `RETENTION_AND_DELETION.md` ist implementiert (z.B. 12 Monate nach Ausscheiden).
+- [ ] **Upload-Sicherheit:** Beschränkungen und OCR-Sicherheit gemäß `UPLOAD_AND_OCR_SECURITY.md`.
 - [ ] **Integrität und Vertraulichkeit:** Verschlüsselung At-Rest (AES-256) und In-Transit (TLS 1.3).
 
 ---
