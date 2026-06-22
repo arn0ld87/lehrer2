@@ -17,7 +17,7 @@ Die Lehrkraft erfasst die Basiselemente der Planung:
 
 ### Phase 2: RAG-gestützter Strukturvorschlag
 Das System führt eine Retrieval-Augmented Generation (RAG) durch:
-1. **Retrieval**: Suche nach relevanten Kompetenzen und Inhalten in `OFFICIAL_BINDING` Quellen (Landeslehrpläne LSA).
+1. **Retrieval**: Suche nach relevanten Kompetenzen und Inhalten in OFFICIAL_BINDING und OFFICIAL_GUIDANCE Quellen (Landeslehrpläne LSA, Schulbücher etc.).
 2. **Filterung**: Strikte Einhaltung des Fach- und Konfessions-Scopes (kein Cross-Strang-Retrieval).
 3. **Generierung**: Erstellung eines Entwurfs (Stundenverlauf, Lernziele, Kompetenzbezug).
 
