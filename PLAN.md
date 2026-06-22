@@ -106,7 +106,7 @@ Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_
 - **M1 – Unterrichtsplanung MVP**: Datenmodell Artefakte, Planungsassistent, Arbeitsblattgenerator, Bewertungsraster/Erwartungshorizont, Export-Architektur.
 - **M2 – Quellen-RAG mit Nachweisen**: Quellenverwaltung, Ingestion, Chunking, Retrieval/Reranking/Zitation, Eval-Suite, Widerruf/Löschung.
 - **M3 – Korrekturassistenz MVP**: Korrekturworkflow, Pseudonymisierung/Redaction, Feedbackformat, Upload-/OCR-Sicherheit.
-- **M4 – Security, Pilot & Betrieb**: Rollen/Mandanten/Audit, Backup/Restore, Deployment/Secrets, Pilotplan, Security-Review (OWASP ASVS).
+- **M4 – Security, Pilot & Betrieb**: Rollen/Mandanten/Audit, Backup/Restore, Deployment/Secrets (Konzept erstellt), Pilotplan, Security-Review (OWASP ASVS).
 
 ## 12. Risiken, offene Entscheidungen, Abbruchkriterien
 
@@ -127,4 +127,4 @@ Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_
 
 ### Bezug zu den Ausführungs-/Governance-Dokumenten
 
-ADRs: [0001](docs/adr/0001-modular-monolith-first.md) · [0002](docs/adr/0002-provider-agnostic-llm-layer.md) · [0003](docs/adr/0003-source-governance-before-ingestion.md) · [0004](docs/adr/0004-local-first-student-data.md) · [0005](docs/adr/0005-orm-drizzle.md) · [0006](docs/adr/0006-curriculum-modeling.md) · [0007](docs/adr/0007-auth-solution.md) _(Proposed)_ · [0008](docs/adr/0008-document-export-stack.md) _(Proposed)_ · [0009](docs/adr/0009-pseudonym-retention.md). Offene Entscheidungen: alle 6 aus [OPEN_QUESTIONS.md](docs/decisions/OPEN_QUESTIONS.md) entschieden (Stand 2026-06-22). GitHub-Planung & Status: [GITHUB_SETUP.md](docs/operations/GITHUB_SETUP.md).
+ADRs: [0001](docs/adr/0001-modular-monolith-first.md) · [0002](docs/adr/0002-provider-agnostic-llm-layer.md) · [0003](docs/adr/0003-source-governance-before-ingestion.md) · [0004](docs/adr/0004-local-first-student-data.md) · [0005](docs/adr/0005-orm-drizzle.md) · [0006](docs/adr/0006-curriculum-modeling.md) · [0007](docs/adr/0007-auth-solution.md) _(Proposed)_ · [0008](docs/adr/0008-document-export-stack.md) _(Proposed/Angekündigt)_ · [0009](docs/adr/0009-pseudonym-retention.md). Offene Entscheidungen: alle 6 aus [OPEN_QUESTIONS.md](docs/decisions/OPEN_QUESTIONS.md) entschieden (Stand 2026-06-22). GitHub-Planung & Status: [GITHUB_SETUP.md](docs/operations/GITHUB_SETUP.md).

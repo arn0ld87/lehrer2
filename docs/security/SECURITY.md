@@ -49,19 +49,16 @@ Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
 
 ## Umgang mit Secrets
 
-### Keine Secrets im Repo
+### Umgang mit Secrets
 
-- **Verbot:** Keine `.env`, API-Keys, Zertifikate, Private Keys, OAuth Tokens, Datenbank-Passwörter im Git-Repo
-- **Detektion:** Pre-commit Hook (TruffleHog / git-secrets) blockt verdächtige Patterns
-- **Speicherort:** Secrets leben in einer separaten, nicht-versionierten `secrets/` Datei oder in einem Secret Manager (z. B. HashiCorp Vault, Docker Secrets bei Stack-Deployment)
-- **Rotation:** Alle Secrets werden monatlich rotiert; Rotation ist dokumentiert im Audit Log
-- **Zugriff:** Nur der IT-Administrator und autorisierte Dienstkonten dürfen Secrets lesen
+Details zum Management von Secrets finden sich im [Secret-Management-Konzept](../operations/SECRET_MANAGEMENT.md).
 
-### Secret-Handling in Deployment
-
-1. Zur Buildzeit: Secrets werden NICHT injiziert; stattdessen werden Platzhalter gelesen
-2. Zur Laufzeit: Secrets werden aus Vault/Environment gelesen; sofort nach Verwendung aus Memory geräumt
-3. In Logs: Secrets werden automatisch redacted (z. B. `$API_KEY` → `[REDACTED]`)
+- **Verbot:** Keine `.env`, API-Keys, Zertifikate, Private Keys, OAuth Tokens, Datenbank-Passwörter im Git-Repo.
+- **Detektion:** Pre-commit Hooks und CI-Scanner blocken verdächtige Patterns.
+- **Speicherort:** Secrets leben in Docker Secrets (Produktion) oder einer lokalen `.env` (Entwicklung, gitignored).
+- **Rotation:** Infrastruktur-Secrets werden regelmäßig rotiert (siehe Konzept).
+- **Injektion:** Secrets werden zur Laufzeit injiziert; niemals zur Buildzeit.
+- **Logs:** Automatische Redaction von Secrets in allen Log-Outputs.
 
 ## Meldeweg für Sicherheitslücken
 
@@ -125,6 +122,7 @@ Alle Stellen sind **fail-closed**: wenn Validierung fehlschlägt, wird kein Zugr
 - **Datenschutz-Checkliste:** [./DATA_PROTECTION_CHECKLIST.md](./DATA_PROTECTION_CHECKLIST.md) — DSGVO-Prüfschritte
 - **Sicherheits-Findings:** [./SECURITY_FINDINGS.md](./SECURITY_FINDINGS.md) — Identifizierte Lücken aus dem Review
 - **Aufbewahrung und Löschung:** [./RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md) — Aufbewahrungsfristen, kaskadierende Löschung
+- **Secret-Management:** [../operations/SECRET_MANAGEMENT.md](../operations/SECRET_MANAGEMENT.md) — Detailliertes Konzept zum Umgang mit Secrets
 - **Local-First Architektur:** [../adr/0004-local-first-student-data.md](../adr/0004-local-first-student-data.md) — Design Decision für Pseudonymisierung und lokale Speicherung
 - **RAG Ingestion:** [../rag/INGESTION_POLICY.md](../rag/INGESTION_POLICY.md) — Quelle-Validierung, Trust-Stufen, Widerruf
 

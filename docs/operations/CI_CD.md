@@ -149,6 +149,8 @@ Wenn ein CI-Job fehlschlägt:
 ## Weitere Ressourcen
 
 - [Entwicklungsumgebung](./DEVELOPMENT.md) – Lokale Einrichtung
+- [Deployment-Strategie](./DEPLOYMENT_STRATEGY.md) – Ziel-Architektur und Deployment-Flow
+- [Secret-Management](./SECRET_MANAGEMENT.md) – Umgang mit Secrets im CI/CD
 - [Projektplan](../../PLAN.md) – Architektur und Roadmap
 - [GitHub Actions Workflow](../../.github/workflows/ci.yml) – Vollständige Pipeline-Definition
 - [Dokumentations-Verifizierungsskript](../../scripts/verify-docs.sh) – Technische Details
