@@ -106,7 +106,7 @@ Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_
 - **M1 – Unterrichtsplanung MVP**: Datenmodell Artefakte, Planungsassistent, Arbeitsblattgenerator, Bewertungsraster/Erwartungshorizont, Export-Architektur. _Schritt 1 (UI-Shell) abgeschlossen. Schritt 2 (Branch `m1/data-model-export`): Drizzle-Schema (Auth/Tenant/Curriculum/Artefakte/Provenienz), 4 Migrationen, Postgres-Repositories + Mapping, Export-Subsystem (DOCX/PDF), CI-Gates (Schema-Drift, Migration-Review-Flag) — umgesetzt (Stand 2026-06-22). Noch ausstehend: Planungsassistent-/Arbeitsblattgenerator-Logik (LLM, hängt an M2-RAG)._
 - **M2 – Quellen-RAG mit Nachweisen**: Quellenverwaltung, Ingestion, Chunking, Retrieval/Reranking/Zitation, Eval-Suite, Widerruf/Löschung.
 - **M3 – Korrekturassistenz MVP**: Korrekturworkflow, Pseudonymisierung/Redaction, Feedbackformat, Upload-/OCR-Sicherheit.
-- **M4 – Security, Pilot & Betrieb**: Rollen/Mandanten/Audit, Backup/Restore, Deployment/Secrets, Pilotplan ([PILOT_PLAN.md](docs/operations/PILOT_PLAN.md)), Security-Review (OWASP ASVS).
+- **M4 – Security, Pilot & Betrieb**: Rollen/Mandanten/Audit, Backup/Restore (Planung abgeschlossen: [BACKUP_AND_RECOVERY.md](docs/operations/BACKUP_AND_RECOVERY.md), [RECOVERY_TEST_PLAN.md](docs/operations/RECOVERY_TEST_PLAN.md)), Deployment/Secrets, Pilotplan ([PILOT_PLAN.md](docs/operations/PILOT_PLAN.md)), Security-Review (OWASP ASVS).
 
 ## 12. Risiken, offene Entscheidungen, Abbruchkriterien
 

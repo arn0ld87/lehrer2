@@ -74,6 +74,7 @@ Repository: `arn0ld87/lehrer2` (privat).
 - **[docs/operations/PILOT_PLAN.md](docs/operations/PILOT_PLAN.md)** — Pilotplan mit synthetischen Testdaten und Feedbackprozess
 - **[docs/operations/CI_CD.md](docs/operations/CI_CD.md)** — CI/CD-Pipeline und Automation
 - **[docs/operations/BACKUP_AND_RECOVERY.md](docs/operations/BACKUP_AND_RECOVERY.md)** — Backup, Disaster Recovery und Datenintegrität
+- **[docs/operations/RECOVERY_TEST_PLAN.md](docs/operations/RECOVERY_TEST_PLAN.md)** — Wiederherstellungs-Testplan und Restore-Prozeduren
 
 ### Offene Fragen
 
