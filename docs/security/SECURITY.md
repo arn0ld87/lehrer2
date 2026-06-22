@@ -121,6 +121,7 @@ Alle Stellen sind **fail-closed**: wenn Validierung fehlschlägt, wird kein Zugr
 - **Datenschutz:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md) — Rechtliche Grundlagen, DSGVO-Compliance
 - **Datenschutz-Checkliste:** [./DATA_PROTECTION_CHECKLIST.md](./DATA_PROTECTION_CHECKLIST.md) — DSGVO-Prüfschritte
 - **Sicherheits-Findings:** [./SECURITY_FINDINGS.md](./SECURITY_FINDINGS.md) — Identifizierte Lücken aus dem Review
+- **Upload & OCR Sicherheit:** [./UPLOAD_AND_OCR_SECURITY.md](./UPLOAD_AND_OCR_SECURITY.md) — Beschränkungen und OCR-Sandboxing
 - **Aufbewahrung und Löschung:** [./RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md) — Aufbewahrungsfristen, kaskadierende Löschung
 - **Secret-Management:** [../operations/SECRET_MANAGEMENT.md](../operations/SECRET_MANAGEMENT.md) — Detailliertes Konzept zum Umgang mit Secrets
 - **Local-First Architektur:** [../adr/0004-local-first-student-data.md](../adr/0004-local-first-student-data.md) — Design Decision für Pseudonymisierung und lokale Speicherung
