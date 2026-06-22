@@ -110,12 +110,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -202,12 +198,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -217,9 +209,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -283,9 +273,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -442,12 +430,8 @@
           "name": "teacher_profile_user_id_user_id_fk",
           "tableFrom": "teacher_profile",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -455,12 +439,8 @@
           "name": "teacher_profile_school_id_school_id_fk",
           "tableFrom": "teacher_profile",
           "tableTo": "school",
-          "columnsFrom": [
-            "school_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["school_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -532,12 +512,8 @@
           "name": "curriculum_node_strand_id_curriculum_strand_id_fk",
           "tableFrom": "curriculum_node",
           "tableTo": "curriculum_strand",
-          "columnsFrom": [
-            "strand_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["strand_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -545,14 +521,8 @@
           "name": "node_parent_same_strand_fk",
           "tableFrom": "curriculum_node",
           "tableTo": "curriculum_node",
-          "columnsFrom": [
-            "parent_id",
-            "strand_id"
-          ],
-          "columnsTo": [
-            "id",
-            "strand_id"
-          ],
+          "columnsFrom": ["parent_id", "strand_id"],
+          "columnsTo": ["id", "strand_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -562,18 +532,12 @@
         "node_code_per_strand": {
           "name": "node_code_per_strand",
           "nullsNotDistinct": false,
-          "columns": [
-            "strand_id",
-            "code"
-          ]
+          "columns": ["strand_id", "code"]
         },
         "node_id_strand": {
           "name": "node_id_strand",
           "nullsNotDistinct": false,
-          "columns": [
-            "id",
-            "strand_id"
-          ]
+          "columns": ["id", "strand_id"]
         }
       },
       "policies": {},
@@ -671,12 +635,8 @@
           "name": "strand_supersedes_fk",
           "tableFrom": "curriculum_strand",
           "tableTo": "curriculum_strand",
-          "columnsFrom": [
-            "supersedes_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["supersedes_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -686,9 +646,7 @@
         "strand_id_unique": {
           "name": "strand_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -791,12 +749,8 @@
           "name": "expectation_horizon_task_id_task_id_fk",
           "tableFrom": "expectation_horizon",
           "tableTo": "task",
-          "columnsFrom": [
-            "task_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["task_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -804,12 +758,8 @@
           "name": "expectation_horizon_owner_teacher_id_user_id_fk",
           "tableFrom": "expectation_horizon",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -819,9 +769,7 @@
         "expectation_horizon_id_unique": {
           "name": "expectation_horizon_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -905,12 +853,8 @@
           "name": "lesson_unit_id_teaching_unit_id_fk",
           "tableFrom": "lesson",
           "tableTo": "teaching_unit",
-          "columnsFrom": [
-            "unit_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["unit_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -918,12 +862,8 @@
           "name": "lesson_owner_teacher_id_user_id_fk",
           "tableFrom": "lesson",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -933,9 +873,7 @@
         "lesson_id_unique": {
           "name": "lesson_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -972,12 +910,8 @@
           "name": "lesson_curriculum_node_lesson_id_lesson_id_fk",
           "tableFrom": "lesson_curriculum_node",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -985,12 +919,8 @@
           "name": "lesson_curriculum_node_curriculum_node_id_curriculum_node_id_fk",
           "tableFrom": "lesson_curriculum_node",
           "tableTo": "curriculum_node",
-          "columnsFrom": [
-            "curriculum_node_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["curriculum_node_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1000,10 +930,7 @@
         "lesson_curriculum_node_unique": {
           "name": "lesson_curriculum_node_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "lesson_id",
-            "curriculum_node_id"
-          ]
+          "columns": ["lesson_id", "curriculum_node_id"]
         }
       },
       "policies": {},
@@ -1095,12 +1022,8 @@
           "name": "rubric_owner_teacher_id_user_id_fk",
           "tableFrom": "rubric",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -1110,9 +1033,7 @@
         "rubric_id_unique": {
           "name": "rubric_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -1202,12 +1123,8 @@
           "name": "rubric_criterion_rubric_id_rubric_id_fk",
           "tableFrom": "rubric_criterion",
           "tableTo": "rubric",
-          "columnsFrom": [
-            "rubric_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["rubric_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1215,12 +1132,8 @@
           "name": "rubric_criterion_owner_teacher_id_user_id_fk",
           "tableFrom": "rubric_criterion",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -1230,9 +1143,7 @@
         "rubric_criterion_id_unique": {
           "name": "rubric_criterion_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -1329,12 +1240,8 @@
           "name": "source_ref_owner_teacher_id_user_id_fk",
           "tableFrom": "source_ref",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1344,16 +1251,12 @@
         "source_ref_content_hash_unique": {
           "name": "source_ref_content_hash_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "content_hash"
-          ]
+          "columns": ["content_hash"]
         },
         "source_ref_id_unique": {
           "name": "source_ref_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -1457,12 +1360,8 @@
           "name": "task_worksheet_id_worksheet_id_fk",
           "tableFrom": "task",
           "tableTo": "worksheet",
-          "columnsFrom": [
-            "worksheet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["worksheet_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1470,12 +1369,8 @@
           "name": "task_expected_competence_node_id_curriculum_node_id_fk",
           "tableFrom": "task",
           "tableTo": "curriculum_node",
-          "columnsFrom": [
-            "expected_competence_node_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["expected_competence_node_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1483,12 +1378,8 @@
           "name": "task_owner_teacher_id_user_id_fk",
           "tableFrom": "task",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -1498,9 +1389,7 @@
         "task_id_unique": {
           "name": "task_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -1537,12 +1426,8 @@
           "name": "task_source_ref_task_id_task_id_fk",
           "tableFrom": "task_source_ref",
           "tableTo": "task",
-          "columnsFrom": [
-            "task_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["task_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1550,12 +1435,8 @@
           "name": "task_source_ref_source_ref_id_source_ref_id_fk",
           "tableFrom": "task_source_ref",
           "tableTo": "source_ref",
-          "columnsFrom": [
-            "source_ref_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["source_ref_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1565,10 +1446,7 @@
         "task_source_ref_unique": {
           "name": "task_source_ref_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "task_id",
-            "source_ref_id"
-          ]
+          "columns": ["task_id", "source_ref_id"]
         }
       },
       "policies": {},
@@ -1672,12 +1550,8 @@
           "name": "teaching_unit_strand_id_curriculum_strand_id_fk",
           "tableFrom": "teaching_unit",
           "tableTo": "curriculum_strand",
-          "columnsFrom": [
-            "strand_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["strand_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
@@ -1685,12 +1559,8 @@
           "name": "teaching_unit_owner_teacher_id_user_id_fk",
           "tableFrom": "teaching_unit",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -1700,9 +1570,7 @@
         "unit_id_unique": {
           "name": "unit_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -1804,12 +1672,8 @@
           "name": "worksheet_unit_id_teaching_unit_id_fk",
           "tableFrom": "worksheet",
           "tableTo": "teaching_unit",
-          "columnsFrom": [
-            "unit_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["unit_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1817,12 +1681,8 @@
           "name": "worksheet_owner_teacher_id_user_id_fk",
           "tableFrom": "worksheet",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -1832,9 +1692,7 @@
         "worksheet_id_unique": {
           "name": "worksheet_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -1871,12 +1729,8 @@
           "name": "worksheet_source_ref_worksheet_id_worksheet_id_fk",
           "tableFrom": "worksheet_source_ref",
           "tableTo": "worksheet",
-          "columnsFrom": [
-            "worksheet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["worksheet_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1884,12 +1738,8 @@
           "name": "worksheet_source_ref_source_ref_id_source_ref_id_fk",
           "tableFrom": "worksheet_source_ref",
           "tableTo": "source_ref",
-          "columnsFrom": [
-            "source_ref_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["source_ref_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1899,10 +1749,7 @@
         "worksheet_source_ref_unique": {
           "name": "worksheet_source_ref_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "worksheet_id",
-            "source_ref_id"
-          ]
+          "columns": ["worksheet_id", "source_ref_id"]
         }
       },
       "policies": {},
@@ -1914,12 +1761,7 @@
     "public.audit_severity": {
       "name": "audit_severity",
       "schema": "public",
-      "values": [
-        "info",
-        "warning",
-        "error",
-        "critical"
-      ]
+      "values": ["info", "warning", "error", "critical"]
     },
     "public.confession_context": {
       "name": "confession_context",
@@ -1935,39 +1777,22 @@
     "public.curriculum_status": {
       "name": "curriculum_status",
       "schema": "public",
-      "values": [
-        "DRAFT",
-        "ACTIVE",
-        "RETIRED"
-      ]
+      "values": ["DRAFT", "ACTIVE", "RETIRED"]
     },
     "public.data_class": {
       "name": "data_class",
       "schema": "public",
-      "values": [
-        "PUBLIC",
-        "INTERNAL",
-        "PERSONAL_TEACHER",
-        "SENSITIVE_STUDENT"
-      ]
+      "values": ["PUBLIC", "INTERNAL", "PERSONAL_TEACHER", "SENSITIVE_STUDENT"]
     },
     "public.difficulty": {
       "name": "difficulty",
       "schema": "public",
-      "values": [
-        "EASY",
-        "MEDIUM",
-        "HARD"
-      ]
+      "values": ["EASY", "MEDIUM", "HARD"]
     },
     "public.education_track": {
       "name": "education_track",
       "schema": "public",
-      "values": [
-        "HAUPTSCHULBILDUNGSGANG",
-        "REALSCHULBILDUNGSGANG",
-        "GYMNASIALER_BILDUNGSGANG"
-      ]
+      "values": ["HAUPTSCHULBILDUNGSGANG", "REALSCHULBILDUNGSGANG", "GYMNASIALER_BILDUNGSGANG"]
     },
     "public.generation_artifact_type": {
       "name": "generation_artifact_type",
@@ -1986,46 +1811,27 @@
     "public.grade_band": {
       "name": "grade_band",
       "schema": "public",
-      "values": [
-        "KS5",
-        "KS6",
-        "KS7",
-        "KS8",
-        "KS9",
-        "KS10"
-      ]
+      "values": ["KS5", "KS6", "KS7", "KS8", "KS9", "KS10"]
     },
     "public.rubric_scale_type": {
       "name": "rubric_scale_type",
       "schema": "public",
-      "values": [
-        "ANALYTIC",
-        "HOLISTIC"
-      ]
+      "values": ["ANALYTIC", "HOLISTIC"]
     },
     "public.rubric_scope": {
       "name": "rubric_scope",
       "schema": "public",
-      "values": [
-        "UNIT",
-        "TASK"
-      ]
+      "values": ["UNIT", "TASK"]
     },
     "public.school_form": {
       "name": "school_form",
       "schema": "public",
-      "values": [
-        "GESAMTSCHULE",
-        "GEMEINSCHAFTSSCHULE"
-      ]
+      "values": ["GESAMTSCHULE", "GEMEINSCHAFTSSCHULE"]
     },
     "public.school_stage": {
       "name": "school_stage",
       "schema": "public",
-      "values": [
-        "SEK_I",
-        "SEK_II"
-      ]
+      "values": ["SEK_I", "SEK_II"]
     },
     "public.source_trust": {
       "name": "source_trust",
@@ -2041,11 +1847,7 @@
     "public.subject": {
       "name": "subject",
       "schema": "public",
-      "values": [
-        "DEUTSCH",
-        "RELIGION",
-        "ETHIK"
-      ]
+      "values": ["DEUTSCH", "RELIGION", "ETHIK"]
     },
     "public.task_type": {
       "name": "task_type",
@@ -2061,11 +1863,7 @@
     "public.teaching_unit_status": {
       "name": "teaching_unit_status",
       "schema": "public",
-      "values": [
-        "DRAFT",
-        "ACTIVE",
-        "ARCHIVED"
-      ]
+      "values": ["DRAFT", "ACTIVE", "ARCHIVED"]
     }
   },
   "schemas": {},

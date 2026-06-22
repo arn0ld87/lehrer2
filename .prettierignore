@@ -12,3 +12,7 @@ unterrichtsassistenz-lsa-design-kit/
 
 # pi-Agent-Verzeichnis (lokal, nicht Teil des Projekts)
 .pi/
+
+# Superpowers-Implementierungspläne (agent-intern, eigene Formatierung)
+docs/superpowers/
+.superpowers/

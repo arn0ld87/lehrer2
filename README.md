@@ -79,6 +79,25 @@ Repository: `arn0ld87/lehrer2` (privat).
 
 Zum Starten der lokalen Entwicklung siehe **[docs/operations/DEVELOPMENT.md](docs/operations/DEVELOPMENT.md)**.
 
+### Verfügbare Scripts
+
+Paketmanager ist **`pnpm`** (niemals npm/yarn).
+
+```bash
+pnpm dev             # Next.js Dev-Server (http://localhost:3000)
+pnpm build           # Produktionsbuild
+pnpm start           # Produktionsserver
+pnpm lint            # ESLint
+pnpm typecheck       # tsc --noEmit (strict)
+pnpm format          # Prettier (schreibend)
+pnpm format:check    # Prettier (prüfend, für CI)
+pnpm verify:docs     # Doku-Gate: prüft verlinkte Dateien auf Existenz
+pnpm test            # Vitest mit Testcontainers (benötigt Docker)
+pnpm db:generate     # Drizzle-Kit: Migrationsdatei aus Schema generieren
+pnpm db:migrate      # Drizzle-Kit: Migrationen auf die DB anwenden
+pnpm db:check        # Drizzle-Kit: Schema-Drift prüfen (kein DB-Zugriff nötig)
+```
+
 ## Beitrag und Feedback
 
 Dieses Projekt ist privat. Fragen, Ideen und Feedback von Stakeholdern werden erfasst und in Issues dokumentiert.

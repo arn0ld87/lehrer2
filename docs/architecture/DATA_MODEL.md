@@ -2,6 +2,8 @@
 
 Konzeptionelles Datenmodell für die Unterrichtsassistenz-Plattform. Beschreibt Entitäten, Relationen, Datenklassen und Invarianten. Implementiert wird das Modell in TypeScript/Drizzle ORM (siehe [ADR-0005](../adr/0005-orm-drizzle.md)).
 
+> **Implementierungsstatus (Stand 2026-06-22):** M1 Schritt 2 (Branch `m1/data-model-export`) implementiert die Entitäten der Datenklassen `PUBLIC` und `INTERNAL` — Auth/Tenant, Curriculum, Unterrichtsplan, Arbeitsblatt, Bewertungsraster/Erwartungshorizont, Provenienz/Audit sowie die Export-Architektur (DOCX/PDF). Die `SENSITIVE_STUDENT`-Entitäten (`StudentSubmission`, `CorrectionDraft`, `pseudonym_mappings`) sind **konzeptionell hier beschrieben, aber bewusst nicht in M1 implementiert** — sie folgen in **M3** (Korrekturassistenz), sobald Pseudonymisierung, Redaction und DSFA-Vorbehalt vollständig ausgearbeitet sind (ADR 0004, ADR 0009).
+
 ## Kontrollierte Vokabulare (Enums)
 
 ### SchoolForm
