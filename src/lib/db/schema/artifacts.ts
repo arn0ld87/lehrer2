@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   integer,
-  json,
+  jsonb,
   pgTable,
   text,
   unique,
