@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vertrauliche Sicherheitsmeldung
+    url: https://github.com/arn0ld87/lehrer2/security/advisories/new
+    about: Bitte ausnutzbare Schwachstellen vertraulich melden, nicht als oeffentliches Issue.

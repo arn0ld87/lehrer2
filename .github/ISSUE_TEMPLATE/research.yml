@@ -1,0 +1,28 @@
+name: Research
+description: Offene Frage, Recherche oder Entscheidungsbedarf
+title: "[Research] "
+labels: ["type: research"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Forschungsfrage
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Kontext
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Erwartetes Ergebnis / Entscheidung
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Quellen / Constraints
+      description: Nur offizielle/lizenzgeklaerte Quellen; kein Scraping geschuetzter Inhalte

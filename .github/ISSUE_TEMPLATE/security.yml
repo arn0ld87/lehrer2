@@ -1,0 +1,39 @@
+name: Security
+description: Sicherheits-/Datenschutzthema (nicht-vertraulich)
+title: "[Security] "
+labels: ["type: security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fuer konkrete, ausnutzbare Schwachstellen bitte den vertraulichen Meldeweg
+        nutzen (siehe Verweis im Issue-Auswahlmenue), nicht dieses oeffentliche Issue.
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Betroffene Daten / Komponenten
+      description: z.B. Schuelerarbeiten (SENSITIVE_STUDENT), RAG-Quellen, LLM-Provider-Pfad
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Schweregrad (Einschaetzung)
+      options:
+        - niedrig
+        - mittel
+        - hoch
+        - kritisch
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Hinweise
+      description: KEINE echten Secrets, KEINE Klarnamen/personenbezogenen Daten posten
