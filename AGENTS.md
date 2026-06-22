@@ -55,19 +55,19 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## What to read before modifying (Pointer)
 
-| Bereich                                                                                 | Zuerst lesen                                                                                |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Scope, Roadmap, Datenflüsse                                                             | `PLAN.md`                                                                                   |
-| Architektur, Integrationsgrenzen                                                        | `docs/architecture/ARCHITECTURE.md`, `INTEGRATION_BOUNDARIES.md`, `DATA_MODEL.md`, `RAG_ARCHITECTURE.md`                            |
-| Entscheidungen (Modular Monolith, LLM-Schicht, Source-Governance, Local-first, Drizzle) | `docs/adr/0001`–`0005`                                                                      |
-| Offene Entscheidungen                                                                   | `docs/decisions/OPEN_QUESTIONS.md`                                                          |
-| Datenschutz, Drohmodell, Löschung                                                       | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `DATA_PROTECTION.md`, `RETENTION_AND_DELETION.md`                 |
-| RAG-Ingestion, Evaluierung                                                              | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md`, `CITATION_STANDARD.md`, `SOURCE_REGISTRY.md`                                        |
-| Produktvision, MVP, Akzeptanz, User Flows                                               | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md` |
-| CI/CD, Entwicklung, Backup                                                              | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`                      |
-| Erste UI-Implementierung in Next.js                                                     | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich)          |
-| Design-Tokens                                                                           | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte)      |
-| Design-System (Doku) | `docs/design/DESIGN_SYSTEM.md` |
+| Bereich                                                                                 | Zuerst lesen                                                                                             |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Scope, Roadmap, Datenflüsse                                                             | `PLAN.md`                                                                                                |
+| Architektur, Integrationsgrenzen                                                        | `docs/architecture/ARCHITECTURE.md`, `INTEGRATION_BOUNDARIES.md`, `DATA_MODEL.md`, `RAG_ARCHITECTURE.md` |
+| Entscheidungen (Modular Monolith, LLM-Schicht, Source-Governance, Local-first, Drizzle) | `docs/adr/0001`–`0005`                                                                                   |
+| Offene Entscheidungen                                                                   | `docs/decisions/OPEN_QUESTIONS.md`                                                                       |
+| Datenschutz, Drohmodell, Löschung                                                       | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `DATA_PROTECTION.md`, `RETENTION_AND_DELETION.md`        |
+| RAG-Ingestion, Evaluierung                                                              | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md`, `CITATION_STANDARD.md`, `SOURCE_REGISTRY.md`       |
+| Produktvision, MVP, Akzeptanz, User Flows                                               | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md`              |
+| CI/CD, Entwicklung, Backup                                                              | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`                                   |
+| Erste UI-Implementierung in Next.js                                                     | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich)                       |
+| Design-Tokens                                                                           | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte)                   |
+| Design-System (Doku)                                                                    | `docs/design/DESIGN_SYSTEM.md`                                                                           |
 
 ## Project structure
 
