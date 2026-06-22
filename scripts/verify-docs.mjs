@@ -22,6 +22,7 @@ const REQUIRED = [
   "docs/adr/0005-orm-drizzle.md",
   "docs/security/SECURITY.md", "docs/security/THREAT_MODEL.md",
   "docs/security/DATA_PROTECTION.md", "docs/security/RETENTION_AND_DELETION.md",
+  "docs/security/UPLOAD_AND_OCR_SECURITY.md",
   "docs/rag/SOURCE_REGISTRY.md", "docs/rag/INGESTION_POLICY.md",
   "docs/rag/EVALUATION_PLAN.md", "docs/rag/CITATION_STANDARD.md",
   "docs/operations/DEVELOPMENT.md", "docs/operations/GITHUB_SETUP.md",

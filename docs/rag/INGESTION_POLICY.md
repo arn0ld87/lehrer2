@@ -190,4 +190,5 @@ Für die Behandlung von Dokumenten-Widerruf (z. B. bei neuer Rechtslage, fehlerh
 - [./SOURCE_REGISTRY.md](./SOURCE_REGISTRY.md) — Trust-Level-Definitionen und Quellen-Masterdaten
 - [./CITATION_STANDARD.md](./CITATION_STANDARD.md) — Zitation von Chunks im Response
 - [../architecture/RAG_ARCHITECTURE.md](../architecture/RAG_ARCHITECTURE.md) — technische Architektur (Qdrant, Ollama, etc.)
+- [../security/UPLOAD_AND_OCR_SECURITY.md](../security/UPLOAD_AND_OCR_SECURITY.md) — Sicherheitsanforderungen für Upload und OCR.
 - [../adr/0003-source-governance-before-ingestion.md](../adr/0003-source-governance-before-ingestion.md) — Architektur-Entscheidung und Begründung
