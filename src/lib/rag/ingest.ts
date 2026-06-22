@@ -2,7 +2,7 @@
  * ingest.ts — Ingestion-Pipeline für eine einzelne Quelle
  *
  * Ablauf (fail-closed):
- *   GATE → Bytes laden → SHA-256 → extractContent → chunkText
+ *   GATE → Bytes laden → SHA-256 → Dedup-Check → extractContent → chunkText
  *   → embed → Qdrant upsert → PG-Transaktion (rag_chunk insert + lifecycleStatus=INGESTED)
  *
  * Kompensation: schlägt der PG-Teil nach dem Qdrant-Upsert fehl,
@@ -10,7 +10,7 @@
  */
 
 import { createHash, randomUUID } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne, isNotNull } from "drizzle-orm";
 
 import type { Db } from "@/lib/db/client";
 import type { VectorStore } from "@/lib/infra/qdrant";
@@ -23,6 +23,55 @@ import { ragChunk } from "@/lib/db/schema/rag";
 import { extractContent } from "./extract";
 import { chunkText } from "./chunk";
 import { ensureCollection, upsertSourceChunks, deletePoints } from "./qdrant";
+
+/**
+ * DuplicateContentError — wird geworfen, wenn der berechnete contentHash bereits
+ * von einer ANDEREN sourceRef-Zeile gehalten wird (Früherkennung vor Embedding-Arbeit).
+ *
+ * Enthält die `existingSourceRefId` der Quelle, die den Hash bereits besitzt,
+ * damit Aufrufer gezielt reagieren können (z. B. deduplizieren statt erneut ingestieren).
+ */
+export class DuplicateContentError extends Error {
+  readonly existingSourceRefId: string;
+  readonly contentHash: string;
+
+  constructor(contentHash: string, existingSourceRefId: string) {
+    super(
+      `DuplicateContentError: contentHash ${contentHash} wird bereits von sourceRef ${existingSourceRefId} gehalten — Ingestion abgebrochen (Duplikat-Früherkennung)`,
+    );
+    this.name = "DuplicateContentError";
+    this.existingSourceRefId = existingSourceRefId;
+    this.contentHash = contentHash;
+  }
+}
+
+/**
+ * findExistingSourceForHash — prüft, ob der gegebene contentHash bereits von einer
+ * ANDEREN Quelle (≠ ownSourceRefId) gehalten wird.
+ *
+ * Sucht unter allen Zeilen mit gesetztem contentHash; schließt die eigene Quelle aus,
+ * damit ein Re-Ingest derselben Quelle nicht fälschlicherweise blockiert wird.
+ *
+ * @returns sourceRefId der kollisionierenden Quelle, oder null wenn keine gefunden.
+ */
+export async function findExistingSourceForHash(
+  db: import("@/lib/db/client").Db,
+  contentHash: string,
+  ownSourceRefId: string,
+): Promise<string | null> {
+  const rows = await db
+    .select({ id: sourceRef.id })
+    .from(sourceRef)
+    .where(
+      and(
+        eq(sourceRef.contentHash, contentHash),
+        ne(sourceRef.id, ownSourceRefId),
+        isNotNull(sourceRef.contentHash),
+      ),
+    )
+    .limit(1);
+  return rows[0]?.id ?? null;
+}
 
 export interface IngestDeps {
   db: Db;
@@ -109,6 +158,19 @@ export async function ingestSource(
   // inkonsistenter Zwischenzustand zurück (Hash gesetzt, aber kein rag_chunk,
   // nicht INGESTED) — und beim Retry ein blobKey-Mismatch.
   const contentHash = createHash("sha256").update(raw).digest("hex");
+
+  // ── (3b) Dedup-Früherkennung ────────────────────────────────────────────────
+  // Bevor Embeddings oder Qdrant-Arbeit passiert: prüfen, ob der contentHash
+  // bereits von einer ANDEREN Quelle gehalten wird. Der partielle Unique-Index
+  // (IS NOT NULL) fängt Duplikate spät als Unique-Violation beim PG-Update ab;
+  // dieser Check wandelt das in eine klare, frühe DuplicateContentError um.
+  //
+  // Spart Embedding- und Qdrant-Arbeit und liefert eine aussagekräftige Meldung
+  // (welche bestehende sourceRefId den Hash hält).
+  const existingSourceRefId = await findExistingSourceForHash(db, contentHash, sourceRefId);
+  if (existingSourceRefId !== null) {
+    throw new DuplicateContentError(contentHash, existingSourceRefId);
+  }
 
   // ── (4) Text extrahieren ────────────────────────────────────────────────────
   // MIME aus sourceRef.licenseInfo? Nein — wir leiten ihn aus der URI ab.

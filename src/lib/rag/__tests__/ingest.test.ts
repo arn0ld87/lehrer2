@@ -12,6 +12,9 @@
  *     - APPROVED, licenseVerified=true, sourceType=OFFICIAL_BINDING, synthetischer Plain-Text:
  *       FakeVectorStore-Punkte > 0; payload.trust_level === 'OFFICIAL_BINDING';
  *       rag_chunk-Rows > 0; sourceRef.lifecycleStatus === 'INGESTED'.
+ *   DEDUP (#43):
+ *     - contentHash bereits von anderer Quelle gehalten → DuplicateContentError (früh, vor Embedding).
+ *     - normale Ingestion (einziger Hash) bleibt unberührt.
  *
  * File-unique IDs: Suffix "-ingest-test-<timestamp>" auf allen title/contentHash-Werten.
  */
@@ -28,7 +31,7 @@ import { FakeBlobStore } from "@/lib/infra/minio";
 import { sourceRef } from "@/lib/db/schema/artifacts";
 import { ragChunk } from "@/lib/db/schema/rag";
 import * as schema from "@/lib/db/schema";
-import { ingestSource } from "@/lib/rag/ingest";
+import { ingestSource, DuplicateContentError } from "@/lib/rag/ingest";
 
 // ── Test-DB-Verbindung (gemeinsame DB aus globalSetup) ─────────────────────
 const client = postgres(process.env.DATABASE_URL!, { max: 1 });
@@ -329,6 +332,146 @@ describe("ingestSource — Kompensation gezielt (#41)", () => {
       const ids = remaining.map((p) => p.id);
       expect(ids).toContain("residual-old-run"); // breite Löschung hätte ihn entfernt
       expect(remaining).toHaveLength(1); // nur der Rest-Punkt, keine neuen Punkte
+    },
+  );
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// #43 — Dedup-Früherkennung: DuplicateContentError vor Embedding-Arbeit
+// ─────────────────────────────────────────────────────────────────────────────
+describe("ingestSource — Dedup-Früherkennung (#43)", () => {
+  // ── Negativ-Test: contentHash bereits von anderer Quelle belegt ────────────
+  it(
+    "wirft DuplicateContentError, wenn contentHash von einer anderen Quelle bereits gehalten wird; FakeVectorStore bleibt leer",
+    async () => {
+      const store = new FakeVectorStore();
+      const embedder = new FakeEmbedder(8);
+
+      const DEDUP_TEXT =
+        "Dedup-Testdokument Sachsen-Anhalt Lehrplan Dedup-Früherkennung-#43: " +
+        "Dieser synthetische Text ist ausreichend lang, um gechunkt zu werden. " +
+        "Er dient ausschließlich der Verifikation des Dedup-Checks in ingestSource. " +
+        "Kein Schüler-PII, keine curriculare Verbindlichkeit. Pflichtlänge erfüllt.";
+
+      const deduplicateHash = createHash("sha256")
+        .update(new TextEncoder().encode(DEDUP_TEXT))
+        .digest("hex");
+
+      // Erste Quelle: bereits INGESTED mit gesetztem contentHash (simuliert abgeschlossene Ingestion)
+      const [existingSource] = await db
+        .insert(sourceRef)
+        .values({
+          title: `Dedup-Existing-${TS}`,
+          sourceType: "OFFICIAL_BINDING",
+          licenseVerified: true,
+          lifecycleStatus: "INGESTED",
+          contentHash: deduplicateHash,
+          subjectAlignment: "DEUTSCH",
+          confessionContext: "NICHT_ANWENDBAR",
+          uri: `file://dedup-existing-${TS}.txt`,
+        })
+        .returning();
+
+      // Zweite Quelle: APPROVED, wartet auf Ingestion — identischer Inhalt
+      const [duplicateSource] = await db
+        .insert(sourceRef)
+        .values({
+          title: `Dedup-Duplicate-${TS}`,
+          sourceType: "OFFICIAL_BINDING",
+          licenseVerified: true,
+          lifecycleStatus: "APPROVED",
+          subjectAlignment: "DEUTSCH",
+          confessionContext: "NICHT_ANWENDBAR",
+          uri: `file://dedup-duplicate-${TS}.txt`,
+        })
+        .returning();
+
+      // Blob mit identischem Inhalt → gleicher contentHash
+      const blob = new FakeBlobStore();
+      await blob.putObject(
+        `sources/${duplicateSource.id}/v1`,
+        new TextEncoder().encode(DEDUP_TEXT),
+        "text/plain",
+      );
+
+      const deps = { db, store, blob, embedder };
+
+      // ── Act: muss DuplicateContentError werfen ────────────────────────────
+      const err = await ingestSource(deps, duplicateSource.id).catch((e) => e);
+
+      expect(err).toBeInstanceOf(DuplicateContentError);
+      expect((err as DuplicateContentError).existingSourceRefId).toBe(existingSource.id);
+      expect((err as DuplicateContentError).contentHash).toBe(deduplicateHash);
+      expect(err.message).toMatch(/DuplicateContentError/);
+      expect(err.message).toMatch(existingSource.id);
+
+      // ── Assert: kein Qdrant-Punkt, kein rag_chunk für die Duplikat-Quelle ─
+      const points = await store.search([], {}, 1000);
+      expect(points).toHaveLength(0);
+
+      const chunks = await db
+        .select()
+        .from(ragChunk)
+        .where(eq(ragChunk.sourceRefId, duplicateSource.id));
+      expect(chunks).toHaveLength(0);
+
+      // lifecycleStatus bleibt APPROVED (nicht INGESTED)
+      const [stillApproved] = await db
+        .select()
+        .from(sourceRef)
+        .where(eq(sourceRef.id, duplicateSource.id));
+      expect(stillApproved.lifecycleStatus).toBe("APPROVED");
+    },
+  );
+
+  // ── Positiv-Test: einzigartiger contentHash → normale Ingestion ────────────
+  it(
+    "ingestiert erfolgreich, wenn kein anderer Datensatz denselben contentHash hält (kein Duplikat)",
+    async () => {
+      const store = new FakeVectorStore();
+      const embedder = new FakeEmbedder(8);
+
+      // Einzigartiger Text durch Timestamp — kein anderer Datensatz kann diesen Hash kennen
+      const UNIQUE_TEXT =
+        `Einzigartiger Dedup-Test-Text ${TS}-${Math.random()}: ` +
+        "Lehrplan Sachsen-Anhalt Deutsch Sekundarstufe — synthetisch, kein Schüler-PII. " +
+        "Dieser Text ist mit hoher Wahrscheinlichkeit einmalig in der Testdatenbank und " +
+        "dient der Verifikation, dass normale Ingestionen durch den Dedup-Check nicht blockiert werden. " +
+        "Pflichtlänge erfüllt.";
+
+      const [source] = await db
+        .insert(sourceRef)
+        .values({
+          title: `Dedup-Unique-${TS}`,
+          sourceType: "OFFICIAL_BINDING",
+          licenseVerified: true,
+          lifecycleStatus: "APPROVED",
+          subjectAlignment: "DEUTSCH",
+          confessionContext: "NICHT_ANWENDBAR",
+          uri: `file://dedup-unique-${TS}.txt`,
+        })
+        .returning();
+
+      const blob = new FakeBlobStore();
+      await blob.putObject(
+        `sources/${source.id}/v1`,
+        new TextEncoder().encode(UNIQUE_TEXT),
+        "text/plain",
+      );
+
+      const deps = { db, store, blob, embedder };
+
+      // ── Act: normale Ingestion muss durchlaufen ───────────────────────────
+      const result = await ingestSource(deps, source.id);
+
+      expect(result.chunkCount).toBeGreaterThan(0);
+
+      // lifecycleStatus muss INGESTED sein
+      const [ingested] = await db
+        .select()
+        .from(sourceRef)
+        .where(eq(sourceRef.id, source.id));
+      expect(ingested.lifecycleStatus).toBe("INGESTED");
     },
   );
 });
