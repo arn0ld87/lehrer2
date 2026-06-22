@@ -2,6 +2,8 @@
 
 Konzeptionelles Datenmodell für die Unterrichtsassistenz-Plattform. Beschreibt Entitäten, Relationen, Datenklassen und Invarianten. Implementiert wird das Modell in TypeScript/Drizzle ORM (siehe [ADR-0005](../adr/0005-orm-drizzle.md)).
 
+> **Implementierungsstatus (Stand 2026-06-22):** M1 Schritt 2 (Branch `m1/data-model-export`) implementiert die Entitäten der Datenklassen `PUBLIC` und `INTERNAL` — Auth/Tenant, Curriculum, Unterrichtsplan, Arbeitsblatt, Bewertungsraster/Erwartungshorizont, Provenienz/Audit sowie die Export-Architektur (DOCX/PDF). Die `SENSITIVE_STUDENT`-Entitäten (`StudentSubmission`, `CorrectionDraft`, `pseudonym_mappings`) sind **konzeptionell hier beschrieben, aber bewusst nicht in M1 implementiert** — sie folgen in **M3** (Korrekturassistenz), sobald Pseudonymisierung, Redaction und DSFA-Vorbehalt vollständig ausgearbeitet sind (ADR 0004, ADR 0009).
+
 ## Kontrollierte Vokabulare (Enums)
 
 ### SchoolForm
@@ -457,6 +459,11 @@ Verweis auf RAG-Quelle (Lehrplan, Handreichung, OER, etc.).
 
 - Jede Generierung wird in `GenerationProvenance` erfasst (Modell, Provider, Redaction-Flag, Quellen).
 - Soft-Delete (`deleted_at IS NOT NULL`) behält Daten für Audit / Compliance.
+
+### UI-Subsumption und RAG-Retrieval-Hinweis (M1→M2)
+
+- `KONFESSIONSSENSIBEL_UEBERGREIFEND` wird in der UI-`Subject`-Union (die keinen dritten Konfessionsstrang kennt) unter `evangelische-religion` dargestellt (siehe `src/lib/db/repositories/mapping.ts`). RAG-Retrieval-Queries müssen daher `confession_context IN ('EVANGELISCH','KONFESSIONSSENSIBEL_UEBERGREIFEND')` verwenden, nie Gleichheit.
+- Die Join-Tabelle `task_source_ref` (Task ↔ SourceRef) ist eine bewusste Erweiterung gegenüber dem ursprünglichen DATA_MODEL (Quellennachweis direkt auf Aufgabenebene); sie ist additiv und mit FK + UNIQUE abgesichert.
 
 ## Erweiterungen (nicht im MVP)
 

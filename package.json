@@ -2,20 +2,54 @@
   "name": "unterrichtsassistenz-lsa",
   "version": "0.0.0",
   "private": true,
-  "description": "Unterrichtsassistenz LSA — Fundament/Planung (noch keine Anwendung). Nur Doku, Governance, CI-Geruest.",
+  "description": "Unterrichtsassistenz LSA — datenschutzsensibler, quellengebundener KI-Assistent fuer Lehrkraefte in Sachsen-Anhalt.",
   "type": "module",
   "packageManager": "pnpm@10.28.2",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "verify:docs": "bash scripts/verify-docs.sh",
     "format": "prettier --write \"**/*.{md,yml,yaml,json}\"",
-    "format:check": "prettier --check \"**/*.{md,yml,yaml,json}\""
+    "format:check": "prettier --check \"**/*.{md,yml,yaml,json}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:check": "drizzle-kit check"
   },
   "engines": {
     "node": ">=20",
     "pnpm": ">=10"
   },
+  "dependencies": {
+    "better-auth": "^1.0.0",
+    "docx": "^9.7.0",
+    "drizzle-orm": "^0.45.0",
+    "lucide-react": "^1.21.0",
+    "next": "16.2.9",
+    "pdfkit": "^0.16.0",
+    "postgres": "^3.4.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@testcontainers/postgresql": "^10.14.0",
+    "@types/node": "^20",
+    "@types/pdfkit": "^0.12.11",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.0",
+    "dotenv": "^16.4.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
     "js-yaml": "^4.1.0",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^2.1.0"
   }
 }

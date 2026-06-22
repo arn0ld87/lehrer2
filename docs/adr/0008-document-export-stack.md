@@ -2,9 +2,8 @@
 
 ## Status
 
-**Vorgeschlagen (Proposed), 2026-06-22** — finale Annahme durch Maintainer im PR-Review ausstehend.
-
-> CLAUDE.md/AGENTS.md schreiben vor, dass der Export-Stack nicht ad hoc, sondern per ADR entschieden wird. Dieses ADR legt eine begründete Empfehlung vor.
+**Akzeptiert, 2026-06-22** — vom Maintainer im Review angenommen.
+0008: docx (DOCX) + pdfkit (PDF) hinter Format-Abstraktion; nur MIT-Abhängigkeiten.
 
 ## Kontext
 

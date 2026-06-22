@@ -24,3 +24,5 @@ Thumbs.db
 # Lokale Daten / Uploads — niemals Schuelerdaten committen
 /data/uploads/
 /data/local/
+tsconfig.tsbuildinfo
+.pi/

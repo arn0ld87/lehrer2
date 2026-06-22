@@ -2,9 +2,8 @@
 
 ## Status
 
-**Vorgeschlagen (Proposed), 2026-06-22** — finale Annahme durch Maintainer im PR-Review ausstehend.
-
-> CLAUDE.md/AGENTS.md schreiben vor, dass die Auth-Lösung nicht ad hoc, sondern per ADR entschieden wird. Dieses ADR legt eine begründete Empfehlung vor; der Status wechselt mit der Maintainer-Zustimmung auf „Akzeptiert".
+**Akzeptiert, 2026-06-22** — vom Maintainer im Review angenommen.
+0007: Better Auth, single-tenant MVP (org-ready vorbereitet, Mandantentrennung später, Zitadel als Migrationspfad).
 
 ## Kontext
 
