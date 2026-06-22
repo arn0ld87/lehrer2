@@ -4,18 +4,19 @@ Dieses Dokument spezifiziert die Zugriffssteuerung, die Isolation von Mandanten 
 
 ## 1. Rollenmodell (RBAC)
 
-Das Rollenmodell folgt dem Prinzip des *Least Privilege*. Berechtigungen werden auf Basis der funktionalen Notwendigkeit vergeben.
+Das Rollenmodell folgt dem Prinzip des _Least Privilege_. Berechtigungen werden auf Basis der funktionalen Notwendigkeit vergeben.
 
-| Rolle | Beschreibung | Kernkompetenzen / Berechtigungen |
-| :--- | :--- | :--- |
-| **Lehrkraft** (`TEACHER`) | Standard-Nutzer des Systems. | Erstellen/Verwalten eigener Unterrichtsmaterialien; Zugriff auf eigene Klassen; Durchführung von Korrekturen (pseudonymisiert). |
-| **Fachkonferenz** (`DEPARTMENT_HEAD`) | Fachspezifische Aufsicht (spätere Ausbaustufe). | Freigabe von schulinternen Material-Pools; Einsicht in aggregierte Fachstatistiken; Erteilung von `CurriculumRelease`. |
-| **Schuladmin** (`SCHOOL_ADMIN`) | Administrative Leitung der Einzelschule. | Benutzerverwaltung der Schule; Erteilung von `CloudReleaseGrant` (nach rechtlicher Prüfung); Einsicht in Audit-Logs der Schule. |
-| **Admin** (`SYS_ADMIN`) | Systemadministrator (Technischer Betrieb). | Systemkonfiguration; Wartung; Backup-Management; Globales Monitoring. Kein Zugriff auf pädagogische Inhalte oder Schülerdaten ohne explizites Audit. |
+| Rolle                                 | Beschreibung                                    | Kernkompetenzen / Berechtigungen                                                                                                                     |
+| :------------------------------------ | :---------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lehrkraft** (`TEACHER`)             | Standard-Nutzer des Systems.                    | Erstellen/Verwalten eigener Unterrichtsmaterialien; Zugriff auf eigene Klassen; Durchführung von Korrekturen (pseudonymisiert).                      |
+| **Fachkonferenz** (`DEPARTMENT_HEAD`) | Fachspezifische Aufsicht (spätere Ausbaustufe). | Freigabe von schulinternen Material-Pools; Einsicht in aggregierte Fachstatistiken; Erteilung von `CurriculumRelease`.                               |
+| **Schuladmin** (`SCHOOL_ADMIN`)       | Administrative Leitung der Einzelschule.        | Benutzerverwaltung der Schule; Erteilung von `CloudReleaseGrant` (nach rechtlicher Prüfung); Einsicht in Audit-Logs der Schule.                      |
+| **Admin** (`SYS_ADMIN`)               | Systemadministrator (Technischer Betrieb).      | Systemkonfiguration; Wartung; Backup-Management; Globales Monitoring. Kein Zugriff auf pädagogische Inhalte oder Schülerdaten ohne explizites Audit. |
 
 ### Übergangsregel (MVP)
 
 Im MVP existieren produktiv nur die Rollen `TEACHER` und `SYS_ADMIN`.
+
 - Fachspezifische Freigaben (`DEPARTMENT_HEAD`) sind im MVP nicht aktiv (Default: nur eigene Materialien).
 - Die Rolle `SYS_ADMIN` übernimmt notwendige technische Konfigurationen, erhält aber **keine** unbegrenzte Override-Macht über pädagogische Freigaben oder Cloud-LLM-Grants.
 - `CloudReleaseGrant` bleibt deaktiviert, solange die Rollen `DEPARTMENT_HEAD` und `SCHOOL_ADMIN` nicht implementiert sind (siehe ADR 0002/0004 und [OPEN_QUESTIONS](../decisions/OPEN_QUESTIONS.md)).
@@ -50,17 +51,18 @@ Das Audit Log dient der Nachvollziehbarkeit sicherheitskritischer Aktionen und d
 
 ### Geloggte Ereignisse
 
-| Kategorie | Ereignistypen |
-| :--- | :--- |
-| **Authentifizierung** | Login, Logout, Fehlgeschlagene Anmeldeversuche, Passwortänderungen. |
-| **Autorisierung** | Rollenänderungen, Vergabe von Berechtigungen, Ablehnung von Zugriffen. |
-| **Datenzugriff** | Zugriff auf `SENSITIVE_STUDENT` Daten, Exporte von Klassenlisten, Löschvorgänge. |
-| **KI-Aktionen** | LLM-Calls (mit Metadaten: Modell, Provider, Redaction-Status), Erteilung von `CloudReleaseGrant`. |
-| **System** | Konfigurationsänderungen, Backup-Status, kritische Fehler. |
+| Kategorie             | Ereignistypen                                                                                     |
+| :-------------------- | :------------------------------------------------------------------------------------------------ |
+| **Authentifizierung** | Login, Logout, Fehlgeschlagene Anmeldeversuche, Passwortänderungen.                               |
+| **Autorisierung**     | Rollenänderungen, Vergabe von Berechtigungen, Ablehnung von Zugriffen.                            |
+| **Datenzugriff**      | Zugriff auf `SENSITIVE_STUDENT` Daten, Exporte von Klassenlisten, Löschvorgänge.                  |
+| **KI-Aktionen**       | LLM-Calls (mit Metadaten: Modell, Provider, Redaction-Status), Erteilung von `CloudReleaseGrant`. |
+| **System**            | Konfigurationsänderungen, Backup-Status, kritische Fehler.                                        |
 
 ### Datenstruktur
 
 Jeder Audit-Eintrag umfasst mindestens:
+
 - `timestamp`: UTC-Zeitstempel der Aktion.
 - `actor_id`: Eindeutige ID des handelnden Nutzers oder Systems.
 - `school_id`: Mandanten-Kontext, in dem die Aktion stattfand.
@@ -73,7 +75,7 @@ Jeder Audit-Eintrag umfasst mindestens:
 
 ### Aufbewahrung & Integrität
 
-- **Unveränderlichkeit:** Audit-Logs sind *append-only*. Bestehende Einträge können nicht modifiziert oder gelöscht werden.
+- **Unveränderlichkeit:** Audit-Logs sind _append-only_. Bestehende Einträge können nicht modifiziert oder gelöscht werden.
 - **Aufbewahrung:** Gemäß [RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md) (i. d. R. laufendes Schuljahr + 2 Jahre für Revisionszwecke).
 - **Zugriff:** Audit-Logs sind nur für Nutzer mit der Rolle `SCHOOL_ADMIN` (bezogen auf den eigenen Mandanten) oder `SYS_ADMIN` (technisches Monitoring) einsehbar. Jede Einsichtnahme in das Audit Log wird selbst wiederum protokolliert.
 
