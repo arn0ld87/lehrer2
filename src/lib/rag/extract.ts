@@ -6,13 +6,16 @@
  *   text/html           — Tag-Strip via Regex (keine externe Dep)
  *   application/pdf     — pdf-parse; leerer Text => OCR via ocrEngine (wenn übergeben)
  *                          oder ExtractionFailedError (Scan-PDF ohne OCR-Engine)
+ *   image/*             — OCR-only: text = ocrEngine.recognizeImage(buf)
+ *                          ohne ocrEngine → ExtractionFailedError (Bild ohne OCR-Engine)
  *
  * Niemals einen leeren String zurückgeben — wirft ExtractionFailedError.
  *
  * OCR-Fallback (minimal-invasiv, #40):
  *   Wenn `application/pdf` UND pdf-parse liefert leeren Text UND `ocrEngine` übergeben ist:
  *     text = await ocrEngine.recognizePdf(buf)
- *   Ist OCR-Ergebnis ebenfalls leer → ExtractionFailedError (fail-laut, mit URI).
+ *   Bei `image/*` ist OCR der einzige Weg: text = await ocrEngine.recognizeImage(buf).
+ *   Ist OCR-Ergebnis leer → ExtractionFailedError (fail-laut, mit URI).
  *   OHNE `ocrEngine` bleibt das bisherige Verhalten EXAKT erhalten (wirft).
  */
 
@@ -88,6 +91,21 @@ export async function extractContent(
           `PDF lieferte keinen Text — vermutlich Scan; OCR-Worker (M2.4) noetig; Maintainer-Issue anlegen (URI: ${uri})`,
         );
       }
+    }
+  } else if (mime.startsWith("image/")) {
+    // Bilddatei: OCR ist der einzige Extraktionsweg (#40)
+    if (ocrEngine) {
+      const ocrText = await ocrEngine.recognizeImage(buf);
+      if (!ocrText.trim()) {
+        throw new ExtractionFailedError(
+          `OCR-Worker: OCR lieferte leeren Text für Bild — Dokument nicht ingestierbar (URI: ${uri})`,
+        );
+      }
+      text = ocrText;
+    } else {
+      throw new ExtractionFailedError(
+        `Bild lieferte keinen Text — OCR-Worker (M2.4) noetig; ohne OCR-Engine nicht ingestierbar (URI: ${uri})`,
+      );
     }
   } else {
     throw new ExtractionFailedError(

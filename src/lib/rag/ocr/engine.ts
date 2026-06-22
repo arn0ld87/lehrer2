@@ -9,7 +9,7 @@
  *   - Steuerzeichen entfernen (kein roher JS/LaTeX-Durchschlag)
  *   - HTML-Tags bereinigen (kein XSS-Risiko durch OCR-Ausgabe)
  *   - Whitespace normalisieren
- *   - recognizePdf MUSS sanitizeOcrText aufrufen
+ *   - recognizePdf und recognizeImage MÜSSEN sanitizeOcrText aufrufen
  */
 
 /**
@@ -25,6 +25,15 @@ export interface OcrEngine {
    * @throws       Bei fehlendem Binary, leerem Ergebnis oder sonstigen Fehlern
    */
   recognizePdf(bytes: Uint8Array): Promise<string>;
+
+  /**
+   * Extrahiert Text aus einer Bilddatei (z. B. JPEG, PNG) per OCR.
+   *
+   * @param bytes  Rohdaten des Bildes
+   * @returns      Bereinigter Text (sanitizeOcrText wurde angewendet)
+   * @throws       Bei fehlendem Binary, leerem Ergebnis oder sonstigen Fehlern
+   */
+  recognizeImage(bytes: Uint8Array): Promise<string>;
 }
 
 /**
@@ -79,20 +88,28 @@ export class FakeOcrEngine implements OcrEngine {
   private throwOnEmpty: boolean;
 
   /**
-   * @param returnText   Text, den `recognizePdf` zurückgibt (nach sanitizeOcrText).
-   *                     Leerstring simuliert ein fehlgeschlagenes OCR.
-   * @param throwOnEmpty Wenn true, wirft recognizePdf bei leerem returnText.
+   * @param returnText   Text, den `recognizePdf`/`recognizeImage` zurückgibt (nach
+   *                     sanitizeOcrText). Leerstring simuliert ein fehlgeschlagenes OCR.
+   * @param throwOnEmpty Wenn true, wirft bei leerem returnText.
    */
   constructor(returnText: string, throwOnEmpty = false) {
     this.returnText = returnText;
     this.throwOnEmpty = throwOnEmpty;
   }
 
-  async recognizePdf(_bytes: Uint8Array): Promise<string> {
+  private simulate(): string {
     const sanitized = sanitizeOcrText(this.returnText);
     if (this.throwOnEmpty && !sanitized.trim()) {
       throw new Error("FakeOcrEngine: OCR-Ergebnis ist leer (simulierter Fehler)");
     }
     return sanitized;
+  }
+
+  async recognizePdf(_bytes: Uint8Array): Promise<string> {
+    return this.simulate();
+  }
+
+  async recognizeImage(_bytes: Uint8Array): Promise<string> {
+    return this.simulate();
   }
 }
