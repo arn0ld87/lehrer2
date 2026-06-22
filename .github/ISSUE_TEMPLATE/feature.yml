@@ -1,0 +1,37 @@
+name: Feature
+description: Neue Funktion oder Erweiterung vorschlagen
+title: "[Feature] "
+labels: ["type: feature"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Ziel
+      description: Was soll erreicht werden?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Kontext
+      description: Hintergrund, betroffene Nutzer, Bezug zum Lehrplan/Datenschutz
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Akzeptanzkriterien
+      description: Ueberpruefbare Checkboxen
+      value: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Nicht-Ziele
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risiken / Abhaengigkeiten

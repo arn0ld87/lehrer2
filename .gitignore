@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Env / Secrets (niemals echte Secrets committen)
+.env
+.env.*
+!.env.example
+
+# Build-Artefakte
+dist/
+build/
+.next/
+.output/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Lokale Daten / Uploads — niemals Schuelerdaten committen
+/data/uploads/
+/data/local/

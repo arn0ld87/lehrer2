@@ -2,13 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+@AGENTS.md
+
+> **`AGENTS.md` ist die kanonische Orientierungskarte** (tool-agnostisch, kompakt). Diese Datei ergänzt Claude-Code-spezifische Vertiefungen (RAG-Governance, LLM-Request-Fluss, Datenklassifizierung) und widerspricht `AGENTS.md` nicht.
+
 ## Projektstatus
 
 **Planungs- und Architekturphase. Es existiert noch kein Produktivcode.** Committet: `README.md`, `CLAUDE.md`, `PLAN.md`, ein wachsender `docs/`-Baum und ein statisches Design-Kit (`unterrichtsassistenz-lsa-design-kit/`). `data/`, `scripts/`, `.github/workflows/`, `.github/ISSUE_TEMPLATE/` existieren als leere Verzeichnisse.
 
 **`docs/` ist teilweise befüllt** — nicht mehr alle PLAN-Links sind Soll-Struktur. Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION_BOUNDARIES), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY), `docs/security/` (SECURITY, THREAT_MODEL, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY).
 
-**Stolperfalle:** Folgende von `PLAN.md` verlinkte Dokumente existieren **noch nicht** — Links sind Soll-Struktur: `docs/adr/*` (0001–0005), `docs/architecture/DATA_MODEL.md`, `docs/architecture/RAG_ARCHITECTURE.md`, `docs/rag/CITATION_STANDARD.md`, `docs/rag/SOURCE_REGISTRY.md`, `docs/decisions/OPEN_QUESTIONS.md`, `docs/operations/GITHUB_SETUP.md`. Ebenso fehlen `.env.example`, `package.json`, `LICENSE-DECISION.md`, `scripts/verify-docs.sh` (geplantes Doku-Gate, in der DoD referenziert). Vor dem Referenzieren einer Doku auf Existenz prüfen, nicht dem Link vertrauen.
+**Stolperfalle:** Folgende von `PLAN.md` verlinkte Dokumente existieren **noch nicht** — Links sind Soll-Struktur: `docs/architecture/DATA_MODEL.md`, `docs/architecture/RAG_ARCHITECTURE.md`, `docs/rag/CITATION_STANDARD.md`, `docs/rag/SOURCE_REGISTRY.md`, `docs/operations/GITHUB_SETUP.md`. Ebenso fehlen `.env.example`, `package.json`, `scripts/verify-docs.sh` (geplantes Doku-Gate, in der DoD referenziert). Vor dem Referenzieren einer Doku auf Existenz prüfen, nicht dem Link vertrauen.
+
+**Inzwischen vorhanden** (früher Soll-Struktur, jetzt real): `docs/adr/0001`–`0005`, `docs/decisions/OPEN_QUESTIONS.md`, `LICENSE-DECISION.md`.
 
 **`PLAN.md` ist Source of Truth** für Scope, Roadmap (M0–M4), Datenflüsse und offene Entscheidungen — vor Architekturarbeit lesen.
 
