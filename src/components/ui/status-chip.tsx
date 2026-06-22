@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { DraftStatus, SourceStatus, SourceTrust } from "@/lib/types";
 
-type StatusKind = DraftStatus | "active" | "waiting" | "rejected";
+type StatusKind = DraftStatus | SourceStatus;
 
 interface StatusChipProps {
   /** Entwurfs-/Freigabestatus. */
@@ -19,6 +19,7 @@ const STATUS_CLASSES: Record<StatusKind, string> = {
   review: "bg-danger-soft text-[#B54425]",
   active: "bg-success-soft text-[#0C7D61]",
   waiting: "bg-[#FFF5DF] text-[#A66100]",
+  "pending-review": "bg-danger-soft text-[#B54425]",
   rejected: "bg-danger-soft text-[#B54425]",
 };
 
@@ -44,6 +45,7 @@ const STATUS_LABEL: Record<StatusKind, string> = {
   review: "Unsicherheit",
   active: "aktiv",
   waiting: "Wartet",
+  "pending-review": "Freigabe prüfen",
   rejected: "Abgelehnt",
 };
 
