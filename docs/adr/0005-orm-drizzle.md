@@ -21,6 +21,7 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 ### (a) Prisma
 
 **Merkmale:**
+
 - Sehr reife Migrations-Infrastruktur (`prisma migrate`).
 - Exzellente DX: Prisma Studio (GUI-Datenbank-Browser), Code-Generation, intuitive Schema-Syntax.
 - Breite Verbreitung, große Community, reichlich Tutorials/StackOverflow-Antworten.
@@ -29,12 +30,14 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 - Live-Query-Validierung in VSCode via Extension.
 
 **Nachteile:**
+
 - Schwergewichtiger: `@prisma/client` + `@prisma/internals` sind umfangreich; Startup-Zeit länger.
 - SQL-Abstraktion erschwert das Nachprüfen, ob eine Löschoperation wirklich vollständig ist.
 - Migrationen sind Prisma-eigenes Format (.prisma); direkter SQL-Review nötig für Audit.
 - Vendor-Lock-in: Prisma-eigenes Konzept (z. B. Prisma Relations) schwer auf andere ORMs übertragbar.
 
 **Bewertung:**
+
 - ✅ Branchenerfahrung, Onboarding für große Teams.
 - ❌ SQL-Transparenz schwächer; Löschkonzepte weniger auditierbar.
 - ⚠️ Für Self-Hosting: annehmbar, aber nicht optimal.
@@ -42,6 +45,7 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 ### (b) Drizzle ORM (GEWÄHLT)
 
 **Merkmale:**
+
 - SQL-transparent: Queries sind reales SQL; `SELECT`, `DELETE`, `UPDATE` sind sichtbar und auditierbar.
 - TypeScript-nativ: Schema als TS-Objekte; Generator erzeugt Types aus Schema.
 - Schlank: `drizzle-orm` ist minimal; Startup schnell.
@@ -50,6 +54,7 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 - Hervorragend für Compliance-Anforderungen: SQL-Logik ist transparent.
 
 **Nachteile:**
+
 - Migrations-Tooling jünger als Prisma; weniger Best-Practices in der Wildnis.
 - Geringere Community-Größe; weniger Tutorials, kleinerer Pool an erfahrenen Entwickler:innen.
 - Keine GUI-Tools wie Prisma Studio (Workaround: psql direkt oder pgAdmin).
@@ -57,6 +62,7 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 - Dokumentation teilweise terse (verbessert sich aktiv).
 
 **Bewertung:**
+
 - ✅ SQL-Transparenz; schlanke Infrastruktur; auditierbare Löschkonzepte.
 - ✅ Self-Hosting-freundlich.
 - ❌ Geringere Reife bei Migrationen; kleinere Community.
@@ -64,17 +70,17 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 
 ### Vergleichstabelle
 
-| Kriterium | Prisma | Drizzle |
-|---|---|---|
-| SQL-Transparenz | Mittel | Hoch |
-| Migrations-Reife | Hoch | Mittel |
-| Community-Größe | Groß | Klein-Mittel |
-| Startup-Zeit | ~1s | ~100ms |
-| Self-Hosting-freundlich | Ja | Ja (besser) |
-| Type Safety | Hoch | Hoch |
-| DX: Onboarding | Hoch | Mittel |
-| Audit-Compliance | Mittel | Hoch |
-| Kostenmodell | Open Source | Open Source |
+| Kriterium               | Prisma      | Drizzle      |
+| ----------------------- | ----------- | ------------ |
+| SQL-Transparenz         | Mittel      | Hoch         |
+| Migrations-Reife        | Hoch        | Mittel       |
+| Community-Größe         | Groß        | Klein-Mittel |
+| Startup-Zeit            | ~1s         | ~100ms       |
+| Self-Hosting-freundlich | Ja          | Ja (besser)  |
+| Type Safety             | Hoch        | Hoch         |
+| DX: Onboarding          | Hoch        | Mittel       |
+| Audit-Compliance        | Mittel      | Hoch         |
+| Kostenmodell            | Open Source | Open Source  |
 
 ## Entscheidung
 
@@ -93,6 +99,7 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 ### Wichtigste Gegenstimme (Dokumentiert)
 
 **Prisma hätte Vorteil bei:**
+
 - **Migrations-Reife**: Prisma `migrate` ist battle-tested; Drizzle-Migrationen sind noch aktiv in Entwicklung.
 - **Onboarding**: Neue Entwickler:innen haben eher Prisma-Erfahrung; Einarbeitung ist schneller.
 - **Ökosystem**: Mehr Third-Party-Tools, Middleware, Community-Patterns.
@@ -130,11 +137,11 @@ Die beiden Hauptkandidaten sind **Prisma** und **Drizzle**:
 
 ### Restrisiken
 
-- **Migrations-Tooling-Fehler**: Drizzle-CLI könnte Bugs enthalten, die Migrationen beschädigen. 
+- **Migrations-Tooling-Fehler**: Drizzle-CLI könnte Bugs enthalten, die Migrationen beschädigen.
   - **Kontrolle**: Staging-Environment vor Production; Backup vor Migration; Rollback-Strategie klar dokumentiert.
-- **Type-Inferenz-Probleme**: Komplexe JOINs können Type-Checker überfordern. 
+- **Type-Inferenz-Probleme**: Komplexe JOINs können Type-Checker überfordern.
   - **Kontrolle**: Defensive Type-Assertions mit `as` (dokumentiert); Tests stärken Vertrauen.
-- **Langfristige Wartbarkeit**: Sollte Drizzle-Projekt stagnieren, ist Umstieg teuer. 
+- **Langfristige Wartbarkeit**: Sollte Drizzle-Projekt stagnieren, ist Umstieg teuer.
   - **Kontrolle**: Drizzle ist aktiv entwickelt (GitHub-Activity, Release-Zyklus prüfen); SQL-Layer ist robust auch bei Unmaintainability.
 
 ## Verweise

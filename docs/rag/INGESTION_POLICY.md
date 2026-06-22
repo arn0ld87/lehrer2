@@ -64,22 +64,22 @@ Bevor ein Dokument aus dem Status `REGISTERED` in `APPROVED` überführt wird, m
 
 Für jedes Dokument werden vor der Extraktion folgende Felder erfasst:
 
-| Feld | Typ | Pflicht | Notizen |
-|---|---|---|---|
-| `source_id` | UUID | ja | eindeutig pro Originalquelle |
-| `source_url` | URL | ja | Persistente URL oder Archiv-URL |
-| `title` | string | ja | Dokumententitel |
-| `subject` | string | ja | Fachbereich: Deutsch, Religion, Übergreifend |
-| `confession_context` | enum | nein | evangelisch / katholisch / übergreifend / ethik (nur bei Religion) |
-| `version` | string | ja | z. B. "2024-01", "Lehrplan 2021, rev. 3" |
-| `license` | string | ja | Lizenztyp, z. B. "CC-BY-SA-4.0", "Amtlich" |
-| `license_verified` | bool | ja | `true` nur nach Freigabe-Gate |
-| `trust_level` | enum | ja | OFFICIAL_BINDING / OFFICIAL_GUIDANCE / OPEN_CURATED / USER_APPROVED / UNVERIFIED |
-| `valid_from` | date | ja | Gültig ab (z. B. Schuljahr 2024/2025) |
-| `valid_to` | date | nein | Gültig bis; leer = unbegrenzt |
-| `retrieved_at` | timestamp | ja | Abrufdatum des Dokuments |
-| `content_hash` | string | ja | SHA-256 des Rohdokuments |
-| `approval_metadata` | object | ja | Details des Freigabe-Gates (Reviewer, Datum, Anmerkungen) |
+| Feld                 | Typ       | Pflicht | Notizen                                                                          |
+| -------------------- | --------- | ------- | -------------------------------------------------------------------------------- |
+| `source_id`          | UUID      | ja      | eindeutig pro Originalquelle                                                     |
+| `source_url`         | URL       | ja      | Persistente URL oder Archiv-URL                                                  |
+| `title`              | string    | ja      | Dokumententitel                                                                  |
+| `subject`            | string    | ja      | Fachbereich: Deutsch, Religion, Übergreifend                                     |
+| `confession_context` | enum      | nein    | evangelisch / katholisch / übergreifend / ethik (nur bei Religion)               |
+| `version`            | string    | ja      | z. B. "2024-01", "Lehrplan 2021, rev. 3"                                         |
+| `license`            | string    | ja      | Lizenztyp, z. B. "CC-BY-SA-4.0", "Amtlich"                                       |
+| `license_verified`   | bool      | ja      | `true` nur nach Freigabe-Gate                                                    |
+| `trust_level`        | enum      | ja      | OFFICIAL_BINDING / OFFICIAL_GUIDANCE / OPEN_CURATED / USER_APPROVED / UNVERIFIED |
+| `valid_from`         | date      | ja      | Gültig ab (z. B. Schuljahr 2024/2025)                                            |
+| `valid_to`           | date      | nein    | Gültig bis; leer = unbegrenzt                                                    |
+| `retrieved_at`       | timestamp | ja      | Abrufdatum des Dokuments                                                         |
+| `content_hash`       | string    | ja      | SHA-256 des Rohdokuments                                                         |
+| `approval_metadata`  | object    | ja      | Details des Freigabe-Gates (Reviewer, Datum, Anmerkungen)                        |
 
 ### 3. Extraktion und OCR
 
@@ -119,16 +119,19 @@ Für jedes Dokument werden vor der Extraktion folgende Felder erfasst:
 Das System implementiert **zwei Filterschichten**, um zu verhindern, dass ungeprüfte Daten in die Antworten gelangen:
 
 ### Layer 1: Ingestierungs-Gate
+
 - Nur Status `APPROVED` und `license_verified=true` dürfen ingestiert werden
 - `UNVERIFIED`-Dokumente werden explizit blockiert (Code: Prüfung im Ingestierungs-Job)
 - Kein Fallback auf "später überprüfen" — entweder Freigabe jetzt, oder nicht ingestieren
 
 ### Layer 2: Query-Filter (serverseitig)
+
 - Bei jeder Suche in Qdrant wird der Metadaten-Filter auf `trust_level != UNVERIFIED` gesetzt
 - Falls trotz Layer 1 ein UNVERIFIED-Chunk in der Collection landet (z. B. durch manuelle DB-Bearbeitung): wird von der Query ausgeschlossen
 - **Logging**: Jeder gefilterte Zugriff wird protokolliert (für Audit)
 
 ### Auswirkung auf Benutzer-Eingaben (USER_APPROVED)
+
 - USER_APPROVED-Dokumente (z. B. von einer Lehrkraft hochgeladene Materialien) dürfen ingestiert werden, müssen aber deutlich gekennzeichnet sein
   - Im Response: `"source": "user-approved, Lehrkraft XYZ, 2026-01-15"`
   - UI-Warnung: "Dieses Material wurde von der Schulgemeinschaft eingereicht und von Fachleuten noch nicht überprüft"
@@ -160,14 +163,14 @@ Wenn eine aktualisierte Version eines existierenden Dokuments erscheint (z. B. n
 
 ## Fehlerbehandlung und Maintainer-Eskalation
 
-| Fehler | Behandlung |
-|---|---|
-| **Fehlende Lizenz-Info** | Ingestierung stoppen, GitHub-Issue `triage:licensing` öffnen |
-| **OCR-Fehler > 5%** | Ingestierung stoppen, Issue `triage:ocr` öffnen, Manual Review anfordern |
-| **Konflikt: zwei aktive Versionen** | Beide sperren, Issue `triage:versioning` öffnen, Maintainer entscheidet |
-| **Unerreichbare Quelle** | Issue `triage:source-unavailable` öffnen, nicht automatisch entfernen |
-| **Ungültige Konfessions-Zuordnung** | Ingestierung stoppen, Issue `triage:confessional-context` öffnen |
-| **Großfehler in Chunk-Extraktion** | Transaction rollback, Chunk-Preview für Maintainer zur Validierung |
+| Fehler                              | Behandlung                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| **Fehlende Lizenz-Info**            | Ingestierung stoppen, GitHub-Issue `triage:licensing` öffnen             |
+| **OCR-Fehler > 5%**                 | Ingestierung stoppen, Issue `triage:ocr` öffnen, Manual Review anfordern |
+| **Konflikt: zwei aktive Versionen** | Beide sperren, Issue `triage:versioning` öffnen, Maintainer entscheidet  |
+| **Unerreichbare Quelle**            | Issue `triage:source-unavailable` öffnen, nicht automatisch entfernen    |
+| **Ungültige Konfessions-Zuordnung** | Ingestierung stoppen, Issue `triage:confessional-context` öffnen         |
+| **Großfehler in Chunk-Extraktion**  | Transaction rollback, Chunk-Preview für Maintainer zur Validierung       |
 
 **Prinzip**: Im Zweifelsfall stoppen und eskalieren. Keine automatischen Umgehungen, keine Annahmen. Die Fachkompetenz (Lehrplan, Konfessionssensibilität) ist zu kostbar für Heuristiken.
 

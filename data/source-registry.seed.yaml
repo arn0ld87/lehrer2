@@ -1,0 +1,388 @@
+# Quellen-Kandidatenregistry (Seed) — Unterrichtsassistenz LSA
+#
+# Status: KANDIDATENLISTE. Keine dieser Quellen ist geprüft/in ingestiert.
+# Alle Einträge haben status: candidate, license_verified: false, content_hash: null.
+# Erst nach Freigabe (Source-Governance, ADR 0003) wird status auf registered/approved/ingested gesetzt.
+#
+# Alle URLs wurden am 2026-06-22 abgerufen (web_search/web_fetch). Nur offizielle
+# Domains (bildung-lsa.de, lisa.sachsen-anhalt.de, mb.sachsen-anhalt.de,
+# datenschutz.sachsen-anhalt.de, landesschulamt.sachsen-anhalt.de, landtag.sachsen-anhalt.de,
+# kmk.org via verlinkte GVBl-Quellen). Keine geschützten Verlagsmaterialien, kein Scraping.
+#
+# Schema:
+#   id, title, publisher, official_url, source_type, trust_level, subject,
+#   school_form, grade_range, version_or_date, license_or_terms,
+#   license_verified (immer false), retrieved_at, content_hash (immer null),
+#   status (immer candidate), notes
+#
+# Widersprüchliche/mehrere Lehrplanfassungen werden NICHT geraten — in notes markiert,
+# Maintainer-Issue zur Klärung vormerken (zusätzlich zu Issue #6).
+
+sources:
+  - id: src-001
+    title: "Fachlehrplan Sekundarschule — Deutsch"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt (über LISA/Bildungsserver)"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/Endfassungen/lp_sks_deutsch.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "DEUTSCH"
+    school_form: "SEKUNDARSCHULE"
+    grade_range: "5-10"
+    version_or_date: "In Kraft seit 2012, Anpassung 2019 (Stand 01.08.2019)"
+    license_or_terms: "Herausgeber Ministerium für Bildung LSA; Nutzung für schulische Zwecke; Lizenz nicht explizit ausgewiesen"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "PDF-Endfassung. Gemäß RdErl ab 2025/26 (src-009) gelten für Sekundarschule weiterhin Lehrpläne in aktualisierter Fassung (1.8.2019). Widersprüche zu neueren Erprobungsfassungen möglich — bei Ingestion Versionsstand verifizieren."
+
+  - id: src-002
+    title: "Fachlehrplan Grundschule — Deutsch"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/7c5f6ff122fa27b7eb9822ab54ee6396/lp_gs_deutsch_01_08_2019.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "DEUTSCH"
+    school_form: "GRUNDSCHULE"
+    grade_range: "1-4"
+    version_or_date: "In Kraft seit 2007, Anpassung 2019 (Stand 01.08.2019)"
+    license_or_terms: "Herausgeber Ministerium für Bildung LSA; schulische Nutzung; Lizenz nicht explizit ausgewiesen"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Grundschule (Klassen 1-4) — nicht unmittelbar MVP (MVP Klassen 5-12), aber als Vorwissen-/Anschlussreferenz relevant."
+
+  - id: src-003
+    title: "Fachlehrplan Grundschule — Evangelischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/7c5f6ff122fa27b7eb9822ab54ee6396/lp_gs_evrel_01_08_2019.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_EV"
+    school_form: "GRUNDSCHULE"
+    grade_range: "1-4"
+    version_or_date: "In Kraft seit 2007, Anpassung 2019 (Stand 01.08.2019)"
+    license_or_terms: "Herausgeber Ministerium für Bildung LSA; in Übereinstimmung mit Grundsätzen der Ev. Kirche; Lizenz nicht explizit ausgewiesen"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Grundschule — Referenz für Übergang Kl. 4→5. Konfessionelle Trennung ev./kath. beachten (ADR 0004 / Curriculummodell)."
+
+  - id: src-004
+    title: "Rahmenrichtlinien Gymnasium — Evangelischer Religionsunterricht (Schuljahrgänge 5–12)"
+    publisher: "Kultusministerium des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/evrelgyma.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_EV"
+    school_form: "GYMNASIUM"
+    grade_range: "5-12"
+    version_or_date: "Rahmenrichtlinien 1999, angepasste Fassung 2003 (Achtes Gesetz zur Änderung des Schulgesetzes)"
+    license_or_terms: "Herausgeber Kultusministerium LSA; in Übereinstimmung mit Grundsätzen der Ev. Kirche; Lizenz nicht explizit ausgewiesen"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "MVP-relevant (Religion ev. Kl. 5-12). Fassung von 2003 — gemäß RdErl src-009 ist für Gymnasium ab 1.8.2022 neue Lehrplanfassung in Kraft (Anlage 4). Neuere Fachlehrplan-Fassung sollte verifiziert werden; Widerspruch wird NICHT geraten — Maintainer-Issue vormerken."
+
+  - id: src-005
+    title: "RdErl. — Lehrpläne, Rahmenrichtlinien, Curricula … ab Schuljahr 2025/2026"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://mb.sachsen-anhalt.de/fileadmin/Bibliothek/Landesjournal/Bildung_und_Wissenschaft/Erlasse/Lehrpl%C3%A4ne__Rahmenrichtlinien_f%C3%BCr_den_Unterricht_der_allgemeinbildenden_und_berufsbildenden_Schulen_ab_2025_2026.pdf"
+    source_type: "legal"
+    trust_level: "official"
+    subject: "META"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "RdErl. des MB vom 18. Juli 2025 – 31-82160/82170 (inkraft 1.8.2025)"
+    license_or_terms: "Landesportal Sachsen-Anhalt; Haftungsausschluss: rechtsverbindlich nur GVBl./SVBl. LSA"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Verbindliche Übersicht aller Lehrpläne/Rahmenrichtlinien ab Schuljahr 2025/26 (Anlagen 1–14). Zentrale Referenz für Versionsstände und Bezugsquellen. Für Ingestion: Anlagen nach Schulform auflösen."
+
+  - id: src-006
+    title: "LISA — Anhörungsverfahren/Erprobung (Lehrplan-Übersicht)"
+    publisher: "Landesinstitut für Schulqualität und Lehrerbildung Sachsen-Anhalt (LISA)"
+    official_url: "https://lisa.sachsen-anhalt.de/schulqualitaet/lehrplaene-rahmenrichtlinien/anhoerungsverfahren-erprobung"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "META"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Stand 2026 (laufend aktualisierte Übersicht)"
+    license_or_terms: "Landesportal Sachsen-Anhalt"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Übersicht der sich im Anhörungs-/Erprobungsverfahren befindenden Lehrpläne. Wichtig für Versionskonflikte (z. B. Fachoberschule Ethikunterricht, Berufsschule Ev. Religionsunterricht bis Juli 2026)."
+
+  - id: src-007
+    title: "LISA — Fachbereich Schul- und Unterrichtsentwicklung"
+    publisher: "Landesinstitut für Schulqualität und Lehrerbildung Sachsen-Anhalt (LISA)"
+    official_url: "https://lisa.sachsen-anhalt.de/institut/organisation/fb-schul-und-unterrichtsentwicklung"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "META"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Stand 2026"
+    license_or_terms: "Landesportal Sachsen-Anhalt"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Beschreibt Aufgaben des FB 2 (Lehrplanentwicklung, KMK-Bildungsstandards-Integration, zentrale Leistungserhebungen). Kontextquelle, nicht primär RAG-relevant."
+
+  - id: src-008
+    title: "Planungsbeispiel — Religion in der offenen Gesellschaft Sachsen-Anhalts (Schuljahrgänge 5–10)"
+    publisher: "LISA (bildung-lsa.de)"
+    official_url: "https://www.bildung-lsa.de/files/9416c87542aa9f9c8a5b62d195f5755a/PB_RU_5_10_Religion.pdf"
+    source_type: "guidance"
+    trust_level: "official"
+    subject: "RELIGION_EV"
+    school_form: "SEKUNDARSCHULE"
+    grade_range: "5-10"
+    version_or_date: "LISA Planungsbeispiel (Jahres-/Einstiegsthemen 5–10)"
+    license_or_terms: "Herausgeber LISA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Didaktische Konkretisierung des Ev. RU für Kl. 5–10. Hilfreich für Aufgaben-/Stundenthemen-Generierung. Konfessionsspezifisch ev. — kath. Pendant verifizieren."
+
+  - id: src-009
+    title: "Flyer — Drei Schulfächer für große Fragen (Ethik/Religion ev./kath.)"
+    publisher: "LISA (bildung-lsa.de)"
+    official_url: "https://www.bildung-lsa.de/files/ed380f5cdc850bd235815600fd99a2b4/Flyer_Ethik_Religion_6s_DRUCK.pdf"
+    source_type: "guidance"
+    trust_level: "official"
+    subject: "ETHIK"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "LISA 2022"
+    license_or_terms: "Herausgeber LISA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Fachauswahl-Information Eltern (Ethik vs. ev. vs. kath. Religion). Konfessionstrennung + Wahlpflicht bestätigt — relevant für Curriculummodell (ADR 0004)."
+
+  - id: src-010
+    title: "Fachlehrplan Gymnasium — Wirtschaftslehre"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt (LISA)"
+    official_url: "https://lisa.sachsen-anhalt.de/fileadmin/Bibliothek/Politik_und_Verwaltung/MK/LISA/Unterricht/Lehrplaene/Gym/FLP_Wirtschaftslehre_010824_LTd.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "WIRTSCHAFT"
+    school_form: "GYMNASIUM"
+    grade_range: "9-12"
+    version_or_date: "In Kraft seit 2017, Anpassung 2024 (Stand 01.08.2024)"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Nicht MVP (Wirtschaft). Aufgenommen als Strukturbeispiel für gymnasiale Oberstufen-Modellierung (Kurshalbjahre) — vgl. OPEN_QUESTIONS.md Frage 1."
+
+  - id: src-011
+    title: "LISA Information 02/2022 — Was ist neu? Biologie, Chemie, Physik (Bildungsstandards AHR)"
+    publisher: "LISA (bildung-lsa.de)"
+    official_url: "https://lisa.sachsen-anhalt.de/fileadmin/Bibliothek/Politik_und_Verwaltung/MK/LISA/Unterricht/Lehrplaene/Gym/Anpassung_2022/LISA_Pub_02-2022_Was_ist_neu_Biologie__Chemie__Physik.pdf"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "META"
+    school_form: "GYMNASIUM"
+    grade_range: "5-12"
+    version_or_date: "Anregungen zur Schul- und Unterrichtsentwicklung 03/2022"
+    license_or_terms: "LISA, CC BY-NC-SA (Impressum: c b a — Weiterverbreiten/Bearbeiten unter gleichen Bedingungen, Urheber nennen)"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Erklärt KMK-Bildungsstandards AHR (2020) und Übernahme in Fachlehrpläne GYM. Lizenz CC BY-NC-SA im Impressum angegeben — aber Verifizierung für RAG-Nutzung noch offen. Nicht MVP (Nawi), aber Referenz für Standards-Integration."
+
+  - id: src-012
+    title: "Rahmenplan Gymnasium — Lernen in der digitalen Welt"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt (LISA)"
+    official_url: "https://www.bildung-lsa.de/files/b45de329c361a40a2f0a7211902d5815/RPL_LeDiWe_Gym_St01082023.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "DIGITALE_BILDUNG"
+    school_form: "GYMNASIUM"
+    grade_range: "5-8"
+    version_or_date: "In Kraft ab 01.08.2023"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: 'Rahmenplan zur KMK-Strategie „Bildung in der digitalen Welt". Relevanz für Datenschutz-/KI-Themen im RU/Deutsch (Meinungsbildung, KI reflektiert nutzen).'
+
+  - id: src-013
+    title: "Landeskonzept — Bildung in der digitalen Welt (Sachsen-Anhalt)"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/87532f5391d20fb29d9ac147a6267312/Landeskonzept_LSA_2017.pdf"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "DIGITALE_BILDUNG"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Stand 1. Juni 2017"
+    license_or_terms: "Herausgeber MB LSA"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Leitfaden zur KMK-Strategie 2016. Älter, aber Grundlagendokument für schulische Medienbildung. Für RAG sekundär."
+
+  - id: src-014
+    title: "Schulgesetz des Landes Sachsen-Anhalt (SchulG LSA) — Bekanntmachung der Neufassung 2018"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt (GVBl. LSA Nr. 17/2018)"
+    official_url: "https://www.begabungslotse.de/cms-assets/files/GVBl_Nr.17_Schulgesetz_Fassung2018.pdf"
+    source_type: "legal"
+    trust_level: "official"
+    subject: "RECHT"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Bekanntmachung 9.8.2018 (GVBl. LSA S. 244), mit späteren Änderungen (Stand 2024)"
+    license_or_terms: "Gesetz- und Verordnungsblatt LSA; rechtsverbindlich"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Hosted auf begabungslotse.de (nicht direkt sachsen-anhalt.de) — Inhalt ist GVBl.-Reproduktion. Für rechtssichere Verwendung GVBl.-Original verifizieren. Enthält § 19 Religions-/Ethikunterricht, § 84a Datenverarbeitung."
+
+  - id: src-015
+    title: "Datenschutz-Grundverordnungs-Ausfüllungsgesetz LSA (DSAG LSA)"
+    publisher: "Landtag Sachsen-Anhalt"
+    official_url: "https://www.landtag.sachsen-anhalt.de/fileadmin/Downloads/Rechtsgrundlagen/Gesetze_8.WP/20240229_Datenschutzgrundverordnungsausfuellungsgesetz-DSAG-LSA2_Online.pdf"
+    source_type: "legal"
+    trust_level: "official"
+    subject: "DATENSCHUTZ"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Vom 18. Februar 2020 (GVBl. LSA S. 25), zuletzt geändert durch Gesetz vom 17. Mai 2023 (GVBl. LSA S. 228)"
+    license_or_terms: "Landtag Sachsen-Anhalt; rechtsverbindlich"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Landesdatenschutz-Ausfüllungsgesetz zur DS-GVO. § 9 besondere Kategorien, § 26 Beschäftigungskontext, § 27 Forschung. Für DATA_PROTECTION.md / RETENTION_AND_DELETION.md relevant."
+
+  - id: src-016
+    title: "Infopaket Schule und Kita — Landesbeauftragte für Datenschutz"
+    publisher: "Landesbeauftragte für Datenschutz Sachsen-Anhalt"
+    official_url: "https://datenschutz.sachsen-anhalt.de/informationen/infopakete/infopaket-schule-und-kita"
+    source_type: "guidance"
+    trust_level: "official"
+    subject: "DATENSCHUTZ"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Stand 2026 (laufend aktualisiert)"
+    license_or_terms: "Landesportal Sachsen-Anhalt"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Linkliste (Instagram-Empfehlungen, Klassenchat-Flyer, MS365-Hinweise, Orientierungshilfe Online-Lernplattformen). Für Cloud-/Export-Entscheidungen (OPEN_QUESTIONS) relevant."
+
+  - id: src-017
+    title: "Standard-Datenschutzmodell (SDM) V2.0a"
+    publisher: "Konferenz der unabhängigen Datenschutzaufsichtsbehörden des Bundes und der Länder (DSK)"
+    official_url: "https://datenschutz.sachsen-anhalt.de/informationen/hinweise/standard-datenschutzmodell-sdm"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "DATENSCHUTZ"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "SDM V2.0a, Stand 6. November 2019"
+    license_or_terms: "DSK; Empfehlung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Methodik zur Datenschutzberatung/-prüfung auf Basis einheitlicher Gewährleistungsziele. Für technisch-organisatorische Maßnahmen (ART 32 DS-GVO) relevant."
+
+  - id: src-018
+    title: "Datenschutz an Schulen — FAQ und Ansprechpartner (Landesschulamt)"
+    publisher: "Landesschulamt Sachsen-Anhalt"
+    official_url: "https://landesschulamt.sachsen-anhalt.de/service/datenschutz-an-schulen"
+    source_type: "guidance"
+    trust_level: "official"
+    subject: "DATENSCHUTZ"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Stand 2026"
+    license_or_terms: "Landesportal Sachsen-Anhalt"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Ansprechpartner schulische DSB (Bereich Süd/Nord). FAQ-Papier verlinkt. Operative Anlaufstelle für Schulen."
+
+  - id: src-019
+    title: "Schulbuchverzeichnis Sachsen-Anhalt 2026/2027 (Primarstufe + Sekundarstufe I)"
+    publisher: "LISA im Auftrag des MB LSA"
+    official_url: "https://www.bildung-lsa.de/files/74ce365e88f07e43ce9a1b7aaf384d61/Schulbuchverzeichnis_2026_27_Neu.pdf"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "META"
+    school_form: "ALLE"
+    grade_range: "1-10"
+    version_or_date: "LISA Halle, 13. März 2026"
+    license_or_terms: "Herausgeber LISA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Zugelassene Schulbücher je Fach/Schulform. NICHT die Bücher selbst ingestieren (urheberrechtlich geschützt). Nur Metadaten als Referenz für Materialauswahl. Ethik/Religion ev./kath./Deutsch-Schulbücher für Kl. 5-10 verzeichnet."
+
+  - id: src-020
+    title: "RdErl. — Aufnahme an weiterführenden Schulen"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt (Landesschulamt)"
+    official_url: "https://www.gs-spiegel.bildung-lsa.de/dat/cms1001238/images/Dokumente/aufnahme_an_weiterfuehrenden_schulen.pdf"
+    source_type: "legal"
+    trust_level: "official"
+    subject: "META"
+    school_form: "ALLE"
+    grade_range: "4-5"
+    version_or_date: "RdErl. MK 18.11.2014 – 23-83023, zuletzt geändert RdErl. MB 30.09.2024 (SVBl. LSA 2024 S.175)"
+    license_or_terms: "Landesportal Sachsen-Anhalt; Haftungsausschluss: rechtsverbindlich nur GVBl./SVBl."
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Regelt Übergang Kl. 4→5 (Schullaufbahnerklärung, Ethik/Religion-Wahl in Anlage 2). Relevant für Religionsfach-Wahl-Logik (Curriculummodell). Hosted auf Schul-Subdomain (gs-spiegel.bildung-lsa.de) — Erlaß-Inhalt, Quelle ist MB."
+
+  - id: src-021
+    title: "LISA — Projekte/Pädagogische Entwicklungsvorhaben"
+    publisher: "Landesinstitut für Schulqualität und Lehrerbildung Sachsen-Anhalt"
+    official_url: "https://lisa.sachsen-anhalt.de/schulqualitaet/projekte-paedagogische-entwicklungsvorhaben"
+    source_type: "framework"
+    trust_level: "official"
+    subject: "META"
+    school_form: "ALLE"
+    grade_range: "alle"
+    version_or_date: "Stand 2026"
+    license_or_terms: "Landesportal Sachsen-Anhalt"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Übersicht laufender Projekte (Startchancen-Programm, LemaS, QuaMath, BNE). Sekundär für RAG; ggf. Kontext für Fortbildungsangebote."
+
+# Hinweise für Maintainer:
+# - katholischer Religionsunterricht: Fachlehrplan Grundschule und Gymnasium konnten via
+#   web_search nicht als direktes PDF zuverlässig abgerufen werden (bild-lsa.de/informationsportal/
+#   unterricht/sekundarschule/kath__religionsunterricht/fachlehrplan.htm lieferte binären Content).
+#   → Maintainer-Issue: kath. Fachlehrpläne separat beschaffen und als src-022+ aufnehmen.
+# - Ethikunterricht Sekundarschule/Gymnasium: Fachlehrpläne analog verifizieren und ergänzen.
+# - Gymnasium Religion ev. neue Fassung ab 1.8.2022 (gemäß RdErl src-005): direktes PDF
+#   verifizieren und ggf. src-004 ersetzen/ergänzen.
+# - Alle Lizenzangaben sind unverifiziert (license_verified: false). Vor Ingestion pro Quelle
+#   Lizenz prüfen und im Feld license_or_terms dokumentieren (ADR 0003 Source-Governance).

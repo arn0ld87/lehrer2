@@ -9,6 +9,7 @@ Das System verwaltet vier kritische Datenkategorien, die regelmäßig gesichert 
 ### 1. PostgreSQL-Datenbank
 
 Enthält:
+
 - Benutzerkonten und Authentifizierung
 - Unterrichtskontext (Klassen, Schüler, Lerngruppen)
 - Anfragemetadaten (Timestamps, User-IDs, Session-IDs)
@@ -19,6 +20,7 @@ Enthält:
 ### 2. Qdrant-Vektordatenbank
 
 Enthält:
+
 - Embedding-Vektoren für Dokumente und Lernmaterialien
 - Metadaten für semantische Suche
 - Indexstrukturen für schnelle Ähnlichkeitssuche
@@ -28,6 +30,7 @@ Enthält:
 ### 3. Object Store (MinIO)
 
 Enthält:
+
 - Hochgeladene Dokumente (PDFs, Bilder, Arbeitsblätter)
 - Generierte Artefakte (Lesson Plans, Quizzes)
 - Temporäre OCR-Ergebnisse
@@ -37,6 +40,7 @@ Enthält:
 ### 4. Pseudonym-Mapping
 
 Enthält:
+
 - Zuordnungen zwischen echten Benutzernamen und pseudonymisierten IDs
 - Erforderlich für Datenschutz und Anonymisierung
 
@@ -80,12 +84,14 @@ docker compose exec qdrant curl -X POST http://localhost:6333/snapshots
 **Status**: Noch festzulegen
 
 Anforderungen abhängig von:
+
 - Kritikalität der Lehrmaterialien
 - Verfügbarkeitsziele für Unterrichtsunterstützung
 - Akzeptable Daten-Verlustfenster (RPO in Stunden/Minuten)
 - Zielwiederherstellungszeit (RTO in Minuten/Stunden)
 
 **Empfohlene Ziele** (TBD):
+
 - **RPO**: 1–4 Stunden (täglich Backups ausreichend)
 - **RTO**: 15–30 Minuten (Hot-Standby oder schnelle Restore-Prozedur)
 
@@ -100,6 +106,7 @@ Mindestens **monatlich** ein vollständiger oder Partial-Restore-Test durchführ
 ### Prozedur
 
 1. **Testumgebung vorbereiten**
+
    ```bash
    # Separate PostgreSQL-Instanz starten
    docker run -d --name postgres-test \
@@ -109,6 +116,7 @@ Mindestens **monatlich** ein vollständiger oder Partial-Restore-Test durchführ
    ```
 
 2. **Backup wiederherstellen**
+
    ```bash
    # SQL-Dump laden
    docker exec postgres-test psql -U postgres -d lsa_db < backup_latest.sql

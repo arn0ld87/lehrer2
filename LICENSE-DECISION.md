@@ -18,6 +18,7 @@ Das Projekt ist derzeit **nicht unter Lizenz gestellt.** Das Repoitory ist priva
 **Modell:** Keine öffentliche Lizenz; Nutzung nur mit schriftlicher Erlaubnis.
 
 **Bewertung:**
+
 - ✅ Maximale Kontrolle über Weitergabe, Modifikation und kommerzielle Nutzung
 - ✅ Einfaches Lizenzmodell für einzelne Schulen oder Schulträger
 - ❌ Keine Förderung von Wiederverwendung oder Community-Beitrag
@@ -33,6 +34,7 @@ Das Projekt ist derzeit **nicht unter Lizenz gestellt.** Das Repoitory ist priva
 **Modell:** Copyleft; für EU-Kontexte optimiert; Weitergabe nur unter EUPL-1.2.
 
 **Bewertung:**
+
 - ✅ EU-rechtliche Auslegung (DSGVO-kompatibel, deutsche Jurisdiktion)
 - ✅ Starke Copyleft (Modifikationen müssen veröffentlicht werden)
 - ✅ Vereinbar mit anderen Open-Source-Lizenzen (GNU, AGPL)
@@ -50,6 +52,7 @@ Das Projekt ist derzeit **nicht unter Lizenz gestellt.** Das Repoitory ist priva
 **Modell:** Starker Copyleft; erzwingt Offenlegung auch für SaaS/Hosted Nutzung.
 
 **Bewertung:**
+
 - ✅ Copyleft auch für Netzwerk-Services (SaaS-Klausel)
 - ✅ Zwingt Modifikationen auf den Tisch, auch wenn nicht weitergegeben
 - ✅ Passt zu "Local-first"-Prinzip (Schulen kontrollieren Instanz)
@@ -66,6 +69,7 @@ Das Projekt ist derzeit **nicht unter Lizenz gestellt.** Das Repoitory ist priva
 **Modell:** Minimal Restrictions; Weitergabe, Modifikation und kommerzielle Nutzung erlaubt.
 
 **Bewertung:**
+
 - ✅ Maximal flexibel für Schulen, Forschung und kommerzielle Anpassungen
 - ✅ Einfach zu verstehen und zu kombinieren
 - ✅ Industriestandard; geringes rechtliches Risiko
@@ -80,37 +84,37 @@ Das Projekt ist derzeit **nicht unter Lizenz gestellt.** Das Repoitory ist priva
 
 ## Entscheidungskriterien
 
-| Kriterium | Ausprägung | Konsequenz |
-|---|---|---|
-| **Self-Hosting oder Cloud-Service?** | Schulen betreiben lokal oder selbst gehostet | → AGPL/EUPL (Local-first erzwingt Transparenz) |
-| | Zentraler SaaS-Betrieb durch Anbieter | → Proprietär oder MIT (Copyleft zu restriktiv) |
-| **Weiterverbreitung an andere Schulen geplant?** | Ja; Quelloffenheit gewünscht | → AGPL/EUPL |
-| | Nein; oder geschlossen halten | → Proprietär oder MIT |
-| **Datenschutz und Transparenz** | Schulbehörden/Datenschutzbehörden verlangen Einsicht | → AGPL/EUPL |
-| | Intern zwischen Schulträger und Anbieter geklärt | → Proprietär oder MIT |
-| **Kommerzielle Spielräume** | Angebot an Schulträger gegen Gebühr OK | → MIT/Apache (permissiv für Dienstleister) |
-| | Kein kommerzieller Mehrwert geplant | → AGPL/EUPL oder Proprietär |
-| **Abhängigkeiten und Stack** | Node.js/Python/Go mit vielen AGPL-Dependencies | → AGPL/EUPL (ohnehin kompatibel) |
-| | Proprietäre oder streng lizenzierte Dependencies | → MIT/Apache (weniger Konflikte) |
+| Kriterium                                        | Ausprägung                                           | Konsequenz                                     |
+| ------------------------------------------------ | ---------------------------------------------------- | ---------------------------------------------- |
+| **Self-Hosting oder Cloud-Service?**             | Schulen betreiben lokal oder selbst gehostet         | → AGPL/EUPL (Local-first erzwingt Transparenz) |
+|                                                  | Zentraler SaaS-Betrieb durch Anbieter                | → Proprietär oder MIT (Copyleft zu restriktiv) |
+| **Weiterverbreitung an andere Schulen geplant?** | Ja; Quelloffenheit gewünscht                         | → AGPL/EUPL                                    |
+|                                                  | Nein; oder geschlossen halten                        | → Proprietär oder MIT                          |
+| **Datenschutz und Transparenz**                  | Schulbehörden/Datenschutzbehörden verlangen Einsicht | → AGPL/EUPL                                    |
+|                                                  | Intern zwischen Schulträger und Anbieter geklärt     | → Proprietär oder MIT                          |
+| **Kommerzielle Spielräume**                      | Angebot an Schulträger gegen Gebühr OK               | → MIT/Apache (permissiv für Dienstleister)     |
+|                                                  | Kein kommerzieller Mehrwert geplant                  | → AGPL/EUPL oder Proprietär                    |
+| **Abhängigkeiten und Stack**                     | Node.js/Python/Go mit vielen AGPL-Dependencies       | → AGPL/EUPL (ohnehin kompatibel)               |
+|                                                  | Proprietäre oder streng lizenzierte Dependencies     | → MIT/Apache (weniger Konflikte)               |
 
 ---
 
 ## Nächste Schritte
 
-1. **Stakeholder-Abstimmung** (Schulen, Schulträger, Datenschutz)  
+1. **Stakeholder-Abstimmung** (Schulen, Schulträger, Datenschutz)
    - Wünschen sich Schulen Quelloffenung und Recht auf Änderung?
    - Gibt es Datenschutzbehörden-Anforderungen?
 
-2. **Rechtsabteilung / DSFA-Konsultation**  
+2. **Rechtsabteilung / DSFA-Konsultation**
    - Passt die Lizenz zur geplanten Betriebsform (SaaS vs. Self-Hosted)?
    - Welche Auswirkungen auf AVV (Auftragsverarbeitungsvertrag)?
 
-3. **Implementierungspfad definieren**  
+3. **Implementierungspfad definieren**
    - Wenn AGPL/EUPL: Dependencies prüfen, Copyleft-Compliance dokumentieren.
    - Wenn Proprietär: Lizenztext und Nutzungsbedingungen vorbereiten.
    - Wenn MIT/Apache: Lizenzheader in alle Quellen eintragen.
 
-4. **Entscheidung und Dokumentation**  
+4. **Entscheidung und Dokumentation**
    - Diese Datei aktualisieren mit finaler Entscheidung, Datum und Rationale.
    - LICENSE-Datei ins Repository committen.
    - Hinweis in [README.md](README.md) aktualisieren.

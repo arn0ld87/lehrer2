@@ -8,17 +8,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projektstatus
 
-**Planungs- und Architekturphase. Es existiert noch kein Produktivcode.** Committet: `README.md`, `CLAUDE.md`, `PLAN.md`, ein wachsender `docs/`-Baum und ein statisches Design-Kit (`unterrichtsassistenz-lsa-design-kit/`). `data/`, `scripts/`, `.github/workflows/`, `.github/ISSUE_TEMPLATE/` existieren als leere Verzeichnisse.
+**Planungs- und Architekturphase. Es existiert noch kein Produktivcode/keine lauffähige App** — aber das Repo-Gerüst steht. Committet: `README.md`, `CLAUDE.md`, `AGENTS.md`, `PLAN.md`, ein weitgehend vollständiger `docs/`-Baum, das statische Design-Kit (`unterrichtsassistenz-lsa-design-kit/`) sowie Tooling-/CI-Gerüst: `package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`, `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow `ci.yml`, Issue-Templates, PR-Template).
 
-**`docs/` ist teilweise befüllt** — nicht mehr alle PLAN-Links sind Soll-Struktur. Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION_BOUNDARIES), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY), `docs/security/` (SECURITY, THREAT_MODEL, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY).
+**`docs/` ist nahezu vollständig.** Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION_BOUNDARIES, DATA_MODEL, RAG_ARCHITECTURE), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY, CITATION_STANDARD, SOURCE_REGISTRY), `docs/security/` (SECURITY, THREAT_MODEL, DATA_PROTECTION, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY), `docs/design/DESIGN_SYSTEM.md`, `docs/adr/0001`–`0005`, `docs/decisions/OPEN_QUESTIONS.md`, `LICENSE-DECISION.md`.
 
-**Stolperfalle:** Folgende von `PLAN.md` verlinkte Dokumente existieren **noch nicht** — Links sind Soll-Struktur: `docs/architecture/DATA_MODEL.md`, `docs/architecture/RAG_ARCHITECTURE.md`, `docs/rag/CITATION_STANDARD.md`, `docs/rag/SOURCE_REGISTRY.md`, `docs/operations/GITHUB_SETUP.md`. Ebenso fehlen `.env.example`, `package.json`, `scripts/verify-docs.sh` (geplantes Doku-Gate, in der DoD referenziert). Vor dem Referenzieren einer Doku auf Existenz prüfen, nicht dem Link vertrauen.
-
-**Inzwischen vorhanden** (früher Soll-Struktur, jetzt real): `docs/adr/0001`–`0005`, `docs/decisions/OPEN_QUESTIONS.md`, `LICENSE-DECISION.md`.
+**Stolperfalle:** Einziges von `PLAN.md`/`README.md` verlinktes, aber **noch fehlendes** Dokument: `docs/operations/GITHUB_SETUP.md`. Vor dem Referenzieren einer Doku weiterhin auf Existenz prüfen, nicht blind dem Link vertrauen.
 
 **`PLAN.md` ist Source of Truth** für Scope, Roadmap (M0–M4), Datenflüsse und offene Entscheidungen — vor Architekturarbeit lesen.
 
-Konsequenz: Build-/Test-/Lint-Befehle (siehe unten) sind **Sollzustand**, nicht lauffähig. Beim Anlegen der ersten Implementierung den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
+Konsequenz: Von den unten gelisteten Befehlen sind nur `pnpm format`, `pnpm format:check` und `pnpm verify:docs` real (siehe `package.json`); `pnpm lint`/`typecheck`/`test` sind **Sollzustand**, weil noch kein Anwendungscode existiert. Beim Anlegen der ersten Implementierung den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
 
 ## Design-Kit und UI-Implementierung
 
@@ -68,13 +66,13 @@ ORM ist entschieden (Drizzle, ADR 0005). **Auth-Lösung und Export-Stack sind we
 
 Der RAG-Bestand ist streng kuratiert. Jede Quelle hat eine **Vertrauensstufe**, die über den produktiven Einsatz entscheidet:
 
-| Stufe | Produktiver RAG-Einsatz |
-| --- | --- |
-| `OFFICIAL_BINDING` (amtliche Lehrpläne/Rechtsquellen) | ja |
-| `OFFICIAL_GUIDANCE` (LISA-/Ministeriums-Handreichungen) | ja, nach Prüfung |
-| `OPEN_CURATED` (offen lizenziert, redaktionell geprüft) | ja, nach Freigabe |
-| `USER_APPROVED` (von Schule/Lehrkraft freigegeben) | ja, mandantenbezogen |
-| `UNVERIFIED` (Recherchekandidat) | **nein** |
+| Stufe                                                   | Produktiver RAG-Einsatz |
+| ------------------------------------------------------- | ----------------------- |
+| `OFFICIAL_BINDING` (amtliche Lehrpläne/Rechtsquellen)   | ja                      |
+| `OFFICIAL_GUIDANCE` (LISA-/Ministeriums-Handreichungen) | ja, nach Prüfung        |
+| `OPEN_CURATED` (offen lizenziert, redaktionell geprüft) | ja, nach Freigabe       |
+| `USER_APPROVED` (von Schule/Lehrkraft freigegeben)      | ja, mandantenbezogen    |
+| `UNVERIFIED` (Recherchekandidat)                        | **nein**                |
 
 RAG-Chunks tragen verpflichtend Metadaten (u. a. `source_id`, `trust_level`, `subject`, `school_form`, `grade_range`, `version_or_date`, `license_or_terms`, `retrieved_at`, `content_hash`, `page_or_section`) — vollständiges Schema im README, Abschnitt „Quellen- und RAG-Governance".
 

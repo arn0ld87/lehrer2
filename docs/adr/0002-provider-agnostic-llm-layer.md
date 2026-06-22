@@ -7,6 +7,7 @@ Akzeptiert, 2026-06-22
 ## Kontext
 
 Das System muss Sprachmodelle einsetzen (Verfügbarmachung von RAG, Korrekturvorschläge, automatische Kategorisierung). Die Anforderungen sind:
+
 - **Kosteneffizienz**: Lokale Ausführung (Ollama) ist Default
 - **Datenschutz**: Schüler-Klarnamen verlassen das System nie; alle LLM-Calls gehen durch Redaction+Guard
 - **Flexibilität**: Wechsel zwischen lokaler und Cloud-LLM ist konfigurierbar
@@ -14,6 +15,7 @@ Das System muss Sprachmodelle einsetzen (Verfügbarmachung von RAG, Korrekturvor
 - **Austauschbarkeit**: Lock-in zu einzelnem Provider vermeiden
 
 Die Problemstellung:
+
 - Diferentes LLM-Provider haben unterschiedliche APIs (OpenAI, Anthropic, local Ollama, etc.)
 - Jeder Aufruf erfordert Datenschutz-Checks (Redaction, Guard)
 - Cloud-LLM erfordert dokumentierte Schulfreigabe (CloudReleaseGrant: Rechtsgrundlage, AVV, DSFA, Provider/Region)
@@ -22,18 +24,22 @@ Die Problemstellung:
 ## Optionen
 
 ### Option A: Direkter Provider-Code (z.B. `openai` Bibliothek überall)
+
 - **Pro**: Einfach, keine Abstraktionsschicht
 - **Contra**: Redaction/Guard muss überall wiederholt werden, Provider-Wechsel kostet viel Refactoring, kein Fallback auf lokale Modelle
 
 ### Option B: Provider-agnostische Adapter (Langchain/LlamaIndex)
+
 - **Pro**: Etabliert, viele Integrationen
 - **Contra**: Overhead, Dependency-Hell, nicht alle Features sichtbar, schwierig für hochspezialisierten Datenschutz-Code
 
 ### Option C: Custom Abstraktionsschicht (LLMProvider Interface + konkrete Adapter)
+
 - **Pro**: Volle Kontrolle über Redaction/Guard, minimal Dependencies, leicht zu testen
 - **Contra**: Custom Code, wartungsaufwendig
 
 ### Option D: Hybrid (Custom für kritische Datenschutz-Calls, Langchain für unkritische Tasks)
+
 - **Pro**: Pragmatisch, Best-of-Both
 - **Contra**: Zwei Systeme zu lernen, inkonsistente Error-Handling möglich
 
@@ -64,7 +70,7 @@ interface LLMProvider {
   id: string; // "ollama" | "openai" | "anthropic"
   models: string[];
   requiresCloudGrant: boolean; // true => muss CloudReleaseGrant geprüft sein
-  
+
   chat(params: ChatParams): Promise<ChatResponse>;
   embed(params: EmbedParams): Promise<Embedding[]>;
 }
@@ -77,8 +83,8 @@ interface ChatParams {
 
 interface RequestContext {
   userId: string;
-  userRole: 'teacher' | 'admin';
-  dataClass: 'PUBLIC' | 'INTERNAL' | 'PERSONAL_TEACHER' | 'SENSITIVE_STUDENT';
+  userRole: "teacher" | "admin";
+  dataClass: "PUBLIC" | "INTERNAL" | "PERSONAL_TEACHER" | "SENSITIVE_STUDENT";
   studentIds?: string[]; // für Audit-Trail
 }
 ```
@@ -103,17 +109,18 @@ interface RequestContext {
 ### CloudReleaseGrant
 
 Nur wenn vorhanden:
+
 ```typescript
 interface CloudReleaseGrant {
-  providerId: string;        // "openai" | "anthropic"
-  region: string;            // "eu" | "us"
-  dataClasses: string[];     // ["PUBLIC", "INTERNAL"] (SENSITIVE_STUDENT nicht erlaubt)
-  rechtsgrundlage: string;   // z.B. "Art. 6 Abs. 1 Buchstabe f DSGVO"
-  avvUrl?: string;           // Auftragsverarbeitungsvertrag
-  dsfaUrl?: string;          // Datenschutzfolgenabschätzung
+  providerId: string; // "openai" | "anthropic"
+  region: string; // "eu" | "us"
+  dataClasses: string[]; // ["PUBLIC", "INTERNAL"] (SENSITIVE_STUDENT nicht erlaubt)
+  rechtsgrundlage: string; // z.B. "Art. 6 Abs. 1 Buchstabe f DSGVO"
+  avvUrl?: string; // Auftragsverarbeitungsvertrag
+  dsfaUrl?: string; // Datenschutzfolgenabschätzung
   approvedAt: Date;
-  approvedBy: string;        // Schulleitung Email
-  expiresAt?: Date;          // optional, automatische Ablauf
+  approvedBy: string; // Schulleitung Email
+  expiresAt?: Date; // optional, automatische Ablauf
 }
 ```
 
@@ -122,6 +129,7 @@ Ist `CloudReleaseGrant` nicht vorhanden für einen Provider: **fail-closed** (Gu
 ## Konsequenzen
 
 ### Positiv
+
 - **Datenschutz-Enforcement**: Redaction+Guard können zentralisiert durchgesetzt werden, unabhängig von Provider-Wechsel
 - **Lokaler Default**: Keine Netzwerk-Abhängigkeit, keine Cloud-Kosten, keine Latenz
 - **Audit-Trail**: Jeder LLM-Call geht durch dieselbe Request-Context, nicht zu nachzuverfolgen
@@ -129,11 +137,13 @@ Ist `CloudReleaseGrant` nicht vorhanden für einen Provider: **fail-closed** (Gu
 - **Testing**: Redaction/Guard können unabhängig von Provider-Implementierung getestet werden (Mock-Provider)
 
 ### Negativ/Managebar
+
 - **Custom Code**: Mehr Zeilen Code zu warten
 - **Provider-Capabilities**: Nicht alle Provider haben alle Features (z.B. Embedding); Fallback nötig (z.B. Ollama hat `embed`, OpenAI auch, aber API unterscheidet sich)
 - **Latenz**: Redaction (NER für Student-Name-Maskierung) hat CPU-Overhead; muss gemessen/optimiert werden
 
 ### Maßnahmen
+
 - **Redaction-Cache**: Häufig maskierte Schlüsselwörter (z.B. Klassennamen) cachen
 - **Provider-Fallback**: Wenn Cloud-Grant abgelaufen, automatisch auf Ollama zurückfallen
 - **Testabdeckung**: Mock-Provider mit Fuzzing für Redaction-Robustheit

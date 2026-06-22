@@ -15,6 +15,7 @@ Die CI/CD-Pipeline definiert automatisierte Checks, die bei jedem Push und Pull 
 **Zweck**: Verifiziert die Integrität und Vollständigkeit aller Dokumentationsdateien.
 
 **Ausführung**:
+
 ```bash
 npm run verify:docs
 ```
@@ -32,6 +33,7 @@ Intern nutzt dieser Job das Skript [../../scripts/verify-docs.sh](../../scripts/
 **Zweck**: Prüft, dass alle Dateien Prettier-Formatierungsvorgaben einhalten.
 
 **Ausführung**:
+
 ```bash
 npm run format:check
 ```
@@ -45,13 +47,14 @@ Dies prüft TypeScript, JavaScript, Markdown, JSON, YAML und andere konfiguriert
 Die Pipeline-Definition befindet sich in [../../.github/workflows/ci.yml](../../.github/workflows/ci.yml).
 
 Beispiel-Struktur:
+
 ```yaml
 name: CI
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   docs:

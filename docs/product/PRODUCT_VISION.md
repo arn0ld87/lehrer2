@@ -7,12 +7,14 @@ Ein datenschutzsensibler KI-Assistent, der Lehrkräfte an Gesamt- und Gemeinscha
 ## Problemstellung
 
 Lehrkräfte investieren täglich Stunden in:
+
 - Individuelle Lernmaterialien für heterogene Klassen (Differenzierung nach Niveau, Förderschwerpunkt, Lerntyp)
 - Aufgabenvariationen für Religion/Ethik mit konfessioneller Sensibilität
 - Korrektur und Feedback — konzeptuell korrekt, aber aufwandintensiv schriftlich zu belegen
 - Recherche und Verifizierung von Unterrichtsmaterialien auf Lehrplantauglichkeit
 
 Bestehende KI-Tools (ChatGPT, Gemini, Claude Web) bieten zwar schnelle Antworten, aber:
+
 - **Datenschutzrisiken**: Schülernamen, Klassenkontext, sensible Inhalte landen in Cloud-Logs
 - **Quellenproblem**: Antworten ohne nachvollziehbare Belege; ideal für Schnelligkeit, problematisch für pädagogische Verantwortung
 - **Zuständigkeitsvermischung**: KI-Output wirkt oft wie Autorität statt wie Werkzeug-Vorschlag
@@ -35,40 +37,45 @@ Bestehende KI-Tools (ChatGPT, Gemini, Claude Web) bieten zwar schnelle Antworten
 ## Leitprinzipien
 
 ### Local-First
+
 - Standardmodell läuft auf Schulserver oder Lehrkraft-Workstation (Ollama)
 - Offline-Funktionalität für Basisszenarien (Aufgabengenerierung, Feedback-Vorschlag)
 - Cloud-LLMs nur dokumentierte Exceptions
 
 ### Quellenbindung mit Nachweis
+
 - Jeder Output hat eine Vertrauenskette (OFFICIAL_BINDING / OFFICIAL_GUIDANCE / OPEN_CURATED / USER_APPROVED / UNVERIFIED)
 - UNVERIFIED Quellen nie produktiv eingespeist
 - Lehrplan, Schulbuch, Arbeitsblatt-Sammlung: Quellenebenen transparent und nachvollziehbar
 
 ### Menschliche Letztentscheidung
+
 - KI-Output ist Entwurf, nicht Autorität
 - Korrekturvorschläge zeigen: Kriterium, Beleg, Unsicherheitsmetriken
 - Endnoten, Anerkennungen, Leistungsfeststellungen: ausschließlich menschlich
 
 ### Kostenkontrolle
+
 - Ollama-Integration reduzeert Cloud-Kosten auf Null (für MVP)
 - Token-Tracking für optionale Cloud-APIs (Budget + Audit-Trail)
 - Batch-Verarbeitung (z.B. Stapelkorrektur) mit Kostenprognose
 
 ### Konfessionstrennung
+
 - Religion: Denominationen explizit (ev./kath./interreligiös/Ethik)
 - Workflow warnt vor Cross-Denomination Contamination
 - Ethik: Religionkundlich, nicht theologisch
 
 ## Abgrenzung zu generischen KI-Tools
 
-| Aspekt | LSA | ChatGPT/Gemini/Claude Web |
-|---|---|---|
-| **Datenschutz** | Lokal; Pseudonymisierung Pflicht | Cloud-Logs; keine Kontrolle |
-| **Quellen** | Unterrichtsmaterial-RAG mit Trust-Levels | Großes Sprachmodell, Quelle oft unklar |
-| **Entscheidung** | Mensch final | Kann wie Autorität wirken |
-| **Kostenmodell** | Lokal ≈ 0 € | Pay-per-Token; unbegrenzte Nutzung schwer kontrollierbar |
-| **Konfession** | Strukturell getrennt | Keine Struktur für Religionsdidaktik |
-| **Zielgruppe** | Schulen, DSGVO-bewusst | Masse, Datenschutz sekundär |
+| Aspekt           | LSA                                      | ChatGPT/Gemini/Claude Web                                |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------- |
+| **Datenschutz**  | Lokal; Pseudonymisierung Pflicht         | Cloud-Logs; keine Kontrolle                              |
+| **Quellen**      | Unterrichtsmaterial-RAG mit Trust-Levels | Großes Sprachmodell, Quelle oft unklar                   |
+| **Entscheidung** | Mensch final                             | Kann wie Autorität wirken                                |
+| **Kostenmodell** | Lokal ≈ 0 €                              | Pay-per-Token; unbegrenzte Nutzung schwer kontrollierbar |
+| **Konfession**   | Strukturell getrennt                     | Keine Struktur für Religionsdidaktik                     |
+| **Zielgruppe**   | Schulen, DSGVO-bewusst                   | Masse, Datenschutz sekundär                              |
 
 ## Nächste Schritte
 

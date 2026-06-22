@@ -4,13 +4,13 @@ Das RAG-System (Retrieval-Augmented Generation) der Unterrichtsassistenz ist nac
 
 ## Vertrauensstufen (TrustLevel)
 
-| Stufe | Definition | Beispiel | Charakteristika |
-|---|---|---|---|
-| **OFFICIAL_BINDING** | Verbindliche Lehrpläne, Rechtsnormen, staatliche Handreichungen mit Normkraft | Kernlehrplan NRW Mathematik; GG Art. 3 (Gleichheitssatz); KMK-Beschluss | Höchste Priorität, zitierpflichtig, nicht verhandelbar |
-| **OFFICIAL_GUIDANCE** | Offizielle Materialien von Kultusministerien, Schulbehörden, staatlichen Bildungsinstituten ohne Normkraft | Unterrichtsmaterialien der Bundeszentrale für politische Bildung; IQSH-Handreichungen | Nutzbar, gekennzeichnet als „offizielle Handreichung", einsortierbar |
-| **OPEN_CURATED** | Geprüfte, offene Bildungsressourcen (OER) mit geklärter Lizenz und Qualitätskuration | Khan Academy (CC-BY), Serlo (CC-BY-SA) | Fachlich validiert, lizenzkonform, nachnutzbar unter Lizenzbedingungen |
-| **USER_APPROVED** | Von Schule/Lehrkraft explizit freigegebenes Eigenmaterial (Arbeitsblätter, schulinterne Handreichungen) | Schulinterner Lehrplan, Fachabsprachen der Mathematik-Fachkonferenz | Eigener Geltungsscope, kein automatischer Einsatz in anderen Schulen |
-| **UNVERIFIED** | Ungepräfte Quellen, keine Governance durchlaufen | Web-Snippets, Social-Media-Posts, vorläufig eingesteuerte Texte | **NIE produktiv**; nur interne Evaluationszwecke |
+| Stufe                 | Definition                                                                                                 | Beispiel                                                                              | Charakteristika                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **OFFICIAL_BINDING**  | Verbindliche Lehrpläne, Rechtsnormen, staatliche Handreichungen mit Normkraft                              | Kernlehrplan NRW Mathematik; GG Art. 3 (Gleichheitssatz); KMK-Beschluss               | Höchste Priorität, zitierpflichtig, nicht verhandelbar                 |
+| **OFFICIAL_GUIDANCE** | Offizielle Materialien von Kultusministerien, Schulbehörden, staatlichen Bildungsinstituten ohne Normkraft | Unterrichtsmaterialien der Bundeszentrale für politische Bildung; IQSH-Handreichungen | Nutzbar, gekennzeichnet als „offizielle Handreichung", einsortierbar   |
+| **OPEN_CURATED**      | Geprüfte, offene Bildungsressourcen (OER) mit geklärter Lizenz und Qualitätskuration                       | Khan Academy (CC-BY), Serlo (CC-BY-SA)                                                | Fachlich validiert, lizenzkonform, nachnutzbar unter Lizenzbedingungen |
+| **USER_APPROVED**     | Von Schule/Lehrkraft explizit freigegebenes Eigenmaterial (Arbeitsblätter, schulinterne Handreichungen)    | Schulinterner Lehrplan, Fachabsprachen der Mathematik-Fachkonferenz                   | Eigener Geltungsscope, kein automatischer Einsatz in anderen Schulen   |
+| **UNVERIFIED**        | Ungepräfte Quellen, keine Governance durchlaufen                                                           | Web-Snippets, Social-Media-Posts, vorläufig eingesteuerte Texte                       | **NIE produktiv**; nur interne Evaluationszwecke                       |
 
 ## Quellen-Lebenszyklus (Statusmaschine)
 
@@ -33,7 +33,7 @@ DISCOVERED → UNDER_REVIEW → REGISTERED → APPROVED → INGESTED → VERSION
    - `trust_level`, `license_info`, `valid_from`, `valid_to`
    - `subject_alignment`, `confession_context`
 
-4. **APPROVED**: Admin/Fachkonferenz erteilt Freigabe (für USER_APPROVED; für OFFICIAL_* oft automatisch).
+4. **APPROVED**: Admin/Fachkonferenz erteilt Freigabe (für USER*APPROVED; für OFFICIAL*\* oft automatisch).
    - Signal an Ingestion-Pipeline: Diese Quelle darf in Qdrant aufgenommen werden.
 
 5. **INGESTED**: OCR/Parsing, Chunking, Embedding.
@@ -57,21 +57,21 @@ DISCOVERED → UNDER_REVIEW → REGISTERED → APPROVED → INGESTED → VERSION
 
 Jeder Chunk, der nach Qdrant ingested wird, muss diese Felder vollständig erfüllen:
 
-| Feld | Typ | Beschreibung | Constraint |
-|---|---|---|---|
-| `source_document_id` | UUID | Verweis auf `SourceDocument` | NOT NULL, FK |
-| `chunk_text` | TEXT | Tatsächlicher Textinhalt (nach OCR/Parsing) | NOT NULL, min. 50 Zeichen |
-| `embedding_ref` | UUID (Qdrant Point-ID) | Vektorp-ID in Qdrant | NOT NULL nach erfolgreicher Ingestion |
-| `page_or_section` | VARCHAR | Wo in der Quelle: Seitennummer, Kapitelüberschrift, etc. | NOT NULL |
-| `source_version` | INT | Version der Quelle (z.B. Neufassung nach OCR-Verbesserung) | NOT NULL, default 1 |
-| `license` | VARCHAR (enum) | Lizenzstatus: CC-BY, CC-BY-SA, School-Internal, Proprietary, Public-Domain | NOT NULL |
-| `retrieved_at` | TIMESTAMP | Zeitpunkt der Ingestion | NOT NULL |
-| `content_hash` | VARCHAR(64) | SHA256(chunk_text) zur Duplikatserkennung | NOT NULL, unique per source_version |
-| `trust_level` | ENUM | OFFICIAL_BINDING, OFFICIAL_GUIDANCE, OPEN_CURATED, USER_APPROVED, UNVERIFIED | NOT NULL |
-| `subject` | VARCHAR | Schulisches Fach: Mathematik, Deutsch, Biologie, ... | NOT NULL |
-| `confession_context` | ENUM | Konfessions-/Ethik-Zuordnung: evangelical, catholic, multiconfessional, ethics_secular, neutral | NOT NULL |
-| `valid_from` | DATE | Gültigkeitsbeginn (Lehrplan-Fasung, Rechtsnorm ab-Datum) | nullable |
-| `valid_to` | DATE | Gültigkeitsende (Außerkraftsetzung, Übergangsregelung) | nullable |
+| Feld                 | Typ                    | Beschreibung                                                                                    | Constraint                            |
+| -------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `source_document_id` | UUID                   | Verweis auf `SourceDocument`                                                                    | NOT NULL, FK                          |
+| `chunk_text`         | TEXT                   | Tatsächlicher Textinhalt (nach OCR/Parsing)                                                     | NOT NULL, min. 50 Zeichen             |
+| `embedding_ref`      | UUID (Qdrant Point-ID) | Vektorp-ID in Qdrant                                                                            | NOT NULL nach erfolgreicher Ingestion |
+| `page_or_section`    | VARCHAR                | Wo in der Quelle: Seitennummer, Kapitelüberschrift, etc.                                        | NOT NULL                              |
+| `source_version`     | INT                    | Version der Quelle (z.B. Neufassung nach OCR-Verbesserung)                                      | NOT NULL, default 1                   |
+| `license`            | VARCHAR (enum)         | Lizenzstatus: CC-BY, CC-BY-SA, School-Internal, Proprietary, Public-Domain                      | NOT NULL                              |
+| `retrieved_at`       | TIMESTAMP              | Zeitpunkt der Ingestion                                                                         | NOT NULL                              |
+| `content_hash`       | VARCHAR(64)            | SHA256(chunk_text) zur Duplikatserkennung                                                       | NOT NULL, unique per source_version   |
+| `trust_level`        | ENUM                   | OFFICIAL_BINDING, OFFICIAL_GUIDANCE, OPEN_CURATED, USER_APPROVED, UNVERIFIED                    | NOT NULL                              |
+| `subject`            | VARCHAR                | Schulisches Fach: Mathematik, Deutsch, Biologie, ...                                            | NOT NULL                              |
+| `confession_context` | ENUM                   | Konfessions-/Ethik-Zuordnung: evangelical, catholic, multiconfessional, ethics_secular, neutral | NOT NULL                              |
+| `valid_from`         | DATE                   | Gültigkeitsbeginn (Lehrplan-Fasung, Rechtsnorm ab-Datum)                                        | nullable                              |
+| `valid_to`           | DATE                   | Gültigkeitsende (Außerkraftsetzung, Übergangsregelung)                                          | nullable                              |
 
 **Invariante**: Ein Chunk ohne vollständige Erfüllung dieser Felder wird vom Ingestion-Gate **abgewiesen** und landet in einer Fehler-Queue für manuelle Nachbearbeitung.
 
@@ -82,6 +82,7 @@ Jeder Chunk, der nach Qdrant ingested wird, muss diese Felder vollständig erfü
 **Schicht A (Ingestion-Gate)**: Chunks mit `trust_level = UNVERIFIED` werden **nicht** nach Qdrant geschrieben. Sie landen in einer Staging/Evaluation-Datenbank für interne Audits.
 
 **Schicht B (Retrieval-Filter)**: Jede Retrieval-Query wird mit serverseitigem `trust_level`-Filter ausgeführt:
+
 ```
 WHERE trust_level IN (OFFICIAL_BINDING, OFFICIAL_GUIDANCE, OPEN_CURATED, USER_APPROVED)
 ```

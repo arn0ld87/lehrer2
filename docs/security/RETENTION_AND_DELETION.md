@@ -7,20 +7,25 @@ Dieses Dokument definiert Aufbewahrungsgrundsätze, Aufbewahrungsfristen je Date
 ## Aufbewahrungsgrundsätze
 
 ### Datenminimierung
+
 Nur Daten speichern, die unmittelbar sachlich notwendig sind:
+
 - **Lehrkraft-Daten:** Name, E-Mail, Authentifizierung, Klassen-Zuordnung
 - **Schülerarbeits-Daten:** Arbeits-Inhalt, Feedback, Bewertungen (für Unterrichtsdauer + eine Periode danach)
 - **Metadaten:** Timestamps, Audit Logs (für Compliance-Kontrolle, begrenzte Dauer)
 - **Keine:** Browsingverlauf, Fehler-Messages mit Kontext, Entwürfe
 
 ### Zweckbindung
+
 Daten werden nur für den dokumentierten Zweck verarbeitet:
+
 - Schülerarbeiten → Feedback + Bewertung im Unterricht
 - Lehrplan-Quellen → Kontextualisierung in RAG
 - Audit Logs → Sicherheits- und Compliance-Kontrolle
 - **Kein Zweck:** Training von MLs (außer mit expliziter Schulfreigabe + AVV)
 
 ### Verarbeiter-Prinzip
+
 - **Lehrkraft** = Verantwortlicher (Datenverantwortung)
 - **LSA-Betreiber** (Schule / IT-Admin) = gemeinsam Verantwortlicher
 - **Cloud-Provider** (falls CloudReleaseGrant) = Auftragsverarbeiter (mit DPA)
@@ -30,19 +35,20 @@ Daten werden nur für den dokumentierten Zweck verarbeitet:
 
 ## Aufbewahrungsfristen (je Datenklasse)
 
-| Datenklasse | Inhalt | Aufbewahrungsfrist | Begründung | Status |
-|---|---|---|---|---|
-| `PERSONAL_TEACHER` | Lehrkraft-Profil, Login-Daten, Credentials | Während aktiver Nutzung + 1 Jahr nach Kündigungen | Arbeitsrecht, Audit | ✓ Zu definieren: Aufbewahrung nach Schulaustritt |
-| `INTERNAL` | Admin-Logs, Audit Trails, Metadaten | 7 Jahre | Handelsrecht (HGB § 257), steuerliche Aufbewahrung | ✓ Standard-Gesetzesfristen |
-| `SENSITIVE_STUDENT` — Arbeits-/Test-Inhalte | Schülertexte, Arbeiten, Feedback | Während Schuljahr + 2 Schuljahre danach | Noten-Archivierung (Schulgesetz Sachsen-Anhalt: mind. 2 Jahre); Lernfortschritt-Tracking über Schuljahre | ⚠️ **Zu definieren:** Verständigung mit Schulleitung (abhängig von Lehrplan-Anforderungen) |
-| `SENSITIVE_STUDENT` — Religion-Daten | Religiöse Zugehörigkeit, Konfessionskennung | Schuljahr der Verarbeitung + 1 Jahr | Art. 9 DSGVO (besondere Kategorie); Religion darf nicht über Schulaustritt hinaus erfasst sein | ⚠️ **Zu definieren:** Explizite Zustimmung Schulleitung + Eltern |
-| `PUBLIC` | Lehrplan-Texte (offiziell) | Zeitlich unbegrenzt (solange Lehrplan gültig) | Unterrichtsmaterial; Änderung dokumentieren, alte Versionen archivieren | ✓ Standard |
-| `INTERNAL` — RAG-Quellen (User-Uploads) | Von Lehrkraft hochgeladene Materialien | 3 Jahre oder bis Widerruf | Lernmaterial-Archiv; Widerruf erlaubt Löschung sofort | ⚠️ **Zu definieren:** Widerrufsfristen und -mechanik |
-| `INTERNAL` — Qdrant Vectors | Vektorisierte Texte (Embeddings) | Synchron mit Quelltexten | Qdrant ist Derivat der Original-Daten; Vektoren ohne Text sind identifikationsrisiko-arm aber sollten gelöscht werden | ✓ Kaskadierend (siehe unten) |
-| `INTERNAL` — Object Store (MinIO) | Uploaded Dateien, OCR-Output | Synchron mit `SENSITIVE_STUDENT` | Ablage von Arbeitsdateien | ✓ Kaskadierend |
-| `INTERNAL` — Audit & System Logs | Login-Events, Fehler, Warnung | 1–7 Jahre (abhängig von Log-Typ) | Sicherheit + Compliance; Logs mit PII nach 1 Jahr, Metadaten-Logs nach 7 Jahren | ⚠️ **Zu definieren:** Log-Klassifikation + Tier-System |
+| Datenklasse                                 | Inhalt                                      | Aufbewahrungsfrist                                | Begründung                                                                                                            | Status                                                                                     |
+| ------------------------------------------- | ------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `PERSONAL_TEACHER`                          | Lehrkraft-Profil, Login-Daten, Credentials  | Während aktiver Nutzung + 1 Jahr nach Kündigungen | Arbeitsrecht, Audit                                                                                                   | ✓ Zu definieren: Aufbewahrung nach Schulaustritt                                           |
+| `INTERNAL`                                  | Admin-Logs, Audit Trails, Metadaten         | 7 Jahre                                           | Handelsrecht (HGB § 257), steuerliche Aufbewahrung                                                                    | ✓ Standard-Gesetzesfristen                                                                 |
+| `SENSITIVE_STUDENT` — Arbeits-/Test-Inhalte | Schülertexte, Arbeiten, Feedback            | Während Schuljahr + 2 Schuljahre danach           | Noten-Archivierung (Schulgesetz Sachsen-Anhalt: mind. 2 Jahre); Lernfortschritt-Tracking über Schuljahre              | ⚠️ **Zu definieren:** Verständigung mit Schulleitung (abhängig von Lehrplan-Anforderungen) |
+| `SENSITIVE_STUDENT` — Religion-Daten        | Religiöse Zugehörigkeit, Konfessionskennung | Schuljahr der Verarbeitung + 1 Jahr               | Art. 9 DSGVO (besondere Kategorie); Religion darf nicht über Schulaustritt hinaus erfasst sein                        | ⚠️ **Zu definieren:** Explizite Zustimmung Schulleitung + Eltern                           |
+| `PUBLIC`                                    | Lehrplan-Texte (offiziell)                  | Zeitlich unbegrenzt (solange Lehrplan gültig)     | Unterrichtsmaterial; Änderung dokumentieren, alte Versionen archivieren                                               | ✓ Standard                                                                                 |
+| `INTERNAL` — RAG-Quellen (User-Uploads)     | Von Lehrkraft hochgeladene Materialien      | 3 Jahre oder bis Widerruf                         | Lernmaterial-Archiv; Widerruf erlaubt Löschung sofort                                                                 | ⚠️ **Zu definieren:** Widerrufsfristen und -mechanik                                       |
+| `INTERNAL` — Qdrant Vectors                 | Vektorisierte Texte (Embeddings)            | Synchron mit Quelltexten                          | Qdrant ist Derivat der Original-Daten; Vektoren ohne Text sind identifikationsrisiko-arm aber sollten gelöscht werden | ✓ Kaskadierend (siehe unten)                                                               |
+| `INTERNAL` — Object Store (MinIO)           | Uploaded Dateien, OCR-Output                | Synchron mit `SENSITIVE_STUDENT`                  | Ablage von Arbeitsdateien                                                                                             | ✓ Kaskadierend                                                                             |
+| `INTERNAL` — Audit & System Logs            | Login-Events, Fehler, Warnung               | 1–7 Jahre (abhängig von Log-Typ)                  | Sicherheit + Compliance; Logs mit PII nach 1 Jahr, Metadaten-Logs nach 7 Jahren                                       | ⚠️ **Zu definieren:** Log-Klassifikation + Tier-System                                     |
 
 **Status-Legende:**
+
 - ✓ = Richtung klar, Implementierung möglich
 - ⚠️ = Offen; erfordert Schulleitung-Abstimmung oder Rechtsprüfung
 
@@ -86,14 +92,14 @@ Bestätigung an Lehrkraft / Schüler / Eltern
 
 ```sql
 -- Schritt 1: Schülerdaten markieren
-UPDATE student_work 
+UPDATE student_work
 SET is_deleted = true, deleted_at = NOW()
 WHERE student_pseudo_id = ?
   AND is_deleted = false;
 
 -- Schritt 2: Nach Aufbewahrungsfrist hard-delete (nach 30 Tagen grace period)
-DELETE FROM student_work 
-WHERE is_deleted = true 
+DELETE FROM student_work
+WHERE is_deleted = true
   AND deleted_at < NOW() - INTERVAL '30 days';
 
 -- Schritt 3: Audit Event
@@ -180,6 +186,7 @@ WHERE student_pseudo_id = ?
 6. **Audit:** Event in Audit Log dokumentiert
 
 ### Timeout
+
 Anfrage muss innerhalb von **30 Tagen** bearbeitet werden (DSGVO Art. 12(3)).
 
 ---
@@ -187,6 +194,7 @@ Anfrage muss innerhalb von **30 Tagen** bearbeitet werden (DSGVO Art. 12(3)).
 ## Quellenwiderruf in RAG (../rag/INGESTION_POLICY.md)
 
 Wenn Lehrkraft eine RAG-Quelle widerruft:
+
 1. Quelle wird im Index mit `is_revoked = true` markiert
 2. Bei Retrieval: revoked Sources **nicht** zurückgeben
 3. Alte Q&A-Pairs mit dieser Quelle werden markiert (for DSB review)
@@ -199,12 +207,14 @@ Wenn Lehrkraft eine RAG-Quelle widerruft:
 ## Schulaustritt / Deprovisioning
 
 ### Lehrkraft tritt aus
+
 1. Lehrkraft-Konto wird deaktiviert (nicht gelöscht)
 2. Alle Zugriffe werden entzogen
 3. Audit-Logs bleiben für 7 Jahre
 4. Nach 7 Jahren: Konto + Personal Data gelöscht
 
 ### Schüler tritt aus (Schulaustritt, Abitur, Wechsel)
+
 1. Sofort: Student-Data-Löschung (wenn nicht unter Aufbewahrungsfrist-Ausnahme)
 2. Aufbewahrungspflicht: Noten werden bis zum Ende der Aufbewahrungsfrist archiviert (read-only)
 3. Nach Frist: Hard-Delete aller Daten
@@ -214,11 +224,13 @@ Wenn Lehrkraft eine RAG-Quelle widerruft:
 ## Backup und Wiederherstellung
 
 ### Backup-Policy
+
 - Tägliches inkrementelles Backup (PostgreSQL WAL, MinIO versioning)
 - Wöchentliches vollständiges Backup (encrypted, off-site)
 - Aufbewahrung: 30 Tage
 
 ### Wiederherstellung
+
 - Wenn Schüler zu Unrecht gelöscht wurde: Backup-Restore möglich bis zum Ende der Grace Period (30 Tage)
 - Nach Grace Period: Daten sind unwiederbringlich (by design)
 - DSB wird vor Backup-Restore benachrichtigt
@@ -228,6 +240,7 @@ Wenn Lehrkraft eine RAG-Quelle widerruft:
 ## Monitoring und Compliance
 
 ### Tägliche Checks
+
 ```bash
 # Cron: 02:00 UTC
 /usr/local/bin/delete-retention-expired.sql
@@ -236,11 +249,13 @@ Wenn Lehrkraft eine RAG-Quelle widerruft:
 ```
 
 ### Wöchentliche Reports (Schulleitung + DSB)
+
 - Anzahl gelöschter Datensätze (pro Datenklasse)
 - Anzahl Vergessenwerden-Anfragen (genehmigt/abgelehnt)
 - Außer Plane Löschungen (Fehler, Sicherheitsbreaches)
 
 ### Jährliche Compliance-Prüfung
+
 - Aufbewahrungsfristen korrekt eingehalten? (Audit gegen DELETE-Logs)
 - Alle CloudReleaseGrants noch gültig?
 - Backup-Tests durchgeführt?

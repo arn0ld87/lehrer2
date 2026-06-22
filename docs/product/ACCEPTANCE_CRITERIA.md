@@ -53,14 +53,16 @@
   - Quelle/Referenz (»nach Lehrplan Deutsch § 4.2«)
   - Abfrage-Struktur: »[1] Was ist fachlich korrekt, [2] Was fehlt/ist ungenau, [3] Lösungshinweis mit Beleg, [4] Unsicherheitsgrad«
 - [ ] Output hat folgende Struktur sichtbar:
+
   ```
   KRITERIUM: [Name]
   ✓ Erkannt: [positive Aspekte]
   ✗ Fehlend/Ungenau: [Lücken]
-  
+
   LÖSUNGSHINWEIS: [mit Quellenreferenz]
   UNSICHERHEIT: High/Medium/Low [Begründung]
   ```
+
 - [ ] Cloud-LLM ist OFF per Default; Checkbox »Cloud-LLM verwenden?« zeigt Warnung: »Redacted Daten werden an externe API übertragen. CloudReleaseGrant erforderlich. [Freigabe überprüfen]«
 
 ### Menschliche Letztentscheidung

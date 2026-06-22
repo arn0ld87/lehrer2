@@ -94,16 +94,18 @@
    - Eingabe (redacted): »[SCHÜLER_23] schreibt: ‚Der Waldboden besteht haupsächlich aus Laub.' Aufgabe war: Beschreiben Sie drei Schichten des Waldbodens.«
    - Prompt (intern): »Analysiere diesen Schülertext gegen das Kriterium ‚Fachliche Korrektheit nach Lehrplan Biologie Klasse 7'. Gib strukturiertes Feedback: [1] Was ist fachlich korrekt, [2] Was fehlt, [3] Lösungshinweis mit Belegen, [4] Unsicherheitsgrad (High/Medium/Low).«
    - Output:
+
      ```
      KRITERIUM: Fachliche Korrektheit
      ✓ Erkannt: Waldboden als Objekt (korrekt)
      ✗ Fehlend: Schichtung (Streu-, Humus-, Mineralbodenschicht)
-     
-     LÖSUNGSHINWEIS: 
+
+     LÖSUNGSHINWEIS:
      Der Waldboden hat drei Schichten. Die oberste ist die Streu-, bestehend aus frischem Laub (Quelle: Lehrplan Biologie § 4.3; Schulbuch »Natur und Technik 7« S. 89).
-     
+
      UNSICHERHEIT: High (»Haupsächlich« — eventuell meint SchülerIn strukturelle Zusammensetzung, nicht Entstehung; Interpretation kann klarer abgegrenzt werden)
      ```
+
 6. **Vorschlag-Finalisierung durch Lehrkraft**:
    - Sichtbar: »Dies ist ein VORSCHLAG der KI. Sie entscheiden die endgültige Bewertung und das Feedback.«
    - Lehrkraft kann:

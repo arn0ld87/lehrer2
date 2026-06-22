@@ -11,6 +11,7 @@ Repository: `arn0ld87/lehrer2` (privat). Einstieg/Übersicht: [README.md](README
 **Problem.** Lehrkräfte verbringen viel Zeit mit lehrplankonformer Unterrichtsplanung, Materialerstellung und Korrektur. Bestehende KI-Werkzeuge sind selten an konkrete Landeslehrpläne gebunden, belegen ihre Aussagen nicht und sind aus Datenschutzsicht für Schülerdaten ungeeignet.
 
 **Zielgruppen.**
+
 - Lehrkräfte an Gesamt-/Gemeinschaftsschulen in Sachsen-Anhalt, Klassenstufen 5–12.
 - Zunächst Fächer **Deutsch** und **Religion** (evangelisch, katholisch, konfessionssensibel/übergreifend) — Ethik getrennt modelliert.
 - Später: Fachkonferenz-/Schuladmin-Rollen.
@@ -20,6 +21,7 @@ Repository: `arn0ld87/lehrer2` (privat). Einstieg/Übersicht: [README.md](README
 ## 2. In-Scope / Out-of-Scope (MVP)
 
 **In-Scope (geplant, noch nicht umgesetzt):**
+
 - Curriculummodell (Schulform, Bildungsgang, Fach, Konfession, Klasse, Gültigkeit) — siehe [DATA_MODEL.md](docs/architecture/DATA_MODEL.md).
 - Lehrplangebundene Unterrichtsplanung mit Quellenpflicht.
 - Arbeitsblatt-/Aufgaben-/Erwartungshorizont-/Bewertungsraster-Generierung mit Differenzierung.
@@ -28,6 +30,7 @@ Repository: `arn0ld87/lehrer2` (privat). Einstieg/Übersicht: [README.md](README
 - Administration: Rollen, Mandantentrennung, Audit-Log (konzeptionell).
 
 **Out-of-Scope (MVP):**
+
 - Automatische Endnotenvergabe.
 - Pädagogisch relevante Entscheidung ohne menschliche Kontrolle.
 - Veröffentlichung/Weitergabe von Schülerdaten, öffentliche Schülerplattform.
@@ -44,13 +47,13 @@ Repository: `arn0ld87/lehrer2` (privat). Einstieg/Übersicht: [README.md](README
 
 ## 4. Qualitätsziele
 
-| Ziel | Bedeutung |
-|---|---|
-| Nachvollziehbarkeit | Jede fachliche/curriculare Aussage belegt; Generierungs-Provenienz protokolliert. |
-| Datenschutz | Datenminimierung, Pseudonymisierung-by-default, lokaler Default-Provider, fail-closed Guard. |
-| Curriculum-Fit | Inhalte an konkrete LSA-Lehrpläne gebunden, Konfessionen strikt getrennt. |
-| Kostenkontrolle | Self-hostbar, austauschbarer Stack, lokale Modelle als Default. |
-| Local-first | Schülerdaten bleiben standardmäßig lokal; Cloud nur dokumentiert freigegeben. |
+| Ziel                | Bedeutung                                                                                    |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| Nachvollziehbarkeit | Jede fachliche/curriculare Aussage belegt; Generierungs-Provenienz protokolliert.            |
+| Datenschutz         | Datenminimierung, Pseudonymisierung-by-default, lokaler Default-Provider, fail-closed Guard. |
+| Curriculum-Fit      | Inhalte an konkrete LSA-Lehrpläne gebunden, Konfessionen strikt getrennt.                    |
+| Kostenkontrolle     | Self-hostbar, austauschbarer Stack, lokale Modelle als Default.                              |
+| Local-first         | Schülerdaten bleiben standardmäßig lokal; Cloud nur dokumentiert freigegeben.                |
 
 ## 5. Architekturübersicht und Datenflüsse
 
@@ -66,12 +69,12 @@ Quellen werden entdeckt → geprüft (Lizenz, Autorität, Aktualität) → regis
 
 ## 7. Datenklassifizierung
 
-| Klasse | Beispiele | Cloud erlaubt? |
-|---|---|---|
-| `PUBLIC` | offen lizenzierte Lehrplan-Codes | ja |
-| `INTERNAL` | generische Vorlagen ohne Personenbezug | ja (freigegeben) |
-| `PERSONAL_TEACHER` | Urheberschaft/Notizen der Lehrkraft | nur freigegeben |
-| `SENSITIVE_STUDENT` | Schülerarbeiten, Korrekturen | nur pseudonymisiert + dokumentierte Schulfreigabe; Klarnamen nie |
+| Klasse              | Beispiele                              | Cloud erlaubt?                                                   |
+| ------------------- | -------------------------------------- | ---------------------------------------------------------------- |
+| `PUBLIC`            | offen lizenzierte Lehrplan-Codes       | ja                                                               |
+| `INTERNAL`          | generische Vorlagen ohne Personenbezug | ja (freigegeben)                                                 |
+| `PERSONAL_TEACHER`  | Urheberschaft/Notizen der Lehrkraft    | nur freigegeben                                                  |
+| `SENSITIVE_STUDENT` | Schülerarbeiten, Korrekturen           | nur pseudonymisiert + dokumentierte Schulfreigabe; Klarnamen nie |
 
 Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_AND_DELETION.md](docs/security/RETENTION_AND_DELETION.md).
 

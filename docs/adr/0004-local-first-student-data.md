@@ -34,10 +34,10 @@ Das Projekt verarbeitet Daten von Schülerinnen und Schülern im Kontext von Rel
 ### (c) Klarnamen-Cloud-Default (VERWORFEN)
 
 - **Ansatz**: Schülernamen standardmäßig an Cloud-Provider übermitteln.
-- **Warum verworfen**: 
+- **Warum verworfen**:
   - **Spec-Widerspruch**: "Pseudonymisierung-by-default" ist Projektziel (Invarianten-Defintion).
   - **Rechtliches Risiko**: DSGVO Art. 32 (Sicherheit), Art. 33/34 (Meldepflicht bei Verletzung), Art. 82 (Schadensersatz); schulische Genehmigungspraxis verlangt explizite Datenschutz-Freigabe; bloße AGB eines Cloud-Providers deckt Schulanforderungen nicht ab.
-  - **Kein funktionaler Nutzen**: LLM-Qualität für Feedback/Analyse verschlechtert sich *nicht* durch Pseudonymisierung (z. B. „Schüler_123" statt „Max Müller"); Kontext bleibt erhalten.
+  - **Kein funktionaler Nutzen**: LLM-Qualität für Feedback/Analyse verschlechtert sich _nicht_ durch Pseudonymisierung (z. B. „Schüler_123" statt „Max Müller"); Kontext bleibt erhalten.
   - **Haftungsrisiko**: Schulleitung trägt letztlich die Verantwortung; unkontrolliertes Cloud-Tracking von Minderjaehrigen ist nicht mehr zeitgemäß.
 
 ## Entscheidung
@@ -72,9 +72,9 @@ Das Projekt verarbeitet Daten von Schülerinnen und Schülern im Kontext von Rel
 
 ### Risiken
 
-- **Re-Identifikation aus Pseudo-Freitext**: Selbst wenn Schülernamen redacted sind, kann ein Freitext-Fragment ("arbeitet langsam, mathematisch begabt, kommt aus [Ort]") möglicherweise re-identifizieren. 
+- **Re-Identifikation aus Pseudo-Freitext**: Selbst wenn Schülernamen redacted sind, kann ein Freitext-Fragment ("arbeitet langsam, mathematisch begabt, kommt aus [Ort]") möglicherweise re-identifizieren.
   - **Mitigation**: Zusätzliche Entfernung von Ortsnamen, extremen Charakteristika; Token-Budget für redacted Prompts beschränken; DSFA-dokumentieren.
-- **Ollama-Qualität**: Lokale Ollama-Modelle können schwächer sein als Cloud-Modelle (z. B. gpt-4-turbo). 
+- **Ollama-Qualität**: Lokale Ollama-Modelle können schwächer sein als Cloud-Modelle (z. B. gpt-4-turbo).
   - **Mitigation**: Regelmäßige Modell-Updates; Feedback-Loop für Lehrer (Iterative Prompt-Verbesserung); evtl. Migrationsroute zu qualitativ besseren lokalen Modellen (LLaMA 3, Mixtral).
 - **Cloud-Modus: Missbrauch durch falsche Genehmigung**: Schule gibt falsch oder unvollständig CloudReleaseGrant ab.
   - **Mitigation**: Starre Validierung im System (Feld-Checker für DSFA-ID, AV-Datum); Admin-Review vor Aktivierung; Quartal-Audit der aktiven Grants.
@@ -83,11 +83,11 @@ Das Projekt verarbeitet Daten von Schülerinnen und Schülern im Kontext von Rel
 
 ### Restrisiken (Explizit zu Führen)
 
-- **Datenleck auf lokalem Server**: Selbstgehostete Infrastruktur kann kompromittiert werden. 
+- **Datenleck auf lokalem Server**: Selbstgehostete Infrastruktur kann kompromittiert werden.
   - **Kontrolle**: Netzwerk-Segmentierung, regelmäßige Security-Updates, Firewall, SSH-Key-Management.
-- **Unerwartete Re-Identifikation**: Fortgeschrittene NLP-Techniken könnten Pseudo-Daten re-identifizieren. 
+- **Unerwartete Re-Identifikation**: Fortgeschrittene NLP-Techniken könnten Pseudo-Daten re-identifizieren.
   - **Kontrolle**: Defensive Redaction-Logik; Evaluationen mit Sicherheitsforscher:innen; DSFA-Update alle 18 Monate.
-- **Vendor-Lock-in bei Cloud-Release**: Sobald Schule Klartext-Modus nutzt, ist Wechsel des Cloud-Providers schwierig. 
+- **Vendor-Lock-in bei Cloud-Release**: Sobald Schule Klartext-Modus nutzt, ist Wechsel des Cloud-Providers schwierig.
   - **Kontrolle**: AV-Verträge mit kurzen Kündigungsfristen (max. 12 Monate); Import/Export von Daten standardisiert dokumentieren.
 
 ## Verweise

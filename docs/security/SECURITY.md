@@ -5,7 +5,9 @@ Dieses Dokument definiert Sicherheitsgrundsätze, Rollen, Verantwortlichkeiten u
 ## Sicherheitsgrundsätze
 
 ### Defense-in-Depth
+
 Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
+
 - Authentifizierung (Lehrkraft + Session) + Autorisierung (Datenklasse-basiert)
 - Lokale Validierung + fail-closed Guards vor jedem LLM-Call
 - Verschlüsselung im Transit (TLS 1.3+) + Ruhe (AES-256-GCM oder äquivalent)
@@ -13,12 +15,14 @@ Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
 - Audit Logging + regelmäßige Intrusion Detection
 
 ### Least Privilege
+
 - Jede Lehrkraft sieht nur ihre eigenen Daten und Klassenarbeiten ihrer Schüler
 - Dienstkonten (OCR-Worker, LLM-Agent) erhalten minimale Permissions: nur erforderliche Datenklassen lesen/schreiben
 - Keine Super-Admin-Accounts im Normalbetrieb; Admin-Zugriffe dokumentiert + zeitlich befristet
 - RAG-Indexe granular: Religion-Quellen segregiert von Deutsch-Quellen
 
 ### Secure Defaults
+
 - Pseudonymisierung ist Default, nicht Opt-in: Schüler-Klarnamen werden **sofort** durch stabile Pseudonyme ersetzt
 - Lokale LLM (Ollama) ist Standard; Cloud-LLM nur mit expliziter Schulfreigabe (CloudReleaseGrant)
 - Alle Anfragen an LLM erhalten vorher Redaction-Schritt; kein Klarname verlässt das System
@@ -26,6 +30,7 @@ Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
 - Datenretention ist Minimierungs-Default: automatische Löschung nach Aufbewahrungsfrist
 
 ### Fail-Closed
+
 - Wenn der Redaction-Schritt oder der Guard fehlschlägt, wird die Anfrage blockiert (kein Fallback zu unsichererer Option)
 - Wenn Cloud-LLM ohne gültiges CloudReleaseGrant angefragt wird, wird lokal zurückgewiesen
 - Wenn Pseudonym-Mapping beschädigt ist, wird die Anfrage abgelehnt (nicht erraten, nicht reparieren)
@@ -34,17 +39,18 @@ Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
 
 ## Verantwortlichkeiten und Rollen
 
-| Rolle | Verantwortung |
-|---|---|
-| **Schulleitung** | Freigabe für Cloud-LLM (CloudReleaseGrant mit Rechtsgrundlage, AVV, DSFA); Datenschutzrichtlinien definieren; Incident Response genehmigen |
-| **Datenschutzbeauftragte (DSB)** | Datenschutz-Impact-Assessments; Lieferantenpflege (Cloud-Provider); Datenschutzverletzungs-Benachrichtigung |
-| **IT-Administrator** | Systembetrieb; Backup/Wiederherstellung; Sicherheits-Patches; Auditlogs prüfen |
-| **Lehrkräfte** | Gewährleisten, dass nur sachlich notwendige Daten verarbeitet werden; Widerruf einreichen falls Schüler/Eltern das Recht auf Vergessenwerden ausüben |
-| **Schüler / Eltern** | Auskunftsverlangen; Widerruf von Datenverarbeitung (Art. 17 DSGVO) |
+| Rolle                            | Verantwortung                                                                                                                                        |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Schulleitung**                 | Freigabe für Cloud-LLM (CloudReleaseGrant mit Rechtsgrundlage, AVV, DSFA); Datenschutzrichtlinien definieren; Incident Response genehmigen           |
+| **Datenschutzbeauftragte (DSB)** | Datenschutz-Impact-Assessments; Lieferantenpflege (Cloud-Provider); Datenschutzverletzungs-Benachrichtigung                                          |
+| **IT-Administrator**             | Systembetrieb; Backup/Wiederherstellung; Sicherheits-Patches; Auditlogs prüfen                                                                       |
+| **Lehrkräfte**                   | Gewährleisten, dass nur sachlich notwendige Daten verarbeitet werden; Widerruf einreichen falls Schüler/Eltern das Recht auf Vergessenwerden ausüben |
+| **Schüler / Eltern**             | Auskunftsverlangen; Widerruf von Datenverarbeitung (Art. 17 DSGVO)                                                                                   |
 
 ## Umgang mit Secrets
 
 ### Keine Secrets im Repo
+
 - **Verbot:** Keine `.env`, API-Keys, Zertifikate, Private Keys, OAuth Tokens, Datenbank-Passwörter im Git-Repo
 - **Detektion:** Pre-commit Hook (TruffleHog / git-secrets) blockt verdächtige Patterns
 - **Speicherort:** Secrets leben in einer separaten, nicht-versionierten `secrets/` Datei oder in einem Secret Manager (z. B. HashiCorp Vault, Docker Secrets bei Stack-Deployment)
@@ -52,6 +58,7 @@ Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
 - **Zugriff:** Nur der IT-Administrator und autorisierte Dienstkonten dürfen Secrets lesen
 
 ### Secret-Handling in Deployment
+
 1. Zur Buildzeit: Secrets werden NICHT injiziert; stattdessen werden Platzhalter gelesen
 2. Zur Laufzeit: Secrets werden aus Vault/Environment gelesen; sofort nach Verwendung aus Memory geräumt
 3. In Logs: Secrets werden automatisch redacted (z. B. `$API_KEY` → `[REDACTED]`)
@@ -74,6 +81,7 @@ Sicherheitslücken werden **nicht** auf GitHub Issues oder öffentliche Kanäle 
 ## Sicherheits-Architektur-Überblick
 
 ### Datenfluss mit Guard-Stellen
+
 ```
 Lehrkraft-Input
   ↓
@@ -102,11 +110,11 @@ Alle Stellen sind **fail-closed**: wenn Validierung fehlschlägt, wird kein Zugr
 
 ## Datenklassen und Sicherheitseinstufung
 
-| Datenklasse | Sicherheitseinstufung | Wer darf zugreifen | Verschlüsselung erforderlich |
-|---|---|---|---|
-| `PUBLIC` | Unkritisch | Jeder | Empfohlen (TLS) |
-| `INTERNAL` | Intern | Lehrkräfte, IT-Admin | Ja (TLS + AES-256) |
-| `PERSONAL_TEACHER` | Persönlich | nur Lehrkraft selbst | Ja (AES-256) |
+| Datenklasse         | Sicherheitseinstufung                 | Wer darf zugreifen             | Verschlüsselung erforderlich                              |
+| ------------------- | ------------------------------------- | ------------------------------ | --------------------------------------------------------- |
+| `PUBLIC`            | Unkritisch                            | Jeder                          | Empfohlen (TLS)                                           |
+| `INTERNAL`          | Intern                                | Lehrkräfte, IT-Admin           | Ja (TLS + AES-256)                                        |
+| `PERSONAL_TEACHER`  | Persönlich                            | nur Lehrkraft selbst           | Ja (AES-256)                                              |
 | `SENSITIVE_STUDENT` | Hochsensibel (Art. 9 DSGVO, Religion) | nur Lehrkraft + Schüler selbst | Ja (AES-256-GCM), fail-closed bei Cloud-LLM ohne Freigabe |
 
 ## Verweise

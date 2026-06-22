@@ -52,7 +52,7 @@ Kopiere die Beispielkonfiguration:
 cp .env.example .env
 ```
 
-Passe [.env](.env) bei Bedarf an (z. B. Datenbank-Passwörter, MinIO-Credentials).
+Passe [.env](../../.env.example) bei Bedarf an (z. B. Datenbank-Passwörter, MinIO-Credentials). Die lokale `.env` wird durch `cp .env.example .env` erzeugt und ist gitignored.
 
 ### 3. Services starten
 

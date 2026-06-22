@@ -23,6 +23,7 @@ Das Design-Kit `unterrichtsassistenz-lsa-design-kit` ist ein vollständiges Figm
 Die `design-tokens.json` definiert ein umfassendes Farbsystem. Zu ermitteln durch direktes Lesen der Datei — die Struktur folgt einem standardisierten Token-Format (wahrscheinlich Figma Design Tokens oder ähnlich).
 
 Erwartete Kategorien (typisch):
+
 - **Neutral-Palette:** Grau-Abstufungen für Hintergründe, Borders, Text
 - **Semantische Farben:** Success (Grün), Warning (Orange), Danger (Rot), Info (Blau)
 - **Brand-Farben:** Primär und Sekundär (abhängig von Schullayout)
@@ -31,6 +32,7 @@ Erwartete Kategorien (typisch):
 ### Typografie
 
 CSS und Tokens definieren vermutlich:
+
 - **Schriftfamilien:** Sans-Serif für UI (z.B. Inter, -apple-system), Serif optional für Hervorhebungen
 - **Schriftgrößen:** Skalierte Größen (z.B. xs, sm, base, lg, xl, 2xl)
 - **Zeilenhöhen:** Gut lesbar für Schüler-/Lehrkraft-Texte
@@ -39,6 +41,7 @@ CSS und Tokens definieren vermutlich:
 ### Spacing
 
 Wahrscheinlich 4er- oder 8er-Skala:
+
 - `xs, sm, md, lg, xl, 2xl` für Padding/Margin/Gap
 
 ### Weitere Token
@@ -98,6 +101,7 @@ Das Design-Kit ist **Design-Tool-agnostik**, sollte aber problemlos zu folgendem
    - Shadows in `theme.boxShadow`
 
    Beispiel:
+
    ```typescript
    // tailwind.config.ts
    export default {
@@ -135,6 +139,7 @@ Das Design-Kit ist **Design-Tool-agnostik**, sollte aber problemlos zu folgendem
 #### Komponenten-Umsetzung
 
 Alle Komponenten (Button, Input, etc.) sollten:
+
 1. Auf `Tailwind`-Klassen bauen (nicht Custom-CSS)
 2. Variant-Pattern unterstützen (Primary, Secondary, Size: sm/md/lg)
 3. In `/app/components/` oder `/lib/ui/` organisiert sein
@@ -142,6 +147,7 @@ Alle Komponenten (Button, Input, etc.) sollten:
 5. Accessibility-Attribute (ARIA) enthalten
 
 Beispiel:
+
 ```typescript
 // app/components/Button.tsx
 interface ButtonProps {
@@ -230,23 +236,23 @@ export function Button({ variant = "primary", size = "md", disabled = false, chi
 
 ## Design-Kit-Dateien (Inventar)
 
-| Datei | Typ | Zweck |
-|-------|-----|-------|
-| `README.md` | Markdown | Übersicht, Setup-Anleitung |
-| `design-tokens.json` | JSON | Designdaten (Farben, Typo, Spacing, Shadows) |
-| `assets/app.css` | CSS | Base-Styles, Resets, Utilities |
-| `assets/app.js` | JavaScript | Interaktivität (Dropdowns, Modals, Tabs) |
-| `manifest.json` | JSON | Metadaten (Version, Autor, Lizenz, Export-Datum) |
-| `handoff/CLAUDE_CODE_HANDOFF.md` | Markdown | Technische Handoff-Notes für Entwickler |
-| `dashboard.html` | HTML | Prototype: Haupt-Dashboard |
-| `worksheet-builder.html` | HTML | Prototype: Arbeitsblatt-Editor |
-| `planner.html` | HTML | Prototype: Stundenplaner |
-| `correction.html` | HTML | Prototype: Korrektur-Interface |
-| `sources.html` | HTML | Prototype: Quellenmanagement |
-| `ui-kit.html` | HTML | Komponenten-Galerie |
-| `assets/logo.svg` | SVG | Anwendungs-Logo |
-| `assets/empty-state.svg` | SVG | Leerzustand-Illustration |
-| `reference/dashboard-reference.png` | PNG | Mockup-Referenz |
+| Datei                               | Typ        | Zweck                                            |
+| ----------------------------------- | ---------- | ------------------------------------------------ |
+| `README.md`                         | Markdown   | Übersicht, Setup-Anleitung                       |
+| `design-tokens.json`                | JSON       | Designdaten (Farben, Typo, Spacing, Shadows)     |
+| `assets/app.css`                    | CSS        | Base-Styles, Resets, Utilities                   |
+| `assets/app.js`                     | JavaScript | Interaktivität (Dropdowns, Modals, Tabs)         |
+| `manifest.json`                     | JSON       | Metadaten (Version, Autor, Lizenz, Export-Datum) |
+| `handoff/CLAUDE_CODE_HANDOFF.md`    | Markdown   | Technische Handoff-Notes für Entwickler          |
+| `dashboard.html`                    | HTML       | Prototype: Haupt-Dashboard                       |
+| `worksheet-builder.html`            | HTML       | Prototype: Arbeitsblatt-Editor                   |
+| `planner.html`                      | HTML       | Prototype: Stundenplaner                         |
+| `correction.html`                   | HTML       | Prototype: Korrektur-Interface                   |
+| `sources.html`                      | HTML       | Prototype: Quellenmanagement                     |
+| `ui-kit.html`                       | HTML       | Komponenten-Galerie                              |
+| `assets/logo.svg`                   | SVG        | Anwendungs-Logo                                  |
+| `assets/empty-state.svg`            | SVG        | Leerzustand-Illustration                         |
+| `reference/dashboard-reference.png` | PNG        | Mockup-Referenz                                  |
 
 ---
 
@@ -264,4 +270,4 @@ export function Button({ variant = "primary", size = "md", disabled = false, chi
 
 - [../../PLAN.md](../../PLAN.md) — Projekt-Roadmap und Meilensteine
 - [../product/USER_FLOWS.md](../product/USER_FLOWS.md) — Benutzer-Journeys
-- [Design-Kit-Root](../../../unterrichtsassistenz-lsa-design-kit/) — Lokales Design-Artefakt
+- [Design-Kit-Root](../../unterrichtsassistenz-lsa-design-kit/) — Lokales Design-Artefakt

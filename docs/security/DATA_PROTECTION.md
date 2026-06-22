@@ -22,14 +22,15 @@ Das System folgt den Datenschutzzielen durch technisches Design, nicht durch Ric
 
 Das System klassifiziert alle Daten nach Sensitivität und Cloud-Zulässigkeit:
 
-| Datenklasse | Beispiele | At-Rest (lokal) | Cloud-fähig | Pseudonymisierung | Besonderheiten |
-|---|---|---|---|---|---|
-| **PUBLIC** | Veröffentlichte Lernmaterialien, allgemeine Fachcurricula, öffentliche Schulinfo | ✓ | ✓ (unrestricted) | nein | Keine Einschränkung; Standard-Datenschutz (Audit-Log) ausreichend |
-| **INTERNAL** | Schulinterner Ablauf, Lehrkraft-Notizen ohne Schülerbezug, Admin-Logs | ✓ | ✓ (mit Audit) | nein | Einmal lokal indexiert, dann Cloud-Zugang nur durch Schuladmin freigegeben |
-| **PERSONAL_TEACHER** | Lehrkraft-spezifische Konfiguration, private Unterrichtspläne, Feedback-Entwürfe (vor Versand an Schüler) | ✓ | ✓ (mit Audit + Consent) | n/a | Nur für die Lehrkraft zugänglich; Cloud nur mit explizitem Opt-in pro Datenelement |
-| **SENSITIVE_STUDENT** | Schülernamen, Schülerleistungen, Feedback an Schüler, Schülerlernstände, Förderbedarfskennzeichnung, Konfession, medizinische Hinweise | ✓ (mit Verschlüsselung) | ⚠️ Nur pseudonymisiert + dokumentierte Schulfreigabe | ja (mandatory) | Klarnamen verlassen das System im Normalbetrieb nicht. Cloud-Zugang nur unter CloudReleaseGrant; Klartext-Modus ist Ausnahmeregelung, auditiert, mit Warnhinweis. Siehe Abschnitt 4. |
+| Datenklasse           | Beispiele                                                                                                                              | At-Rest (lokal)         | Cloud-fähig                                          | Pseudonymisierung | Besonderheiten                                                                                                                                                                       |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ---------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **PUBLIC**            | Veröffentlichte Lernmaterialien, allgemeine Fachcurricula, öffentliche Schulinfo                                                       | ✓                       | ✓ (unrestricted)                                     | nein              | Keine Einschränkung; Standard-Datenschutz (Audit-Log) ausreichend                                                                                                                    |
+| **INTERNAL**          | Schulinterner Ablauf, Lehrkraft-Notizen ohne Schülerbezug, Admin-Logs                                                                  | ✓                       | ✓ (mit Audit)                                        | nein              | Einmal lokal indexiert, dann Cloud-Zugang nur durch Schuladmin freigegeben                                                                                                           |
+| **PERSONAL_TEACHER**  | Lehrkraft-spezifische Konfiguration, private Unterrichtspläne, Feedback-Entwürfe (vor Versand an Schüler)                              | ✓                       | ✓ (mit Audit + Consent)                              | n/a               | Nur für die Lehrkraft zugänglich; Cloud nur mit explizitem Opt-in pro Datenelement                                                                                                   |
+| **SENSITIVE_STUDENT** | Schülernamen, Schülerleistungen, Feedback an Schüler, Schülerlernstände, Förderbedarfskennzeichnung, Konfession, medizinische Hinweise | ✓ (mit Verschlüsselung) | ⚠️ Nur pseudonymisiert + dokumentierte Schulfreigabe | ja (mandatory)    | Klarnamen verlassen das System im Normalbetrieb nicht. Cloud-Zugang nur unter CloudReleaseGrant; Klartext-Modus ist Ausnahmeregelung, auditiert, mit Warnhinweis. Siehe Abschnitt 4. |
 
-**Cloud-fähig-Definition:**  
+**Cloud-fähig-Definition:**
+
 - **✓:** Datenklasse darf cloud-seitig verarbeitet werden, sofern technische und organisatorische Massnahmen (Verschlüsselung, Audit, Schulvereinbarung) eingehalten sind.
 - **⚠️:** Datenklasse darf cloud-seitig verarbeitet werden, aber nur unter restriktiven Bedingungen (Pseudonymisierung, dokumentierte Schulfreigabe, Audit).
 - **✗:** Datenklasse darf nicht in Cloud-Prozesse fliessen (nicht geplant für diese Version).
@@ -45,6 +46,7 @@ Jeder Aufruf an einen LLM-Provider (Ollama lokal, oder externe Cloud-Provider wi
 **Auslöser:** Lehrkraft initiiert Anfrage (z.B. "Generiere Musterkorrektur für Deutschaufsatz").
 
 **System ermittelt:**
+
 - Fachdomäne (z.B. "Deutsch", "Mathematik")
 - Strang (z.B. "Korrekturassistenz", "Aufgabengenerierung")
 - Datenklasse des Eingabe-Kontexts (z.B. "SENSITIVE_STUDENT" weil Schülertexte beteiligt)
@@ -75,6 +77,7 @@ else:
 ```
 
 **CloudReleaseGrant-Anforderungen** (für SENSITIVE_STUDENT Cloud-Nutzung):
+
 - **Freigebende Person:** Schulleitung, Datenschutzbeauftragte oder designierter Schuladmin
 - **Zweck:** Explizit benannte Funktion(en) (z.B. "Korrekturassistenz mit OpenAI für Deutschunterricht")
 - **Geltungsdatum:** Startdatum und Ablaufdatum
@@ -117,8 +120,8 @@ else:
 const redacted = redactionService.apply({
   input: rawInput,
   dataClass: SENSITIVE_STUDENT,
-  provider: 'openai',
-  pseudonymMapping: localMapping
+  provider: "openai",
+  pseudonymMapping: localMapping,
 });
 // redacted.text: "Der Schüler student_9a42c8e1 hat…"
 // redacted.applied: true
@@ -130,8 +133,9 @@ const redacted = redactionService.apply({
 **Auslöser:** Nach Intent-Bestimmung und Policy-Gate wird der RAG-Index abgefragt.
 
 **Pflichtfilter:**
+
 - **Fachdomäne:** Nur Chunks aus dem korrekten Fach (z.B. "Deutsch" LLM-Input nicht mit "Mathematik"-Quellen vermischen)
-- **Konfession:** 
+- **Konfession:**
   - Religionsunterricht: Nur Chunks der Schulkonfession (evangelisch/katholisch) oder konfessionssensibel-übergreifend
   - Ethik-Unterricht: Nur Chunks aus der Ethik-Kategorie, keine konfessionellen Inhalte vermischen
   - Übrige Fächer: Keine religiösen Hinweise (ausser explizit schulintern freigegeben)
@@ -172,6 +176,7 @@ else:
 ```
 
 **Konsequenz bei Treffer:**
+
 - Abbruch (`fail-closed`)
 - Alert an Lehrkraft und Admin: "Datenschutzprobleme erkannt, Anfrage konnte nicht verarbeitet werden. Kontaktieren Sie den Admin."
 - Audit-Log-Eintrag (siehe Abschnitt 8)
@@ -191,6 +196,7 @@ class AnthropicAdapter implements LLMProviderAdapter { ... }
 ```
 
 **Jeder Adapter erbt automatisch:**
+
 - Redaction (Schritt 3.3)
 - Guard-Assertion (Schritt 3.5)
 - Provenance-Logging (Schritt 3.8)
@@ -198,6 +204,7 @@ class AnthropicAdapter implements LLMProviderAdapter { ... }
 **Kein Adapter darf diese Schritte überspringen.**
 
 **Verbindungsrichtlinien:**
+
 - Lokal (Ollama): Unverschlüsselt oder TLS (lokal)
 - Cloud (OpenAI, Anthropic): TLS 1.3, Mutual TLS wo möglich, API-Key aus Vaultwarden
 
@@ -226,18 +233,18 @@ interface GenerationProvenance {
   timestamp: ISO8601;
   teacher_id: UUID;
   school_id: UUID;
-  function: string;  // "correction_assistance", "task_generation", …
+  function: string; // "correction_assistance", "task_generation", …
   data_class: "PUBLIC" | "INTERNAL" | "PERSONAL_TEACHER" | "SENSITIVE_STUDENT";
-  provider: string;  // "ollama", "openai", "anthropic"
-  model: string;     // "qwen3:7b", "gpt-4", "claude-3-sonnet"
-  prompt_hash: string;  // SHA256(system_prompt + assembled_context)
+  provider: string; // "ollama", "openai", "anthropic"
+  model: string; // "qwen3:7b", "gpt-4", "claude-3-sonnet"
+  prompt_hash: string; // SHA256(system_prompt + assembled_context)
   redaction_applied: boolean;
-  redaction_fields: string[];  // ["name", "dob", "address"]
+  redaction_fields: string[]; // ["name", "dob", "address"]
   source_refs: { source_id: string; trust_level: string }[];
-  confidence_state: "high" | "medium" | "low";  // Von Provider
+  confidence_state: "high" | "medium" | "low"; // Von Provider
   result_citation_status: "fully_cited" | "partially_cited" | "unsure_marked";
   guard_check_passed: boolean;
-  abort_reason?: string;  // Falls Abort
+  abort_reason?: string; // Falls Abort
 }
 ```
 
@@ -254,24 +261,25 @@ interface GenerationProvenance {
 
 [OLLAMA | GPT-4 | Anthropic]
 Vertrauensniveau: Hoch / Mittel / Niedrig
-Quellen: Lehrplan Deutsch NRW (2022) [OFFICIAL_BINDING], 
-         Fehlerkatolog Dudenverlag [OFFICIAL_GUIDANCE]
+Quellen: Lehrplan Deutsch NRW (2022) [OFFICIAL_BINDING],
+Fehlerkatolog Dudenverlag [OFFICIAL_GUIDANCE]
 
 ### Rückmeldungen:
 
-**Satz 1:** "Das ist falsch." 
-→ **Vorschlag:** "Das stimmt nicht." 
-   **Grund:** Schriftsprache vermeidet Umgangssprache in formalen Arbeiten. 
-   **Quelle:** Duden Deutschunterricht, Kap. 5. 
-   **Sicherheit:** Mittel (Regelwerk, aber Ausnahmen möglich)
+**Satz 1:** "Das ist falsch."
+→ **Vorschlag:** "Das stimmt nicht."
+**Grund:** Schriftsprache vermeidet Umgangssprache in formalen Arbeiten.
+**Quelle:** Duden Deutschunterricht, Kap. 5.
+**Sicherheit:** Mittel (Regelwerk, aber Ausnahmen möglich)
 
 ---
 
-⚠️ Schüler-Namen sind pseudonymisiert verarbeitet worden. 
+⚠️ Schüler-Namen sind pseudonymisiert verarbeitet worden.
 Alle Quellen lokal geprüft (TrustLevel >= OFFICIAL_GUIDANCE).
 ```
 
 **Lehrkraft-Aufgabe:**
+
 - Prüfe Vorschläge auf Plausibilität
 - Nutze Kriterien und Belege, um selbst Urteile zu bilden
 - Entscheide Letztverantwortung (System ist Assistent, nicht Entscheidungsträger)
@@ -307,7 +315,7 @@ Alle Quellen lokal geprüft (TrustLevel >= OFFICIAL_GUIDANCE).
 ```typescript
 if school.klartext_cloud_mode_enabled == true and cloudReleaseGrant.valid == true:
     // Pseudonymisierung wird ÜBERSPRUNGEN
-    redaction_applied = false  
+    redaction_applied = false
     prompt_text = raw_input  // Schülernamen IN Klarttext
     send_to_cloud(prompt_text)
 else:
@@ -335,7 +343,8 @@ Schulfreigabe vorhanden (CloudReleaseGrant 2026-06).
 
 **Restrisiko:** Auch mit Pseudonymisierung: Re-Identifikation ist theoretisch möglich, wenn ein Cloud-Provider Zugriff auf weitere Daten (z.B. Public Social Media) hat und Kontextmuster abgleicht.
 
-**Empfehlung:** 
+**Empfehlung:**
+
 - Klartext-Modus nur nach Abstimmung mit Landesdatenschutzbeauftragtem aktivieren.
 - Nicht für besonders sensitive Fälle (z.B. Schüler mit Förderbedarfskennzeichnung, besondere Lebensumstände).
 - Regelmässige Risiko-Neubewertung (mind. jährlich).
@@ -346,18 +355,19 @@ Schulfreigabe vorhanden (CloudReleaseGrant 2026-06).
 
 ### 5.1 Rollen
 
-| Rolle | Berechtigung | Datenzugriff |
-|---|---|---|
-| **Lehrkraft** | Erstellt Anfragen für eigene Klassen; sieht Outputs für ihre Fächer | SENSITIVE_STUDENT (own class only), PERSONAL_TEACHER |
-| **Admin (Schule)** | Verwaltet CloudReleaseGrant, Konfiguration, Audit-Logs | Alle, mit Audit-Trail |
-| **Datenschutzbeauftragte (Schule)** | Liest Audit-Logs, validiert CloudReleaseGrant, genehmigt Klartext-Modus | INTERNAL, Audit-Logs (read-only) |
-| **System** | Technik-Rolle, Redaction, Guard, Logging | Alle (vertrauensgebunden) |
+| Rolle                               | Berechtigung                                                            | Datenzugriff                                         |
+| ----------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Lehrkraft**                       | Erstellt Anfragen für eigene Klassen; sieht Outputs für ihre Fächer     | SENSITIVE_STUDENT (own class only), PERSONAL_TEACHER |
+| **Admin (Schule)**                  | Verwaltet CloudReleaseGrant, Konfiguration, Audit-Logs                  | Alle, mit Audit-Trail                                |
+| **Datenschutzbeauftragte (Schule)** | Liest Audit-Logs, validiert CloudReleaseGrant, genehmigt Klartext-Modus | INTERNAL, Audit-Logs (read-only)                     |
+| **System**                          | Technik-Rolle, Redaction, Guard, Logging                                | Alle (vertrauensgebunden)                            |
 
 ### 5.2 Mandantentrennung
 
 **Invariante:** Daten einer Schule dürfen NICHT für Lehrkräfte oder Anfragen einer anderen Schule zugreifbar sein.
 
 **Implementierung:**
+
 - PostgreSQL: Row-Level Security (RLS) auf allen `school_id`-sensitiven Tabellen.
 - Redis: Key-Namespace mit `school_id` (z.B. `school:123:generation:request:uuid`).
 - Qdrant: Metadata-Filter auf `school_id` bei jedem RAG-Query.
@@ -391,6 +401,7 @@ Schulfreigabe vorhanden (CloudReleaseGrant 2026-06).
 **Speicherort:** Vaultwarden (Alex' selfhosted `https://vw.alexle135.de`), oder für Schulumgebungen: Schulinternes Secret-Mangagement (z.B. HashiCorp Vault).
 
 **Runtime-Injection:**
+
 ```bash
 export OPENAI_API_KEY="$(vw get OPENAI_API_KEY)"
 npm run start
@@ -405,6 +416,7 @@ npm run start
 ### 8.1 Audit-Log Tabelle
 
 **Spalten:**
+
 - `id` (UUID)
 - `timestamp` (ISO8601)
 - `event_type` (login, logout, generation_request, redaction, guard_check, cloud_call, re_identification, …)
@@ -427,12 +439,14 @@ npm run start
 **Verweise:** [./RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md)
 
 **Schnellübersicht:**
+
 - **Schüler-Daten:** Löschen spätestens 12 Monate nach Schulausscheiden, auf Anfrage sofort.
 - **Generation-Outputs:** Löschen nach Lehrkraft-Archivierung oder spätestens 5 Jahre.
 - **Audit-Logs:** 3 Jahre, dann anonymisieren oder löschen.
 - **Pseudonym-Mappings:** Gleichzeitig mit Schüler-Daten löschen.
 
 **Mechanik:**
+
 - Automatisierte Batch-Löschung (z.B. täglich um 02:00 Uhr UTC).
 - Soft-Delete (markiert als gelöscht, nicht physisch entfernt, für Wiederherstellung).
 - Vor physischem Delete: Backup und Archivierung für Compliance.
@@ -450,7 +464,8 @@ npm run start
 
 **Kriterium:** DUDEN Rechtschreibung §42, Regel X.Y
 
-**Beleg:** 
+**Beleg:**
+
 - Regel-Text: "Komma trennt Hauptsätze."
 - Ihr Satz: "Der Schüler schreibt, und der Lehrer liest."
   → Zwei Hauptsätze, Komma korrekt.
@@ -458,10 +473,12 @@ npm run start
 **Vorschlag:** Satz ist korrekt. (Kein Fehler.)
 
 **Unsicherheiten:**
+
 - Ausnahmeregelung: Stilistische Kommas nach §42 Abs. 2 können delegiert sein.
 - Wort "liest" könnte Partizip sein (ambig).
 
-**Quellen:** 
+**Quellen:**
+
 - Duden Grammatik, 9. Aufl., S. 425
 - Schulbuch Deutsch NRW Kl. 9, Kap. 5 (TrustLevel: OFFICIAL_BINDING)
 ```
@@ -469,6 +486,7 @@ npm run start
 ### 10.2 Letztentscheidung bleibt bei Lehrkraft
 
 Das System gibt Empfehlungen. Lehrkraft trifft finale Entscheidung:
+
 - "Ich akzeptiere / lehne den Vorschlag ab."
 - "Ich korrigiere die Empfehlung selbst."
 - "Schüler bespricht Vorschlag im Unterricht."
@@ -483,12 +501,12 @@ Das System gibt Empfehlungen. Lehrkraft trifft finale Entscheidung:
 
 ### 11.1 Kategorisierung
 
-| Fachkontext | Konfession | LLM-Input Filterung |
-|---|---|---|
-| Katholischer Religionsunterricht | Katholisch | Nur Chunks `religion=katholisch` oder `religion=konfessionssensibel_übergreifend` |
-| Evangelischer Religionsunterricht | Evangelisch | Nur Chunks `religion=evangelisch` oder `religion=konfessionssensibel_übergreifend` |
-| Ethik-Unterricht | n/a | Nur Chunks `religion=ethik_religionskundlich`, KEINE konfessionellen Inhalte |
-| Übrige Fächer (Deutsch, Mathe, etc.) | n/a | Keine religiösen Hinweise (ausser explizit Schulvorgabe) |
+| Fachkontext                          | Konfession  | LLM-Input Filterung                                                                |
+| ------------------------------------ | ----------- | ---------------------------------------------------------------------------------- |
+| Katholischer Religionsunterricht     | Katholisch  | Nur Chunks `religion=katholisch` oder `religion=konfessionssensibel_übergreifend`  |
+| Evangelischer Religionsunterricht    | Evangelisch | Nur Chunks `religion=evangelisch` oder `religion=konfessionssensibel_übergreifend` |
+| Ethik-Unterricht                     | n/a         | Nur Chunks `religion=ethik_religionskundlich`, KEINE konfessionellen Inhalte       |
+| Übrige Fächer (Deutsch, Mathe, etc.) | n/a         | Keine religiösen Hinweise (ausser explizit Schulvorgabe)                           |
 
 ### 11.2 Implementierung
 

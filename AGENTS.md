@@ -10,16 +10,16 @@ Stack (geplant): Next.js App Router, TypeScript strict, Tailwind, PostgreSQL + D
 
 ## Status — lesen vor jedem Eingriff
 
-**Planungs-/Architekturphase. Kein Produktivcode, keine lauffähige App.** Committet sind nur `README.md`, `PLAN.md`, `CLAUDE.md`, `AGENTS.md`, `docs/`, `unterrichtsassistenz-lsa-design-kit/` und leere Verzeichnisse (`data/`, `scripts/`, `.github/workflows/`, `.github/ISSUE_TEMPLATE/`).
+**Planungs-/Architekturphase. Kein Produktivcode, keine lauffähige App** — aber Repo-Gerüst und Doku stehen. Committet: `README.md`, `PLAN.md`, `CLAUDE.md`, `AGENTS.md`, ein weitgehend vollständiger `docs/`-Baum, `unterrichtsassistenz-lsa-design-kit/`, Tooling/CI (`package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`), `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow, Issue-Templates, PR-Template).
 `PLAN.md` ist Source of Truth für Scope und Roadmap (M0–M4) — zuerst lesen.
-Die unten genannten Befehle sind **Sollzustand**, nicht ausführbar. Beim Anlegen der ersten Implementierung den in README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
+Lauffähig sind bislang nur `pnpm format`, `pnpm format:check` und `pnpm verify:docs`; `pnpm lint`/`typecheck`/`test` sind **Sollzustand** (noch kein Anwendungscode). Beim Anlegen der ersten Implementierung den in README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
 
 ## Setup & Commands (Sollzustand)
 
 Paketmanager ist **`pnpm`** (niemals npm/yarn). Lokale Umgebung über Docker Compose.
 
 ```bash
-cp .env.example .env   # existiert noch nicht — beim ersten Setup anlegen
+cp .env.example .env   # .env.example existiert; .env (Werte) niemals committen
 pnpm install
 docker compose up -d
 
@@ -55,24 +55,27 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## What to read before modifying (Pointer)
 
-| Bereich | Zuerst lesen |
-|---|---|
-| Scope, Roadmap, Datenflüsse | `PLAN.md` |
-| Architektur, Integrationsgrenzen | `docs/architecture/ARCHITECTURE.md`, `INTEGRATION_BOUNDARIES.md` |
-| Entscheidungen (Modular Monolith, LLM-Schicht, Source-Governance, Local-first, Drizzle) | `docs/adr/0001`–`0005` |
-| Offene Entscheidungen | `docs/decisions/OPEN_QUESTIONS.md` |
-| Datenschutz, Drohmodell, Löschung | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `RETENTION_AND_DELETION.md` |
-| RAG-Ingestion, Evaluierung | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md` |
-| Produktvision, MVP, Akzeptanz, User Flows | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md` |
-| CI/CD, Entwicklung, Backup | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md` |
-| Erste UI-Implementierung in Next.js | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich) |
-| Design-Tokens | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte) |
+| Bereich                                                                                 | Zuerst lesen                                                                                |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Scope, Roadmap, Datenflüsse                                                             | `PLAN.md`                                                                                   |
+| Architektur, Integrationsgrenzen                                                        | `docs/architecture/ARCHITECTURE.md`, `INTEGRATION_BOUNDARIES.md`, `DATA_MODEL.md`, `RAG_ARCHITECTURE.md`                            |
+| Entscheidungen (Modular Monolith, LLM-Schicht, Source-Governance, Local-first, Drizzle) | `docs/adr/0001`–`0005`                                                                      |
+| Offene Entscheidungen                                                                   | `docs/decisions/OPEN_QUESTIONS.md`                                                          |
+| Datenschutz, Drohmodell, Löschung                                                       | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `DATA_PROTECTION.md`, `RETENTION_AND_DELETION.md`                 |
+| RAG-Ingestion, Evaluierung                                                              | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md`, `CITATION_STANDARD.md`, `SOURCE_REGISTRY.md`                                        |
+| Produktvision, MVP, Akzeptanz, User Flows                                               | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md` |
+| CI/CD, Entwicklung, Backup                                                              | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`                      |
+| Erste UI-Implementierung in Next.js                                                     | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich)          |
+| Design-Tokens                                                                           | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte)      |
+| Design-System (Doku) | `docs/design/DESIGN_SYSTEM.md` |
 
 ## Project structure
 
-- `docs/` — Architektur, Produkt, RAG, Security, Operations, ADRs, Open Questions (teilweise befüllt)
+- `docs/` — Architektur, Produkt, RAG, Security, Operations, Design, ADRs, Open Questions (nahezu vollständig)
 - `unterrichtsassistenz-lsa-design-kit/` — statische HTML-Mockups, Tokens, Handoff-Anweisung
-- `data/`, `scripts/`, `.github/workflows/`, `.github/ISSUE_TEMPLATE/` — leer, für spätere Implementierung
+- `scripts/` — `verify-docs.sh`/`verify-docs.mjs` (Doku-Gate)
+- `data/` — `source-registry.seed.yaml` (Seed für das Quellenregister; keine echten Schülerdaten)
+- `.github/` — `workflows/ci.yml`, `ISSUE_TEMPLATE/` (bug, feature, research, security, config), `pull_request_template.md`
 - `LICENSE-DECISION.md` — Lizenzentscheidung (Status siehe Datei)
 
 ## UI-Implementierung (aus dem Handoff)
@@ -86,5 +89,5 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## Notes
 
-- `docs/architecture/DATA_MODEL.md`, `docs/architecture/RAG_ARCHITECTURE.md`, `docs/rag/CITATION_STANDARD.md`, `docs/rag/SOURCE_REGISTRY.md`, `docs/operations/GITHUB_SETUP.md` sind in `PLAN.md` verlinkt, existieren noch nicht — vor Referenzierung prüfen.
-- `.env.example`, `package.json`, `scripts/verify-docs.sh` fehlen noch.
+- `docs/operations/GITHUB_SETUP.md` ist in `PLAN.md`/`README.md` verlinkt, existiert aber **noch nicht** — vor Referenzierung prüfen. Alle übrigen früher fehlenden Dokumente (DATA_MODEL, RAG_ARCHITECTURE, CITATION_STANDARD, SOURCE_REGISTRY) existieren inzwischen.
+- `.env.example`, `package.json`, `scripts/verify-docs.sh` existieren inzwischen; `package.json` definiert bislang nur `format`, `format:check`, `verify:docs`.

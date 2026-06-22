@@ -20,12 +20,14 @@ Das System wird mit **Golden Questions** evaluiert — diese sind Testfragen pro
 ### Golden Questions für Deutsch
 
 **Methodik**: Pro Kompetenzbereich (Sprechen, Schreiben, Leseverstehen, Grammatik) werden mind. 3–5 Beispielfragen erarbeitet, die:
+
 - Ein häufiges pädagogisches Anliegen abbilden (z. B. "Wie unterrichte ich Kommaregeln strukturiert?")
 - Mit **Lehrplan-Bezug** (Sachsen-Anhalt Klasse 9–10 Deutsch) beantwortbar sind
 - Mehrere Quellen-Typen aktivieren (Lehrplan selbst, Handreichung, Beispiel-Unterrichtsreihe)
 - **Noch auszuarbeiten**: konkrete Fragesammlungen werden vom Fachteam gepflegt (nicht erfunden)
 
 **Beispiel-Struktur** (nicht konkrete Fragen, nur Template):
+
 ```
 {
   "id": "de-001",
@@ -46,17 +48,20 @@ Das System wird mit **Golden Questions** evaluiert — diese sind Testfragen pro
 ### Golden Questions für Religion
 
 **Konfessions-Differenzierung**: Je Frage wird festgelegt, ob sie:
+
 - **Evangelisch spezifisch** ist (theologische Inhalte, Katechismus, Glaube)
 - **Katholisch spezifisch** ist (Dogmatik, liturgische Traditionen)
 - **Übergreifend** ist (Ethik, Religionsgeschichte, Dialog zwischen Konfessionen)
 
 **Methodik**: Pro Konfession und Kompetenzbereich (z. B. "Evangelische Ethik – Verantwortung", "Katholische Sakramentenlehre") mind. 3–5 Golden Questions, die:
+
 - Sachlich und glaubenstreue darstellen
 - Mit Lehrplan Sachsen-Anhalt Evangelische/Katholische Religion (Klasse 5–12) konsistent sind
 - **Noch auszuarbeiten**: konkrete Fragesammlungen werden vom Konfessionsberatungs-Team gepflegt
 - Markieren, welche Quellen neutral sein müssen (z. B. Rechtsethik) vs. welche konfessionsgebunden
 
 **Beispiel-Struktur**:
+
 ```
 {
   "id": "rel-ev-001",
@@ -84,54 +89,54 @@ Das System wird mit **Golden Questions** evaluiert — diese sind Testfragen pro
 
 ### 1. Retrieval-Qualität
 
-| Metrik | Definition | Akzeptanzbereich | Messpunkt |
-|---|---|---|---|
-| **Precision@5** | Anteil relevanter Chunks in den Top-5 Retrievals | ≥ 0.80 | pro Golden Question |
-| **Recall@10** | Anteil aller relevanten Chunks, die in Top-10 gefunden werden | ≥ 0.75 | pro Golden Question |
-| **MRR (Mean Reciprocal Rank)** | Durchschn. Rang des ersten relevanten Results | ≥ 0.70 | über alle Queries |
-| **NDCG@5** | Rank-gewichtete Relevanz-Akkumulation | ≥ 0.70 | über alle Queries |
+| Metrik                         | Definition                                                    | Akzeptanzbereich | Messpunkt           |
+| ------------------------------ | ------------------------------------------------------------- | ---------------- | ------------------- |
+| **Precision@5**                | Anteil relevanter Chunks in den Top-5 Retrievals              | ≥ 0.80           | pro Golden Question |
+| **Recall@10**                  | Anteil aller relevanten Chunks, die in Top-10 gefunden werden | ≥ 0.75           | pro Golden Question |
+| **MRR (Mean Reciprocal Rank)** | Durchschn. Rang des ersten relevanten Results                 | ≥ 0.70           | über alle Queries   |
+| **NDCG@5**                     | Rank-gewichtete Relevanz-Akkumulation                         | ≥ 0.70           | über alle Queries   |
 
 **Messmethode**: Qdrant-Ähnlichkeit kombiniert mit manueller Annotation (0 = nicht relevant, 1 = hochrelevant). Automated Check: Quell-ID in Top-5 enthalten?
 
 ### 2. Zitations-Korrektheit
 
-| Metrik | Definition | Akzeptanzbereich | Messpunkt |
-|---|---|---|---|
-| **Citation Accuracy** | Zitierte Quelle existiert und enthält behauptete Info | ≥ 0.95 | pro Antwort |
-| **Source-to-Content Match** | Zitierte Seite/Abschnitt ist tatsächlich relevant | ≥ 0.90 | pro Zitation |
-| **Coverage** | Anteil der Antworten mit mind. einer Quelle | = 1.0 | alle Antworten |
-| **Unsupported Claims** | Anteil Sätze ohne Quellenangabe in Faktenfragen | ≤ 0.05 | pro Antwort |
+| Metrik                      | Definition                                            | Akzeptanzbereich | Messpunkt      |
+| --------------------------- | ----------------------------------------------------- | ---------------- | -------------- |
+| **Citation Accuracy**       | Zitierte Quelle existiert und enthält behauptete Info | ≥ 0.95           | pro Antwort    |
+| **Source-to-Content Match** | Zitierte Seite/Abschnitt ist tatsächlich relevant     | ≥ 0.90           | pro Zitation   |
+| **Coverage**                | Anteil der Antworten mit mind. einer Quelle           | = 1.0            | alle Antworten |
+| **Unsupported Claims**      | Anteil Sätze ohne Quellenangabe in Faktenfragen       | ≤ 0.05           | pro Antwort    |
 
 **Messmethode**: Manuelles Spot-Check (menschliche Reviewer durchsucht Quellentext nach zitiertem Beleg). Automated Check: `citation_present` und `source_chunk_id_valid` in Response-Metadaten vorhanden?
 
 ### 3. Konfessions-Scope-Treue (Religion)
 
-| Metrik | Definition | Akzeptanzbereich | Messpunkt |
-|---|---|---|---|
-| **Confession Alignment** | Antwort entspricht konfessioneller Framing-Erwartung | ≥ 0.90 | pro Frage mit confession_context |
-| **Ecumenical Boundary** | Übergreifende Fragen vermeiden konfessionalistische Spitzfindigkeiten | ≥ 0.85 | pro übergreifende Frage |
-| **Neutrality (Ethik)** | Ethik-Fragen sind konfessionsunabhängig formuliert | ≥ 0.95 | pro Ethik-Frage |
+| Metrik                   | Definition                                                            | Akzeptanzbereich | Messpunkt                        |
+| ------------------------ | --------------------------------------------------------------------- | ---------------- | -------------------------------- |
+| **Confession Alignment** | Antwort entspricht konfessioneller Framing-Erwartung                  | ≥ 0.90           | pro Frage mit confession_context |
+| **Ecumenical Boundary**  | Übergreifende Fragen vermeiden konfessionalistische Spitzfindigkeiten | ≥ 0.85           | pro übergreifende Frage          |
+| **Neutrality (Ethik)**   | Ethik-Fragen sind konfessionsunabhängig formuliert                    | ≥ 0.95           | pro Ethik-Frage                  |
 
 **Messmethode**: Manuell durch Konfessionsberatungs-Team (katholisch, evangelisch, Ethik). Frage: "Würde diese Antwort an evangelischen / katholischen Schulen akzeptabel sein?"
 
 ### 4. Halluzinations- und Ungrounded-Rate
 
-| Metrik | Definition | Akzeptanzbereich | Messpunkt |
-|---|---|---|---|
-| **Factual Hallucination** | Antwort enthält erfundene Fakten (z. B. falsche Lehrplan-Zitate) | ≤ 0.02 | pro Antwort |
-| **Source Hallucination** | Antwort zitiert nicht existente Quellen | = 0 | alle Antworten |
-| **Grounding Rate** | Anteil der Aussagen, die in Retrieval-Set enthalten sind | ≥ 0.90 | pro Antwort |
+| Metrik                    | Definition                                                       | Akzeptanzbereich | Messpunkt      |
+| ------------------------- | ---------------------------------------------------------------- | ---------------- | -------------- |
+| **Factual Hallucination** | Antwort enthält erfundene Fakten (z. B. falsche Lehrplan-Zitate) | ≤ 0.02           | pro Antwort    |
+| **Source Hallucination**  | Antwort zitiert nicht existente Quellen                          | = 0              | alle Antworten |
+| **Grounding Rate**        | Anteil der Aussagen, die in Retrieval-Set enthalten sind         | ≥ 0.90           | pro Antwort    |
 
 **Messmethode**: Manuelles Fact-Checking durch Fachexperten; Qdrant-Verifizierung (sind zitierte Chunks tatsächlich retrieved?).
 
 ### 5. Antwortlatenz und Kosten
 
-| Metrik | Definition | Target | Messpunkt |
-|---|---|---|---|
-| **End-to-End Latency** | Zeit von Query bis finale Antwort | ≤ 3 Sekunden | per Request |
-| **Retrieval Latency** | Zeit für Vektorsuche in Qdrant | ≤ 500 ms | per Request |
-| **LLM Inference Time** | Zeit für Token-Generierung | ≤ 2 Sekunden | per Request |
-| **Cost per Query** | Monetary Cost (bei Cloud-APIs) oder Token-Input/Output (Ollama) | ≤ 0.10 € (Cloud) oder < 1000 tokens (Ollama) | pro Request |
+| Metrik                 | Definition                                                      | Target                                       | Messpunkt   |
+| ---------------------- | --------------------------------------------------------------- | -------------------------------------------- | ----------- |
+| **End-to-End Latency** | Zeit von Query bis finale Antwort                               | ≤ 3 Sekunden                                 | per Request |
+| **Retrieval Latency**  | Zeit für Vektorsuche in Qdrant                                  | ≤ 500 ms                                     | per Request |
+| **LLM Inference Time** | Zeit für Token-Generierung                                      | ≤ 2 Sekunden                                 | per Request |
+| **Cost per Query**     | Monetary Cost (bei Cloud-APIs) oder Token-Input/Output (Ollama) | ≤ 0.10 € (Cloud) oder < 1000 tokens (Ollama) | pro Request |
 
 **Messmethode**: Logging in Request-Handler; Prometheus/Datadog-Metriken. Bei Ollama: Token-Count aus llm-response.
 
@@ -207,14 +212,14 @@ Wenn LLM-Modell gewechselt wird (z. B. neue Ollama-Version oder anderer Provider
 
 Die folgenden Schwellen werden in Abstimmung mit dem Schul- und Fachberatungs-Team finalisiert:
 
-| Kriterium | Aktuell | Ziel Q4 2026 | Begründung |
-|---|---|---|---|
-| Precision@5 (Deutsch) | ? | ≥ 0.85 | Verbesserte Relevanz für Lehrkraft-Queries |
-| Precision@5 (Religion) | ? | ≥ 0.80 | Komplexere Konfessionalität, etwas höhere Fehlertoleranz |
-| Citation Accuracy | ? | ≥ 0.95 | Rechtsschutz bei Lehrplan-Zitaten |
-| Hallucination Rate | ? | ≤ 0.02 | Vertrauen ist kritisch |
-| Confessional Alignment (Rel.) | ? | ≥ 0.90 | Schulfriedensschutz |
-| End-to-End Latency P95 | ? | ≤ 4 Sekunden | Nutzergebenheit für synchrone Nutzung |
+| Kriterium                     | Aktuell | Ziel Q4 2026 | Begründung                                               |
+| ----------------------------- | ------- | ------------ | -------------------------------------------------------- |
+| Precision@5 (Deutsch)         | ?       | ≥ 0.85       | Verbesserte Relevanz für Lehrkraft-Queries               |
+| Precision@5 (Religion)        | ?       | ≥ 0.80       | Komplexere Konfessionalität, etwas höhere Fehlertoleranz |
+| Citation Accuracy             | ?       | ≥ 0.95       | Rechtsschutz bei Lehrplan-Zitaten                        |
+| Hallucination Rate            | ?       | ≤ 0.02       | Vertrauen ist kritisch                                   |
+| Confessional Alignment (Rel.) | ?       | ≥ 0.90       | Schulfriedensschutz                                      |
+| End-to-End Latency P95        | ?       | ≤ 4 Sekunden | Nutzergebenheit für synchrone Nutzung                    |
 
 **Status**: Diese Werte werden nach den ersten evaluierten Durchläufen festgelegt.
 
@@ -239,6 +244,7 @@ Die folgenden Schwellen werden in Abstimmung mit dem Schul- und Fachberatungs-Te
 ### Change Log
 
 Jeder große Evaluierungs-Milestone wird dokumentiert (z. B. in GitHub Issues mit Label `evaluation:milestone`):
+
 - Datum, evaluierte Metriken, Ergebnis (bestanden/nicht bestanden)
 - Falls nicht bestanden: Root-Cause (Modell? Quellen? Retrieval-Algorithmus?) und geplante Behebung
 

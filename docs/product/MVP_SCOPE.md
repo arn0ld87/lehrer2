@@ -85,15 +85,15 @@
 
 ## Priorisierung der Funktionsbereiche
 
-| Bereich | Priority | Begründung |
-|---|---|---|
-| **Korrekturassistenz + Pseudonymisierung** | 1 (Must) | Höchster Datenschutz-Risiko; ohne Redaction kein Schulstart |
-| **Aufgabengenerierung** | 1 (Must) | Kernnutzen; zeigt ROI schnell |
-| **RAG + Lehrplan-Quellen** | 1 (Must) | Differenziert LSA von ChatGPT; Quellenpflicht non-negotiable |
-| **Admin + Freigabeflow** | 2 (Should) | Notwendig für Schulfreigabe; MVP könnte mit Schulleiter-Freigabe per Formular starten |
-| **Konfessions-Scope** | 2 (Should) | Religion-Lehrkräfte brauchen es; gut abgrenzbar; Deutsch könnte ohne erste Iteration starten |
-| **Batch-Korrektur** | 3 (Nice) | Stapelverarbeitung; nice-to-have für MVP |
-| **API für LMS-Integration** | 3 (Nice) | Später; MVP fokussiert auf Web-UI |
+| Bereich                                    | Priority   | Begründung                                                                                   |
+| ------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------- |
+| **Korrekturassistenz + Pseudonymisierung** | 1 (Must)   | Höchster Datenschutz-Risiko; ohne Redaction kein Schulstart                                  |
+| **Aufgabengenerierung**                    | 1 (Must)   | Kernnutzen; zeigt ROI schnell                                                                |
+| **RAG + Lehrplan-Quellen**                 | 1 (Must)   | Differenziert LSA von ChatGPT; Quellenpflicht non-negotiable                                 |
+| **Admin + Freigabeflow**                   | 2 (Should) | Notwendig für Schulfreigabe; MVP könnte mit Schulleiter-Freigabe per Formular starten        |
+| **Konfessions-Scope**                      | 2 (Should) | Religion-Lehrkräfte brauchen es; gut abgrenzbar; Deutsch könnte ohne erste Iteration starten |
+| **Batch-Korrektur**                        | 3 (Nice)   | Stapelverarbeitung; nice-to-have für MVP                                                     |
+| **API für LMS-Integration**                | 3 (Nice)   | Später; MVP fokussiert auf Web-UI                                                            |
 
 ## Nächste Schritte
 

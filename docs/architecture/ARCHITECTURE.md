@@ -80,43 +80,51 @@ Asynchrone Job-Verarbeitung (Redis + BullMQ), vektorisierte Suche (Qdrant) statt
 ### Kern-Services
 
 **Web-Frontend (Next.js App Router)**
+
 - Dashboard für Lehrkräfte (Klasse, Fächerzuordnung, Stundplan)
 - Materialdatenbank (Filter, Tagging, Upload)
 - Formulare (Unterrichtsplan-Generator, Korrektions-Batch)
 - Server Components für Datenfluss-Isolation, Client für Interaktivität
 
 **App-Domänenmodule**
+
 - Unterrichtsplanung (Lernziele ↔ Fachstandards, Zeitbudget)
 - Materialgenerierung (Templates, LLM-gesteuert, Quellennachweis)
 - Korrektur (Batch-Verarbeitung, Bewertungsrubrik, Feedback-Generierung)
 - RAG-Retrieval (Query → Kontext-Auswahl → LLM-Prompt mit Quellenangabe)
 
 **PostgreSQL + Drizzle ORM**
+
 - Relationales Kern-Datenmodell (siehe [DATA_MODEL.md](DATA_MODEL.md))
 - Lehrkräfte, Klassen, Unterrichtsmaterialien, Schüler-Anonymisierungs-Mappings
 - Audit-Log (wer, wann, welche Aktion, IP, Resultat)
 
 **Qdrant (Vektorsuche)**
+
 - Eingebettete Materialien (Lernvideos, Textblöcke, Aufgaben)
 - Semantische Suche über Lehrplan-Standards
 - Abruf der Top-K relevanten Kontexte für RAG
 
 **Object Store (S3-kompatibel, lokal MinIO)**
+
 - Unterlagen (PDF, DOCX) im Rohmaterial-Zustand
 - Generierte Outputs (Arbeitsblätter, Lösungen)
 - Versioning & Backup-Integration
 
 **Redis + BullMQ (Job-Queue)**
+
 - Asynchrone Verarbeitung von OCR, LLM-Calls, Datengenerierung
 - Dead-Letter-Queue für fehlerhafte Jobs
 - Exponential Backoff bei API-Ausfällen
 
 **OCR- & Extraktions-Worker**
+
 - Separater Docker-Container oder lokaler Worker-Prozess
 - Input: Bilddateien, Scans, Tabellen
 - Output: Strukturierte JSON-Extrakte (Text, Tabellen, Strukturierung)
 
 **LLM-Provider-Abstraction**
+
 - Einziger Einstiegspunkt für alle LLM-Calls
 - Provider-Adapter (siehe [INTEGRATION_BOUNDARIES.md](INTEGRATION_BOUNDARIES.md)): Ollama (lokal), OpenAI (Cloud), beliebige OpenAI-kompatible APIs
 - **Kritisch**: Datenschutz-Gate PRE-Call, nicht POST-Call
@@ -278,7 +286,7 @@ def can_send_to_llm(data: Dict, destination: LLMProvider) -> bool:
         # Lokaler Ollama-Provider
         # Weniger strikt, aber Audit-Log noch Pflicht
         pass
-    
+
     return True
 ```
 
@@ -297,17 +305,17 @@ Praktisch heißt das:
 
 **Isolation auf drei Ebenen:**
 
-1. **Datenbank-Ebene**  
+1. **Datenbank-Ebene**
    - `schools` Tabelle, Tenant-ID
    - Alle Queries mit `WHERE school_id = current_school_id`
    - Drizzle-ORM erzwingt via Middleware
 
-2. **API-Ebene**  
+2. **API-Ebene**
    - Middleware extrahiert `Authorization` Header → JWT Decode → Lehrkraft-ID + Schule-ID
    - Alle Requests mit Tenant-Kontext
    - API-Response filtert nach Lehrkraft-Zugriff (z.B. nur eigene Klassen)
 
-3. **Audit-Ebene**  
+3. **Audit-Ebene**
    - Jeder Read/Write mit Tenant-ID, Lehrkraft-ID, Timestamp
    - Querys über Tenant-Grenzen sind loggbar & blockierbar
 
@@ -318,11 +326,13 @@ Praktisch heißt das:
 ### Horizontal
 
 **Early-Stage (eine Schule, < 500 Lehrkräfte)**
+
 - Alles in einem Docker-Compose (Next.js, PostgreSQL, Redis, Qdrant, MinIO)
 - Lokal Ollama oder OpenAI-API
 - Single-Node PostgreSQL
 
 **Growth (5–20 Schulen, > 2000 Lehrkräfte)**
+
 - App-Tier horizontal (Load Balancer, mehrere Next.js Replicas)
 - PostgreSQL Replication (Primary–Replica)
 - Redis Cluster
@@ -330,6 +340,7 @@ Praktisch heißt das:
 - Separater OCR-Worker-Pool (Job-Queue verteilt)
 
 **Scale (100+ Schulen, Landesverbund)**
+
 - Microservice-Migration OPTIONAL (if needed)
   - Unterrichtsplanung als Service
   - Materialgenerierung als Service
@@ -343,13 +354,13 @@ Praktisch heißt das:
 
 Jede Grenze hat einen dokumentierten Adapter:
 
-| Komponente | Adapter-Interface | Alternative 1 | Alternative 2 |
-|---|---|---|---|
-| **LLM** | `LLMProvider { call(prompt, context) → response }` | Ollama (lokal) | OpenAI (Cloud) |
-| **VectorDB** | `VectorStore { search(query, top_k) → hits }` | Qdrant | Weaviate, Milvus |
-| **ObjectStore** | `ObjectStore { put(key, data), get(key) → data }` | MinIO (lokal) | AWS S3 |
-| **JobQueue** | `JobQueue { enqueue(type, payload), dequeue() }` | BullMQ + Redis | RabbitMQ, Kafka |
-| **OCRWorker** | `Worker { extract(file) → json }` | Tesseract + PyMuPDF | Cloud Vision API |
+| Komponente      | Adapter-Interface                                  | Alternative 1       | Alternative 2    |
+| --------------- | -------------------------------------------------- | ------------------- | ---------------- |
+| **LLM**         | `LLMProvider { call(prompt, context) → response }` | Ollama (lokal)      | OpenAI (Cloud)   |
+| **VectorDB**    | `VectorStore { search(query, top_k) → hits }`      | Qdrant              | Weaviate, Milvus |
+| **ObjectStore** | `ObjectStore { put(key, data), get(key) → data }`  | MinIO (lokal)       | AWS S3           |
+| **JobQueue**    | `JobQueue { enqueue(type, payload), dequeue() }`   | BullMQ + Redis      | RabbitMQ, Kafka  |
+| **OCRWorker**   | `Worker { extract(file) → json }`                  | Tesseract + PyMuPDF | Cloud Vision API |
 
 Alle Adapter implementieren Fehlerbehandlung, Retry-Logik und Logging einheitlich. Austausch erfordert nur neue Adapter-Impl, keine API-Änderungen.
 
