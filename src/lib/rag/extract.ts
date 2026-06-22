@@ -19,11 +19,10 @@
  *   OHNE `ocrEngine` bleibt das bisherige Verhalten EXAKT erhalten (wirft).
  */
 
+// pdf-parse v2 exportiert eine `PDFParse`-Klasse (ESM). Bewusst per `import`
+// (nicht `require`), damit `vi.mock("pdf-parse")` in Tests greift.
+import { PDFParse } from "pdf-parse";
 import type { OcrEngine } from "./ocr/engine.js";
-
-// pdf-parse uses `export =` (CJS); import-equals is required with moduleResolution:bundler
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string }>;
 
 export class ExtractionFailedError extends Error {
   constructor(message: string) {
@@ -34,6 +33,17 @@ export class ExtractionFailedError extends Error {
 
 /** Typ des PDF-Parser-Adapters (für Testbarkeit ohne vi.mock-CJS-Kämpfe) */
 export type PdfParser = (buf: Buffer) => Promise<{ text: string }>;
+
+/** Standard-Adapter über pdf-parse v2 (PDFParse-Klasse → getText). */
+const pdfParse: PdfParser = async (buf: Buffer) => {
+  const parser = new PDFParse({ data: buf });
+  try {
+    const { text } = await parser.getText();
+    return { text: text ?? "" };
+  } finally {
+    await parser.destroy();
+  }
+};
 
 /**
  * Extrahiert lesbaren Text aus einem Rohdokument.

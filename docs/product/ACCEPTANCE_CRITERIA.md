@@ -7,8 +7,10 @@
 - [ ] System akzeptiert Eingabe (Klassenstufe, Fach: Deutsch/Religion, Lehrplanbereich)
 - [ ] Falls Religion: Konfessions-Scope-Auswahlfeld (evangelisch/katholisch/übergreifend/Ethik) ist Pflicht; Abfrage wird blockiert, wenn nicht gesetzt
 - [ ] RAG-Abfrage erfolgt ausschließlich auf OFFICIAL_BINDING + OFFICIAL_GUIDANCE Quellen; UNVERIFIED Quellen sind ausgeschlossen
+- [ ] System klassifiziert jede Aussage als GROUNDED (belegt) oder UNSUPPORTED_DRAFT (unbelegt) gemäß [CITATION_STANDARD](../rag/CITATION_STANDARD.md)
 - [ ] Stundenentwurf wird generiert mit Struktur: Lernziele (SMART), Methoden, Zeitbudget, Material-Checkliste
 - [ ] **Quellenkette sichtbar**: Jede Empfehlung hat Fußnote mit Lehrplan-Kapitel/Schulbuch-Referenz oder explizitem »Quelle: Sächsisch-anhaltinischer Lehrplan § X.Y«
+- [ ] Aussagen ohne Beleg (UNSUPPORTED_DRAFT) sind visuell deutlich als "Vorschlag – bitte prüfen" gekennzeichnet
 - [ ] Lehrkraft kann Stundenentwurf editieren (Titel, Lernziele, Methoden) in der Web-UI
 - [ ] Export als DOCX mit Quellenangaben ist möglich
 - [ ] Offline-Szenario: Falls RAG-Server kurzzeitig ausfällt, gibt System verständliche Fehlermeldung (»Quellenbibliothek momentan nicht verfügbar«) statt Crash
