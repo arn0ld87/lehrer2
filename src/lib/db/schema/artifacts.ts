@@ -113,10 +113,10 @@ export const task = pgTable(
       { onDelete: "set null" },
     ),
     points: integer("points"),
-    ownerTeacherId: text("owner_teacher_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "restrict" }),
-    ...artifactTimestamps,
+  modelSolution: text("model_solution"),
+  acceptanceCriteria: jsonb("acceptance_criteria"),
+  partialCreditRules: jsonb("partial_credit_rules"),
+  ownerTeacherId: ownerTeacherId(),
   },
   (t) => [
     unique("task_id_unique").on(t.id),
