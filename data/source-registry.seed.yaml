@@ -376,13 +376,229 @@ sources:
     status: "candidate"
     notes: "Übersicht laufender Projekte (Startchancen-Programm, LemaS, QuaMath, BNE). Sekundär für RAG; ggf. Kontext für Fortbildungsangebote."
 
+  - id: src-022
+    title: "Fachlehrplan Gymnasium — Deutsch"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://lisa.sachsen-anhalt.de/fileadmin/Bibliothek/Politik_und_Verwaltung/MK/LISA/Unterricht/Lehrplaene/Gym/Anpassung_2022/FLP_Deutsch_Gym_swd.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "DEUTSCH"
+    school_form: "GYMNASIUM"
+    grade_range: "5-12"
+    version_or_date: "Anpassung 2022 (Stand 01.08.2022)"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Aktualisierte Fassung 2022 gemäß RdErl src-005. Löst ältere Fassungen ab."
+
+  - id: src-023
+    title: "Fachlehrplan Gymnasium (Oberstufe) — Deutsch"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://lisa.sachsen-anhalt.de/fileadmin/Bibliothek/Politik_und_Verwaltung/MK/LISA/Unterricht/Lehrplaene/Gym/FLP_Gym_Deutsch_LT.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "DEUTSCH"
+    school_form: "GYMNASIUM"
+    grade_range: "10-12"
+    version_or_date: "Aktuelle Fassung (Lehrportal)"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Spezifisch für die gymnasiale Oberstufe (Leistungsthemen)."
+
+  - id: src-024
+    title: "Fachlehrplan Sekundarschule — Evangelischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/Endfassungen/lp_sks_ev_rel.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_EV"
+    school_form: "SEKUNDARSCHULE"
+    grade_range: "5-10"
+    version_or_date: "Fassung 2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Aktualisierte Fassung 2022."
+
+  - id: src-025
+    title: "Fachlehrplan Gymnasium — Evangelischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/Fachlehrplan_Gymnasium/flp_evRU_gym_anh_220116.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_EV"
+    school_form: "GYMNASIUM"
+    grade_range: "5-12"
+    version_or_date: "Fassung vom 16.01.2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Neuere Fassung 2022, ergänzt/ersetzt src-004."
+
+  - id: src-026
+    title: "Fachlehrplan Berufliches Gymnasium — Evangelischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/308f909353050418d21ccd637b6a40c0/FLP_evangRU_BGym_01082022_swd.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_EV"
+    school_form: "BERUFLICHES_GYMNASIUM"
+    grade_range: "11-13"
+    version_or_date: "Stand 01.08.2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Relevant für gymnasiale Oberstufe an berufsbildenden Schulen."
+
+  - id: src-027
+    title: "Fachlehrplan Sekundarschule — Katholischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/Endfassungen/lp_sks_ka_rel.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_KATH"
+    school_form: "SEKUNDARSCHULE"
+    grade_range: "5-10"
+    version_or_date: "Fassung 2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Schließt Lücke für katholischen RU Sekundarschule."
+
+  - id: src-028
+    title: "Fachlehrplan Gymnasium — Katholischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/b45de329c361a40a2f0a7211902d5815/FLP_KathRU_Gym_01082022_swd.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_KATH"
+    school_form: "GYMNASIUM"
+    grade_range: "5-12"
+    version_or_date: "Stand 01.08.2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Schließt Lücke für katholischen RU Gymnasium."
+
+  - id: src-029
+    title: "Fachlehrplan Berufliches Gymnasium — Katholischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/308f909353050418d21ccd637b6a40c0/FLP_FGym_kaRel_LT.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_KATH"
+    school_form: "BERUFLICHES_GYMNASIUM"
+    grade_range: "11-13"
+    version_or_date: "Fassung 2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Relevant für katholischen RU in der Oberstufe."
+
+  - id: src-030
+    title: "Fachlehrplan Grundschule — Katholischer Religionsunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/7c5f6ff122fa27b7eb9822ab54ee6396/lp_gs_karel_01_08_2019.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "RELIGION_KATH"
+    school_form: "GRUNDSCHULE"
+    grade_range: "1-4"
+    version_or_date: "Anpassung 2019 (Stand 01.08.2019)"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Anschlussreferenz Grundschule für katholischen RU."
+
+  - id: src-031
+    title: "Fachlehrplan Sekundarschule — Ethikunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/Endfassungen/lp_sks_ethik.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "ETHIK"
+    school_form: "SEKUNDARSCHULE"
+    grade_range: "5-10"
+    version_or_date: "Fassung 2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Schließt Lücke für Ethik Sekundarschule."
+
+  - id: src-032
+    title: "Fachlehrplan Gymnasium — Ethikunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/pool/RRL_Lehrplaene/Erprobung/Gymnasium/FLP_Gym_Ethik_LT.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "ETHIK"
+    school_form: "GYMNASIUM"
+    grade_range: "5-12"
+    version_or_date: "Erprobungsfassung"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Erprobungsfassung für Gymnasium Ethik."
+
+  - id: src-033
+    title: "Fachlehrplan Berufliches Gymnasium — Ethikunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/308f909353050418d21ccd637b6a40c0/FLP_Ethik_BGym_01082022_swd.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "ETHIK"
+    school_form: "BERUFLICHES_GYMNASIUM"
+    grade_range: "11-13"
+    version_or_date: "Stand 01.08.2022"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Relevant für Ethik in der Oberstufe."
+
+  - id: src-034
+    title: "Fachlehrplan Grundschule — Ethikunterricht"
+    publisher: "Ministerium für Bildung des Landes Sachsen-Anhalt"
+    official_url: "https://www.bildung-lsa.de/files/7c5f6ff122fa27b7eb9822ab54ee6396/lp_gs_ethik_01_08_2019.pdf"
+    source_type: "curriculum"
+    trust_level: "official"
+    subject: "ETHIK"
+    school_form: "GRUNDSCHULE"
+    grade_range: "1-4"
+    version_or_date: "Anpassung 2019 (Stand 01.08.2019)"
+    license_or_terms: "Herausgeber MB LSA; schulische Nutzung"
+    license_verified: false
+    retrieved_at: "2026-06-22"
+    content_hash: null
+    status: "candidate"
+    notes: "Anschlussreferenz Grundschule für Ethik."
+
 # Hinweise für Maintainer:
-# - katholischer Religionsunterricht: Fachlehrplan Grundschule und Gymnasium konnten via
-#   web_search nicht als direktes PDF zuverlässig abgerufen werden (bild-lsa.de/informationsportal/
-#   unterricht/sekundarschule/kath__religionsunterricht/fachlehrplan.htm lieferte binären Content).
-#   → Maintainer-Issue: kath. Fachlehrpläne separat beschaffen und als src-022+ aufnehmen.
-# - Ethikunterricht Sekundarschule/Gymnasium: Fachlehrpläne analog verifizieren und ergänzen.
-# - Gymnasium Religion ev. neue Fassung ab 1.8.2022 (gemäß RdErl src-005): direktes PDF
-#   verifizieren und ggf. src-004 ersetzen/ergänzen.
 # - Alle Lizenzangaben sind unverifiziert (license_verified: false). Vor Ingestion pro Quelle
 #   Lizenz prüfen und im Feld license_or_terms dokumentieren (ADR 0003 Source-Governance).
+# - Die in Issue #6 identifizierten Lücken (kath. RU, Ethik, Gym Rel ev/Deutsch 2022) wurden
+#   durch src-022 bis src-034 weitgehend geschlossen.
