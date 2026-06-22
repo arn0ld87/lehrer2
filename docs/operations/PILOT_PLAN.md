@@ -86,7 +86,7 @@ Vor dem Übergang von der Pilotphase in den (eingeschränkten) Wirkbetrieb müss
 
 ### 4.1 Sicherheit & Datenschutz (Prio 1)
 
-- [ ] **Redaction-Rate:** 100% der definierten PII-Muster in synthetischen Tests werden zuverlässig erkannt.
+- [ ] **Redaction-Rate:** 100% der PII-Muster in der definierten synthetischen Benchmark-Testsuite werden zuverlässig erkannt.
 - [ ] **Fail-Closed:** Das System bricht bei Redaction-Fehlern nachweislich ab.
 - [ ] **Audit-Log:** Alle relevanten Ereignisse werden ohne PII-Inhalte protokolliert.
 
