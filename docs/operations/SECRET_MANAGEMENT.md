@@ -48,7 +48,7 @@ Schlüssel für die Pseudonymisierung und die Verschlüsselung von Schülerdaten
 ## Rotation und Widerruf
 
 - **Intervall**: Infrastruktur-Secrets (DB-Passwörter etc.) werden alle 6 Monate rotiert.
-- **Event-basiert**: Bei Ausscheiden eines Administrators oder Verdacht auf Kompromittierung erfolgt eine sofortige Rotation aller betroffenen Secrets.
+- **Event-basiert**: Bei Ausscheiden eines Administrators oder Verdacht auf Kompromittierung erfolgt eine sofortige Rotation aller betroffenen Secrets (bei PII-Verschlüsselungsschlüsseln ist ein Key-Versioning oder Re-Encryption-Prozess erforderlich, um Datenverlust zu vermeiden).
 - **Widerruf**: Kompromittierte API-Keys werden sofort beim Provider (z.B. OpenAI, falls genutzt) gesperrt.
 
 ## Präventionsmaßnahmen (Detection)
