@@ -49,7 +49,7 @@ export const correctionDraft = pgTable("correction_draft", {
   status: correctionStatusEnum("status").notNull().default("DRAFT"),
 
   // Verlauf (History)
-  history: jsonb("history").notNull().default([]),
+  history: jsonb("history").$type<FeedbackHistoryEntry[]>().notNull().default([]),
 
   ownerTeacherId: text("owner_teacher_id")
     .notNull()
