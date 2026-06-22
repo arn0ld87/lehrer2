@@ -119,15 +119,7 @@ async function resolveSubjectsForUnaligned(
     .innerJoin(curriculumStrand, eq(curriculumStrand.id, teachingUnit.strandId))
     .where(inArray(worksheetSourceRef.sourceRefId, unalignedIds));
 
-  for (const link of links) {
-    // Erster Treffer pro Quelle gewinnt (deterministisch, keine stille Mehrfachwahl).
-    if (!out.has(link.sourceRefId)) {
-      out.set(link.sourceRefId, {
-        subject: link.subject as DbSubject,
-        confession: link.confession as DbConfession,
-      });
-    }
-  }
+  for (const link of links) {\n    // Erster Treffer pro Quelle gewinnt (deterministisch, keine stille Mehrfachwahl).\n    if (!out.has(link.sourceRefId)) {\n      out.set(link.sourceRefId, {\n        subject: link.subject as DbSubject,\n        confession: (link.confession as DbConfession | null) ?? "NICHT_ANWENDBAR",\n      });\n    }\n  }
   return out;
 }
 
