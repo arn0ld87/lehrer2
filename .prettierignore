@@ -19,3 +19,7 @@ docs/superpowers/
 
 # Drizzle-Migrations-Metadaten (von drizzle-kit generiert, eigenes Format)
 drizzle/meta/
+
+# OER-/Rohmaterial: heruntergeladene Lehrmaterialien und Rohdaten (eigene Formatierung)
+lehrplaene-lsa/oer-material/
+rohsdaten/
