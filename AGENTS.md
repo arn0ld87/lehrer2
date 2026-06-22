@@ -64,7 +64,7 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 | Datenschutz, Drohmodell, Löschung                                                       | `docs/security/SECURITY.md`, `THREAT_MODEL.md`, `DATA_PROTECTION.md`, `RETENTION_AND_DELETION.md`        |
 | RAG-Ingestion, Evaluierung                                                              | `docs/rag/INGESTION_POLICY.md`, `EVALUATION_PLAN.md`, `CITATION_STANDARD.md`, `SOURCE_REGISTRY.md`       |
 | Produktvision, MVP, Akzeptanz, User Flows                                               | `docs/product/PRODUCT_VISION.md`, `MVP_SCOPE.md`, `ACCEPTANCE_CRITERIA.md`, `USER_FLOWS.md`              |
-| CI/CD, Entwicklung, Backup                                                              | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`                                   |
+| CI/CD, Entwicklung, Backup                                                              | `docs/operations/CI_CD.md`, `DEVELOPMENT.md`, `BACKUP_AND_RECOVERY.md`, `GITHUB_SETUP.md`                |
 | Erste UI-Implementierung in Next.js                                                     | `unterrichtsassistenz-lsa-design-kit/handoff/CLAUDE_CODE_HANDOFF.md` (verbindlich)                       |
 | Design-Tokens                                                                           | `unterrichtsassistenz-lsa-design-kit/design-tokens.json` (keine verstreuten Hex-Werte)                   |
 | Design-System (Doku)                                                                    | `docs/design/DESIGN_SYSTEM.md`                                                                           |
@@ -89,5 +89,6 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## Notes
 
-- `docs/operations/GITHUB_SETUP.md` ist in `PLAN.md`/`README.md` verlinkt, existiert aber **noch nicht** — vor Referenzierung prüfen. Alle übrigen früher fehlenden Dokumente (DATA_MODEL, RAG_ARCHITECTURE, CITATION_STANDARD, SOURCE_REGISTRY) existieren inzwischen.
-- `.env.example`, `package.json`, `scripts/verify-docs.sh` existieren inzwischen; `package.json` definiert bislang nur `format`, `format:check`, `verify:docs`.
+- Alle in `PLAN.md`/`README.md` verlinkten Dokumente existieren inzwischen (zuletzt ergänzt: `docs/operations/GITHUB_SETUP.md`). Bei neuen Links dennoch vor Referenzierung auf Existenz prüfen.
+- `.env.example`, `package.json`, `scripts/verify-docs.sh` existieren; `package.json` definiert bislang nur `format`, `format:check`, `verify:docs`.
+- Paketmanager ist **`pnpm`**: `pnpm-lock.yaml` ist vorhanden und in `package.json` via `packageManager`-Feld (`pnpm@10.x`) + `engines.pnpm` gepinnt. `package-lock.json` wurde entfernt — kein npm/yarn verwenden.

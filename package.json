@@ -4,13 +4,15 @@
   "private": true,
   "description": "Unterrichtsassistenz LSA — Fundament/Planung (noch keine Anwendung). Nur Doku, Governance, CI-Geruest.",
   "type": "module",
+  "packageManager": "pnpm@10.28.2",
   "scripts": {
     "verify:docs": "bash scripts/verify-docs.sh",
     "format": "prettier --write \"**/*.{md,yml,yaml,json}\"",
     "format:check": "prettier --check \"**/*.{md,yml,yaml,json}\""
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "pnpm": ">=10"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",
