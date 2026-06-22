@@ -36,7 +36,7 @@ export function CorrectionHistory({ entries }: { entries: FeedbackHistoryEntry[]
 
               {entry.newText && (
                 <p className="text-[10px] text-muted-dark mt-1 line-clamp-2 italic">
-                  "{entry.newText}"
+                  &quot;{entry.newText}&quot;
                 </p>
               )}
             </div>
