@@ -101,26 +101,43 @@ interface RequestContext {
    - Bei `SENSITIVE_STUDENT`: fail-closed (kein Response, statt unsicherer Fallback)
 
 3. **Provider-Policy**:
-   - `PUBLIC`: Alle Provider erlaubt
-   - `INTERNAL`: Nur Ollama oder freigegebene OpenAI-kompatible lokale APIs
-   - `PERSONAL_TEACHER`: Nur Ollama
-   - `SENSITIVE_STUDENT`: Verboten (Guard lehnt ab), außer ausdrückliche dokumentierte Schulfreigabe
+   - `PUBLIC`: Alle Provider erlaubt.
+   - `INTERNAL`: Nur Ollama oder freigegebene OpenAI-kompatible lokale APIs.
+   - `PERSONAL_TEACHER`: Nur Ollama.
+   - `SENSITIVE_STUDENT`: Standardmäßig **verboten** (Guard lehnt ab). Ausnahme: **Klartext-Cloud-Modus** wenn ein dokumentierter `CloudReleaseGrant` vorliegt UND die Schule den Modus explizit aktiviert hat (siehe [ADR 0004](./0004-local-first-student-data.md)). In diesem Fall erfolgt der Call mit pseudonymisierten Daten (Standard) oder im genehmigten Ausnahmefall mit Klardaten.
 
 ### CloudReleaseGrant
 
 Nur wenn vorhanden:
 
 ```typescript
+/**
+ * Siehe detaillierte Spezifikation in docs/security/REDACTION_AND_GUARD_SPEC.md
+ */
 interface CloudReleaseGrant {
-  providerId: string; // "openai" | "anthropic"
-  region: string; // "eu" | "us"
-  dataClasses: string[]; // ["PUBLIC", "INTERNAL"] (SENSITIVE_STUDENT nicht erlaubt)
-  rechtsgrundlage: string; // z.B. "Art. 6 Abs. 1 Buchstabe f DSGVO"
-  avvUrl?: string; // Auftragsverarbeitungsvertrag
-  dsfaUrl?: string; // Datenschutzfolgenabschätzung
-  approvedAt: Date;
-  approvedBy: string; // Schulleitung Email
-  expiresAt?: Date; // optional, automatische Ablauf
+  id: string; // UUID
+  schoolId: string; // UUID
+  provider: "openai" | "anthropic" | "google";
+  region: "eu-central-1" | "us-east-1";
+
+  // Rechtliche Basis
+  legalBasis: string;       // z.B. "Dienstanweisung Schulleitung vom 01.09.2026"
+  dsfaId: string;           // Referenz auf die Datenschutz-Folgenabschätzung
+  avvStatus: "signed" | "pending";
+
+  // Geltung
+  scope: {
+    subjects: string[];     // ["DEUTSCH", "ETHIK"]
+    gradeBands: string[];   // ["KS9", "KS10"]
+  };
+
+  validFrom: Date;          // ISO8601
+  validUntil: Date;         // ISO8601
+
+  issuer: {
+    name: string;           // Name der Schulleitung / DSB
+    role: "SCHOOL_ADMIN" | "DSB";
+  };
 }
 ```
 
