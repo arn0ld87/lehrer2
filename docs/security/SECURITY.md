@@ -41,11 +41,14 @@ Mehrschichtige Kontrollen schützen vor Ausfällen einzelner Maßnahmen:
 
 | Rolle                            | Verantwortung                                                                                                                                        |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Schulleitung**                 | Freigabe für Cloud-LLM (CloudReleaseGrant mit Rechtsgrundlage, AVV, DSFA); Datenschutzrichtlinien definieren; Incident Response genehmigen           |
+| **Schuladmin** (Schulleitung)    | Freigabe für Cloud-LLM (CloudReleaseGrant mit Rechtsgrundlage, AVV, DSFA); Datenschutzrichtlinien definieren; Incident Response genehmigen           |
+| **Fachkonferenz**                | Fachspezifische Aufsicht; Freigabe von schulinternen Material-Pools; Erteilung von CurriculumRelease                                                 |
 | **Datenschutzbeauftragte (DSB)** | Datenschutz-Impact-Assessments; Lieferantenpflege (Cloud-Provider); Datenschutzverletzungs-Benachrichtigung                                          |
-| **IT-Administrator**             | Systembetrieb; Backup/Wiederherstellung; Sicherheits-Patches; Auditlogs prüfen                                                                       |
+| **IT-Administrator** (Admin)     | Systembetrieb; Backup/Wiederherstellung; Sicherheits-Patches; Auditlogs prüfen                                                                       |
 | **Lehrkräfte**                   | Gewährleisten, dass nur sachlich notwendige Daten verarbeitet werden; Widerruf einreichen falls Schüler/Eltern das Recht auf Vergessenwerden ausüben |
 | **Schüler / Eltern**             | Auskunftsverlangen; Widerruf von Datenverarbeitung (Art. 17 DSGVO)                                                                                   |
+
+Details zum Rollenmodell und Berechtigungen finden sich in der [Spezifikation zu Rollen, Mandanten und Audit](./ROLES_TENANCY_AUDIT.md).
 
 ## Umgang mit Secrets
 
@@ -120,6 +123,7 @@ Alle Stellen sind **fail-closed**: wenn Validierung fehlschlägt, wird kein Zugr
 - **ASVS Compliance:** [./ASVS_COMPLIANCE.md](./ASVS_COMPLIANCE.md) — Review gegen OWASP ASVS v4.0.3 (Level 2)
 - **Datenschutz:** [./DATA_PROTECTION.md](./DATA_PROTECTION.md) — Rechtliche Grundlagen, DSGVO-Compliance
 - **Datenschutz-Checkliste:** [./DATA_PROTECTION_CHECKLIST.md](./DATA_PROTECTION_CHECKLIST.md) — DSGVO-Prüfschritte
+- **Rollen, Mandanten und Audit:** [./ROLES_TENANCY_AUDIT.md](./ROLES_TENANCY_AUDIT.md) — Spezifikation der Zugriffssteuerung und Protokollierung
 - **Sicherheits-Findings:** [./SECURITY_FINDINGS.md](./SECURITY_FINDINGS.md) — Identifizierte Lücken aus dem Review
 - **Aufbewahrung und Löschung:** [./RETENTION_AND_DELETION.md](./RETENTION_AND_DELETION.md) — Aufbewahrungsfristen, kaskadierende Löschung
 - **Secret-Management:** [../operations/SECRET_MANAGEMENT.md](../operations/SECRET_MANAGEMENT.md) — Detailliertes Konzept zum Umgang mit Secrets

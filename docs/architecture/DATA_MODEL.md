@@ -458,6 +458,7 @@ Verweis auf RAG-Quelle (Lehrplan, Handreichung, OER, etc.).
 ### Audit & Provenance
 
 - Jede Generierung wird in `GenerationProvenance` erfasst (Modell, Provider, Redaction-Flag, Quellen).
+- Sicherheitskritische Ereignisse werden in einem zentralen Audit-Log erfasst. Details siehe [Spezifikation zu Rollen, Mandanten und Audit](../security/ROLES_TENANCY_AUDIT.md).
 - Soft-Delete (`deleted_at IS NOT NULL`) behält Daten für Audit / Compliance.
 
 ### UI-Subsumption und RAG-Retrieval-Hinweis (M1→M2)
@@ -467,7 +468,7 @@ Verweis auf RAG-Quelle (Lehrplan, Handreichung, OER, etc.).
 
 ## Erweiterungen (nicht im MVP)
 
-- **Benutzermodell:** Rollen (Lehrkraft, Admin, später Fachkonferenz, Schuladmin), Permissions.
+- **Benutzermodell:** Rollen (Lehrkraft, Admin, später Fachkonferenz, Schuladmin), Permissions. Siehe [Spezifikation zu Rollen, Mandanten und Audit](../security/ROLES_TENANCY_AUDIT.md).
 - **Klassen- / Kursmodell:** Explizite Zuordnung Lehrkraft ↔ Schüler ↔ Klasse.
 - **Feedback- / Notiz-Artefakte:** Student-facing Rückmeldungen (Korrektur-Kommentare, Lernfeedback).
 - **Materiallibraries:** Wiederverwendbare Ressourcen-Vorlagen.
