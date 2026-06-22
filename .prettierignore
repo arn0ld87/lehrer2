@@ -16,3 +16,6 @@ unterrichtsassistenz-lsa-design-kit/
 # Superpowers-Implementierungspläne (agent-intern, eigene Formatierung)
 docs/superpowers/
 .superpowers/
+
+# Drizzle-Migrations-Metadaten (von drizzle-kit generiert, eigenes Format)
+drizzle/meta/

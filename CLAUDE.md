@@ -8,15 +8,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projektstatus
 
-**M0 (Foundations & Governance) abgeschlossen; M1 Schritt 1 (UI-Shell) umgesetzt.** Es steht jetzt eine lauffähige Next.js-UI-Shell (Branch `m1/ui-shell`) — jedoch **nur UI-Struktur**, noch keine RAG-/LLM-/Korrektur-/Auth-/DB-Logik. Repo-Gerüst und Doku: `README.md`, `CLAUDE.md`, `AGENTS.md`, `PLAN.md`, ein weitgehend vollständiger `docs/`-Baum, das statische Design-Kit (`unterrichtsassistenz-lsa-design-kit/`) sowie Tooling-/CI-Gerüst: `package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`, `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow `ci.yml`, Issue-Templates, PR-Template).
+**M0 (Foundations & Governance) abgeschlossen; M1 Schritt 1 (UI-Shell) und Schritt 2 (Datenmodell + Export) umgesetzt (Branch `m1/data-model-export`).** Auf der lauffähigen Next.js-UI-Shell steht jetzt die persistente Datenschicht: PostgreSQL via Drizzle (Curriculum-Topologie mit Konfessions-CHECK am `curriculum_strand`, Artefakte Unit→Lesson/Worksheet→Task→Horizon, Rubric, SourceRef, Joins, Provenienz/Audit), Better Auth single-tenant (ADR 0007) und das Export-Subsystem (docx + pdfkit hinter `exportArtifact`, ADR 0008). Die UI-Repository-Verträge aus `src/lib/repositories.ts` haben Postgres-Implementierungen hinter einer Factory (`mock` ↔ `db` per `REPOSITORY_BACKEND`); die UI bleibt unverändert. Noch nicht real: RAG/Retrieval, LLM-Provider-Anbindung, Korrekturassistenz (`SENSITIVE_STUDENT` = M3), Cloud-LLM-Freigaben. Repo-Gerüst und Doku: `README.md`, `CLAUDE.md`, `AGENTS.md`, `PLAN.md`, ein weitgehend vollständiger `docs/`-Baum, das statische Design-Kit (`unterrichtsassistenz-lsa-design-kit/`) sowie Tooling-/CI-Gerüst: `package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`, `scripts/` (`verify-docs.sh`, `verify-docs.mjs`, `check-schema-drift.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow `ci.yml`, Issue-Templates, PR-Template).
 
-**`docs/` ist nahezu vollständig.** Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION*BOUNDARIES, DATA_MODEL, RAG_ARCHITECTURE), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY, CITATION_STANDARD, SOURCE_REGISTRY), `docs/security/` (SECURITY, THREAT_MODEL, DATA_PROTECTION, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY, GITHUB_SETUP), `docs/design/DESIGN_SYSTEM.md`, `docs/adr/0001`–`0009` (0007 Auth / 0008 Export im Status \_Proposed*), `docs/decisions/OPEN_QUESTIONS.md` (alle 6 Fragen entschieden), `LICENSE-DECISION.md`.
+**`docs/` ist nahezu vollständig.** Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION_BOUNDARIES, DATA_MODEL, RAG_ARCHITECTURE), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY, CITATION_STANDARD, SOURCE_REGISTRY), `docs/security/` (SECURITY, THREAT_MODEL, DATA_PROTECTION, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY, GITHUB_SETUP), `docs/design/DESIGN_SYSTEM.md`, `docs/adr/0001`–`0009` (0005 Drizzle / 0007 Auth / 0008 Export akzeptiert 2026-06-22), `docs/decisions/OPEN_QUESTIONS.md` (alle 6 Fragen entschieden), `LICENSE-DECISION.md`.
 
 **Stolperfalle:** Alle von `PLAN.md`/`README.md` verlinkten Dokumente existieren inzwischen — die Soll-/Ist-Lücke ist geschlossen. Bei neuen Links dennoch weiter auf Existenz prüfen, nicht blind dem Link vertrauen. Paketmanager ist **`pnpm`** (`pnpm-lock.yaml` + `packageManager`-Pin in `package.json`); `package-lock.json` wurde entfernt.
 
 **`PLAN.md` ist Source of Truth** für Scope, Roadmap (M0–M4), Datenflüsse und offene Entscheidungen — vor Architekturarbeit lesen.
 
-Konsequenz: `pnpm dev`, `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm format:check` und `pnpm verify:docs` sind real (siehe `package.json`); `pnpm test` bleibt **Sollzustand**, da noch kein Test-Framework existiert. Beim Erweitern den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
+Konsequenz: `pnpm dev`, `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm format:check`, `pnpm verify:docs`, `pnpm test` (Vitest + Testcontainers) sowie `pnpm db:generate`/`db:migrate`/`db:check` sind real (siehe `package.json`). `pnpm test` und `pnpm db:migrate` benötigen Docker (Postgres-Testcontainer). Beim Erweitern den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
 
 ## Design-Kit und UI-Implementierung
 
@@ -61,7 +61,7 @@ Modularer Monolith (bewusst kein früher Microservice-Schnitt). Schichten:
 - **RAG-/Job-Layer** — Quellenprüfung, Ingestion, Extraktion, Redaction, Retrieval; Hintergrundjobs über Redis + BullMQ; separater OCR-/Extraktions-Worker
 - **LLM-Provider-Abstraktion** — Ollama (lokal = Default) / lokale OpenAI-kompatible APIs, Cloud-Provider hinter Freigaben
 
-ORM ist entschieden (Drizzle, ADR 0005). **Auth-Lösung (ADR 0007) und Export-Stack (ADR 0008) liegen als Vorschlag im Status _Proposed_ vor** — im PR-Review auf _Akzeptiert_ zu heben, nicht eigenmächtig abweichen. ADRs: 0001 Modular Monolith, 0002 Provider-agnostische LLM-Schicht, 0003 Source-Governance vor Ingestion, 0004 Local-first Schülerdaten, 0005 Drizzle, 0006 Curriculum-Modellierung (Sek II/Konfession/Ethik), 0007 Auth (_Proposed_, Empfehlung Better Auth), 0008 Export (_Proposed_, Empfehlung docx + pdfkit), 0009 Pseudonym-Retention (DSFA-Vorbehalt).
+ORM ist entschieden (Drizzle, ADR 0005, akzeptiert). **Auth-Lösung (ADR 0007, Better Auth single-tenant) und Export-Stack (ADR 0008, docx + pdfkit) sind akzeptiert (2026-06-22) und umgesetzt** — nicht eigenmächtig abweichen. ADRs: 0001 Modular Monolith, 0002 Provider-agnostische LLM-Schicht, 0003 Source-Governance vor Ingestion, 0004 Local-first Schülerdaten, 0005 Drizzle, 0006 Curriculum-Modellierung (Sek II/Konfession/Ethik), 0007 Auth (Akzeptiert, Better Auth), 0008 Export (Akzeptiert, docx + pdfkit), 0009 Pseudonym-Retention (DSFA-Vorbehalt).
 
 **LLM-Request-Fluss (Datenschutz-Kern, fail-closed):** Intent/Scope → Provider-Policy-Gate (Default lokal) → lokale Pseudonymisierung/Redaction → RAG-Kontext (Pflichtfilter Fach/Konfession/Trust) → **Guard-Assertion (bricht ab, wenn PII durchrutscht)** → Provider-Call → lokale Re-Identifikation (nur lokaler Pfad) → Provenienz-Logging → Zitations-/Confidence-Markierung. Diesen Guard nie umgehen oder abschwächen.
 
@@ -85,20 +85,26 @@ Datenklassifizierung steuert Cloud-Zulässigkeit: `PUBLIC` und `INTERNAL` (Cloud
 
 ## Befehle
 
-Paketmanager ist **`pnpm`** (nicht npm/yarn). Die UI-Shell läuft ohne Docker; Docker Compose wird erst für Persistenz/Worker (M1/M2) gebraucht.
+Paketmanager ist **`pnpm`** (nicht npm/yarn). `pnpm dev`/Lint/Typecheck/Build laufen ohne Docker; `pnpm test` und `pnpm db:migrate` benötigen Docker Compose (Postgres).
 
 ```bash
 cp .env.example .env   # Werte niemals committen
 pnpm install
+docker compose up -d   # Postgres für db:migrate / test (Testcontainers)
 pnpm dev               # Dev-Server (http://localhost:3000)
 
 pnpm lint              # ESLint (flat config)
 pnpm typecheck         # tsc --noEmit (strict)
 pnpm format:check      # Prettier (md/yml/yaml/json)
 pnpm build             # Produktionsbuild (statisches Prerender)
+pnpm test              # Vitest + @testcontainers/postgresql (Docker nötig)
+
+pnpm db:generate       # Drizzle-Kit: Migration aus Schema generieren
+pnpm db:migrate        # Migrationen auf die DB anwenden
+pnpm db:check          # Schema-Drift prüfen (kein DB-Zugriff nötig)
 ```
 
-`pnpm test` ist noch **Sollzustand** (kein Test-Framework vorhanden). Vor Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm build`.
+Repository-Backend per `REPOSITORY_BACKEND=mock|db` (Default `mock`); `db` nutzt die Postgres-Repositories (`src/lib/db/repositories/`). Vor Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm build`, `pnpm test`. CI zusätzlich: Schema-Drift-Gate (`scripts/check-schema-drift.mjs`) und Migrations-Review-Flag für `DELETE`/`UPDATE` in `drizzle/*.sql`.
 
 ## Beitragsregeln
 
@@ -106,3 +112,4 @@ pnpm build             # Produktionsbuild (statisches Prerender)
 - Keine echten Schülerdaten, personenbezogenen Testdaten oder API-Schlüssel committen.
 - Änderungen an Quellen, Datenschutz oder Bewertungslogik nachvollziehbar dokumentieren.
 - Sicherheitsrelevante Änderungen als `type: security` Issue führen.
+- **Migrations-Reviewpflicht (ADR 0005):** jede `.sql`-Migration im PR reviewen; Löschungen nur über benannte Repository-Methoden (`src/lib/db/repositories/deletion.ts`), nie ad-hoc `DELETE`/`UPDATE` — CI flaggt solche Statements in `drizzle/*.sql`.
