@@ -106,7 +106,7 @@ export class S3BlobStore implements BlobStore {
 export class FakeBlobStore implements BlobStore {
   private store: Map<string, Uint8Array> = new Map();
 
-  async putObject(key: string, body: Uint8Array, _contentType?: string): Promise<void> {
+  async putObject(key: string, body: Uint8Array): Promise<void> {
     this.store.set(key, new Uint8Array(body));
   }
 

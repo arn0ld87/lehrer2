@@ -3,7 +3,6 @@ import { correctionStatusEnum } from "../enums";
 import { artifactTimestamps } from "../columns";
 import { task, rubric } from "./artifacts";
 import { user } from "./auth";
-import type { FeedbackStatement, FeedbackHistoryEntry } from "../../types";
 
 /**
  * StudentSubmission (Schülereingabe)
@@ -36,7 +35,7 @@ export const correctionDraft = pgTable("correction_draft", {
   rubricId: uuid("rubric_id").references(() => rubric.id, { onDelete: "set null" }),
 
   // KI-Vorschlag (strukturiert gemäß FEEDBACK_FORMAT.md)
-  aiSuggestion: jsonb("ai_suggestion").$type<FeedbackStatement[]>().notNull(),
+  aiSuggestion: jsonb("ai_suggestion").notNull(),
 
   // Herkunft & Audit
   provenance: jsonb("provenance").notNull(),
@@ -49,7 +48,7 @@ export const correctionDraft = pgTable("correction_draft", {
   status: correctionStatusEnum("status").notNull().default("DRAFT"),
 
   // Verlauf (History)
-  history: jsonb("history").$type<FeedbackHistoryEntry[]>().notNull().default([]),
+  history: jsonb("history").notNull().default([]),
 
   ownerTeacherId: text("owner_teacher_id")
     .notNull()

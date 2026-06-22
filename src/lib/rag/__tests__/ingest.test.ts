@@ -54,7 +54,7 @@ function makeBlobWithText(sourceRefId: string, text: string): FakeBlobStore {
   const buf = new TextEncoder().encode(text);
   // Synchron füllen — putObject ist async, aber FakeBlobStore ist in-memory;
   // wir nutzen eine kleine Hilfskonstruktion:
-  blob.putObject(key, buf, "text/plain").catch(() => {
+  blob.putObject(key, buf).catch(() => {
     // Sollte nie feuern, FakeBlobStore ist synchron im Kern
   });
   return blob;
@@ -217,7 +217,6 @@ describe("ingestSource — Happy Path (Positiv-Test)", () => {
       await blob.putObject(
         blobKey,
         new TextEncoder().encode(SYNTHETIC_TEXT),
-        "text/plain",
       );
 
       // URI muss auf .txt enden, damit guessMime "text/plain" liefert
@@ -293,7 +292,6 @@ describe("ingestSource — Kompensation gezielt (#41)", () => {
       await blob.putObject(
         `sources/${row.id}/v1`,
         new TextEncoder().encode(SYNTHETIC_TEXT),
-        "text/plain",
       );
 
       // Rest-Punkt eines „früheren Laufs" derselben source_id (stabile ID)
@@ -391,7 +389,6 @@ describe("ingestSource — Dedup-Früherkennung (#43)", () => {
       await blob.putObject(
         `sources/${duplicateSource.id}/v1`,
         new TextEncoder().encode(DEDUP_TEXT),
-        "text/plain",
       );
 
       const deps = { db, store, blob, embedder };
@@ -456,7 +453,6 @@ describe("ingestSource — Dedup-Früherkennung (#43)", () => {
       await blob.putObject(
         `sources/${source.id}/v1`,
         new TextEncoder().encode(UNIQUE_TEXT),
-        "text/plain",
       );
 
       const deps = { db, store, blob, embedder };
