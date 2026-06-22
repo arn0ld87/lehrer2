@@ -1,18 +1,25 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
+  check,
   doublePrecision,
   integer,
   jsonb,
   pgTable,
   text,
+  timestamp,
   unique,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import {
+  confessionContextEnum,
   difficultyEnum,
   rubricScopeEnum,
   rubricScaleEnum,
+  sourceLifecycleEnum,
   sourceTrustEnum,
+  subjectEnum,
   taskTypeEnum,
   teachingUnitStatusEnum,
 } from "../enums";
@@ -202,18 +209,46 @@ export const sourceRef = pgTable(
   "source_ref",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    contentHash: text("content_hash").notNull().unique(), // Fingerprint for deduplication
-    sourceType: sourceTrustEnum("source_type").notNull(),
+    // contentHash nullable; partial unique index enforces uniqueness only when non-null
+    contentHash: text("content_hash"),
+    sourceType: sourceTrustEnum("source_type").notNull().default("UNVERIFIED"),
     title: text("title").notNull(),
     uri: text("uri"), // URL or DOI
     confidence: doublePrecision("confidence"), // Float (0–1), nullable
     ownerTeacherId: text("owner_teacher_id").references(() => user.id, {
       onDelete: "set null",
     }), // Only for USER_APPROVED
+    // Extended lifecycle / provenance fields
+    authorOrganization: text("author_organization"),
+    publishedDate: timestamp("published_date", { withTimezone: true }),
+    licenseInfo: text("license_info"),
+    licenseVerified: boolean("license_verified").notNull().default(false),
+    validFrom: timestamp("valid_from", { withTimezone: true }),
+    validTo: timestamp("valid_to", { withTimezone: true }),
+    subjectAlignment: subjectEnum("subject_alignment"),
+    confessionContext: confessionContextEnum("confession_context"),
+    lifecycleStatus: sourceLifecycleEnum("lifecycle_status").notNull().default("DISCOVERED"),
+    approvalMetadata: jsonb("approval_metadata"),
+    retrievedAt: timestamp("retrieved_at", { withTimezone: true }),
+    sourceVersion: integer("source_version").notNull().default(1),
     ...artifactTimestamps,
   },
   (t) => [
     unique("source_ref_id_unique").on(t.id),
+    // Partial unique index: enforce content-hash uniqueness only for non-null hashes
+    uniqueIndex("source_ref_content_hash_uniq")
+      .on(t.contentHash)
+      .where(sql`${t.contentHash} IS NOT NULL`),
+    // Konfessions-Invariante für source_ref (nur wirksam wenn subject_alignment IS NOT NULL)
+    check(
+      "source_confession_subject_valid",
+      sql`(
+        ${t.subjectAlignment} IS NULL
+        OR (${t.subjectAlignment} = 'RELIGION' AND ${t.confessionContext} IN ('EVANGELISCH','KATHOLISCH','KONFESSIONSSENSIBEL_UEBERGREIFEND'))
+        OR (${t.subjectAlignment} = 'ETHIK' AND ${t.confessionContext} IN ('RELIGIONSKUNDLICH','NICHT_ANWENDBAR'))
+        OR (${t.subjectAlignment} = 'DEUTSCH' AND ${t.confessionContext} = 'NICHT_ANWENDBAR')
+      )`,
+    ),
   ],
 );
 

@@ -131,6 +131,7 @@ export interface SourceEntry {
   version: string;
   license: string;
   status: SourceStatus;
+  lifecycleStatus?: string; // Optional: DISCOVERED, UNDER_REVIEW, REGISTERED, APPROVED, REVOKED, INGESTED
 }
 
 /** Kontext-Switcher-Werte (Fach / Schulform / Klasse) — UI-State, nicht persistent. */
