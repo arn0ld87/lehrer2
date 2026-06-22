@@ -81,23 +81,18 @@ docker compose exec qdrant curl -X POST http://localhost:6333/snapshots
 
 ## Recovery Point Objective (RPO) und Recovery Time Objective (RTO)
 
-**Status**: Noch festzulegen
+Für den Pilotbetrieb (M4) sind folgende Ziele definiert:
 
-Anforderungen abhängig von:
+- **Recovery Point Objective (RPO)**: **24 Stunden**
+  - Ein tägliches Backup (02:00 UTC) ist ausreichend. Im Falle eines Desasters gehen maximal die Daten eines Arbeitstages verloren.
+- **Recovery Time Objective (RTO)**: **4 Stunden**
+  - Innerhalb von vier Stunden nach Feststellung eines Ausfalls muss das System in einer separaten Umgebung wiederhergestellt sein.
 
-- Kritikalität der Lehrmaterialien
-- Verfügbarkeitsziele für Unterrichtsunterstützung
-- Akzeptable Daten-Verlustfenster (RPO in Stunden/Minuten)
-- Zielwiederherstellungszeit (RTO in Minuten/Stunden)
-
-**Empfohlene Ziele** (TBD):
-
-- **RPO**: 1–4 Stunden (täglich Backups ausreichend)
-- **RTO**: 15–30 Minuten (Hot-Standby oder schnelle Restore-Prozedur)
-
-Finale Werte werden in [../../PLAN.md](../../PLAN.md) dokumentiert.
+Diese Werte werden nach der Pilotphase evaluiert und ggf. verschärft.
 
 ## Wiederherstellungstests
+
+Detaillierte Prozeduren für die Wiederherstellung und regelmäßige Tests finden sich im [Wiederherstellungs-Testplan (RECOVERY_TEST_PLAN.md)](RECOVERY_TEST_PLAN.md).
 
 ### Häufigkeit
 
