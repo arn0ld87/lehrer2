@@ -26,6 +26,13 @@ export interface VectorStore {
     limit?: number,
   ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown> }>>;
   deleteByFilter(filter: SearchFilter): Promise<void>;
+  /**
+   * Löscht gezielt die Punkte mit den angegebenen IDs.
+   * Im Gegensatz zu deleteByFilter({ sourceId }) wirkt das ausschließlich auf
+   * die übergebenen IDs — Reste früherer Läufe derselben source_id bleiben unberührt.
+   * Genutzt für die Kompensation einer einzelnen Ingestion (nur deren pointIds).
+   */
+  deletePoints(ids: string[]): Promise<void>;
 }
 
 export class QdrantStore implements VectorStore {
@@ -155,6 +162,24 @@ export class QdrantStore implements VectorStore {
 
     if (!response.ok) {
       throw new Error(`Qdrant delete failed: ${response.statusText}`);
+    }
+  }
+
+  /**
+   * Löscht gezielt die Punkte mit den angegebenen IDs (Qdrant points/delete mit { points: [...] }).
+   */
+  async deletePoints(ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+
+    const url = `${this.url}/collections/${this.collection}/points/delete?wait=true`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ points: ids }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Qdrant deletePoints failed: ${response.statusText}`);
     }
   }
 
@@ -296,6 +321,12 @@ export class FakeVectorStore implements VectorStore {
     }
 
     for (const id of toDelete) {
+      this.points.delete(id);
+    }
+  }
+
+  async deletePoints(ids: string[]): Promise<void> {
+    for (const id of ids) {
       this.points.delete(id);
     }
   }

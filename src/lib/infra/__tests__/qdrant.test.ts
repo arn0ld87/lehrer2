@@ -431,6 +431,47 @@ describe("FakeVectorStore", () => {
     });
   });
 
+  // #41 — gezielte Löschung nur bestimmter Punkt-IDs (Kompensation eines Laufs)
+  describe("deletePoints", () => {
+    beforeEach(async () => {
+      // Zwei Punkte derselben source_id: p_old (früherer Lauf) + p_new (dieser Lauf)
+      await store.upsertPoints([
+        {
+          id: "p_old",
+          vector: [1, 2, 3],
+          payload: { source_id: "srcX", trust_level: "OFFICIAL_BINDING" },
+        },
+        {
+          id: "p_new",
+          vector: [1, 2, 3],
+          payload: { source_id: "srcX", trust_level: "OFFICIAL_BINDING" },
+        },
+      ]);
+    });
+
+    it("löscht NUR die angegebenen IDs; Reste derselben source_id bleiben erhalten", async () => {
+      await store.deletePoints(["p_new"]);
+
+      const results = await store.search([1, 2, 3], {}, 10);
+      const ids = results.map((r) => r.id);
+      expect(ids).toContain("p_old"); // früherer Lauf bleibt unberührt
+      expect(ids).not.toContain("p_new"); // nur dieser Lauf wird zurückgerollt
+    });
+
+    it("unterscheidet sich von deleteByFilter({sourceId}), das ALLE Punkte der source_id löscht", async () => {
+      await store.deleteByFilter({ sourceId: "srcX" });
+
+      const results = await store.search([1, 2, 3], {}, 10);
+      expect(results).toHaveLength(0); // breite Löschung trifft beide
+    });
+
+    it("ist ein No-op bei leerer ID-Liste", async () => {
+      await store.deletePoints([]);
+      const results = await store.search([1, 2, 3], {}, 10);
+      expect(results).toHaveLength(2);
+    });
+  });
+
   describe("search result format", () => {
     beforeEach(async () => {
       const points: VectorPoint[] = [

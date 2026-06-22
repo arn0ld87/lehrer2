@@ -17,6 +17,7 @@
  */
 
 import { afterAll, describe, expect, it } from "vitest";
+import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -39,15 +40,14 @@ afterAll(async () => {
 
 // ── Hilfsfunktion: FakeBlob mit Plain-Text befüllen ────────────────────────
 /**
- * Legt einen FakeBlobStore an, der den Schlüssel
- * "sources/<sourceRefId>/raw" mit dem gegebenen Text belegt.
- * ingestSource versucht zuerst blob.getObject(blobKey), wobei
- * blobKey = `sources/${id}/${contentHash ?? "raw"}` ist.
- * Da contentHash beim Anlegen noch null sein kann, nutzen wir "raw".
+ * Legt einen FakeBlobStore an, der den stabilen Blob-Key (#42)
+ * "sources/<sourceRefId>/v<sourceVersion>" mit dem gegebenen Text belegt.
+ * ingestSource lädt über blobKeyForSource(id, sourceVersion); die Test-Quellen
+ * haben die Default-sourceVersion 1, daher "v1".
  */
 function makeBlobWithText(sourceRefId: string, text: string): FakeBlobStore {
   const blob = new FakeBlobStore();
-  const key = `sources/${sourceRefId}/raw`;
+  const key = `sources/${sourceRefId}/v1`;
   const buf = new TextEncoder().encode(text);
   // Synchron füllen — putObject ist async, aber FakeBlobStore ist in-memory;
   // wir nutzen eine kleine Hilfskonstruktion:
@@ -208,9 +208,9 @@ describe("ingestSource — Happy Path (Positiv-Test)", () => {
         })
         .returning();
 
-      // Blob: Plain-Text unter dem Schlüssel den ingestSource erwartet
+      // Blob: Plain-Text unter dem stabilen Schlüssel, den ingestSource erwartet (#42)
       const blob = new FakeBlobStore();
-      const blobKey = `sources/${row.id}/raw`; // contentHash ist null → "raw"
+      const blobKey = `sources/${row.id}/v1`; // sources/<id>/v<sourceVersion=1>
       await blob.putObject(
         blobKey,
         new TextEncoder().encode(SYNTHETIC_TEXT),
@@ -258,6 +258,77 @@ describe("ingestSource — Happy Path (Positiv-Test)", () => {
         .from(sourceRef)
         .where(eq(sourceRef.id, row.id));
       expect(updated.lifecycleStatus).toBe("INGESTED");
+    },
+  );
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// #41 — Kompensation löscht NUR die in diesem Lauf erzeugten Qdrant-Punkte
+// ─────────────────────────────────────────────────────────────────────────────
+describe("ingestSource — Kompensation gezielt (#41)", () => {
+  it(
+    "rollt bei PG-Fehler nur die neuen pointIds zurück; ein Rest-Punkt derselben source_id bleibt erhalten",
+    async () => {
+      const store = new FakeVectorStore();
+      const embedder = new FakeEmbedder(8);
+
+      const [row] = await db
+        .insert(sourceRef)
+        .values({
+          title: `Kompensation-Test-${TS}`,
+          sourceType: "OFFICIAL_BINDING",
+          licenseVerified: true,
+          lifecycleStatus: "APPROVED",
+          subjectAlignment: "DEUTSCH",
+          confessionContext: "NICHT_ANWENDBAR",
+          uri: `file://kompensation-${TS}.txt`,
+        })
+        .returning();
+
+      // Blob unter stabilem Key (#42)
+      const blob = new FakeBlobStore();
+      await blob.putObject(
+        `sources/${row.id}/v1`,
+        new TextEncoder().encode(SYNTHETIC_TEXT),
+        "text/plain",
+      );
+
+      // Rest-Punkt eines „früheren Laufs" derselben source_id (stabile ID)
+      await store.upsertPoints([
+        {
+          id: "residual-old-run",
+          vector: [0, 0, 0, 0, 0, 0, 0, 0],
+          payload: { source_id: row.id, trust_level: "OFFICIAL_BINDING" },
+        },
+      ]);
+
+      // PG-Fehler erzwingen: kollidierenden rag_chunk vorab einfügen
+      // (gleiches (sourceRefId, contentHash, sourceVersion=1) → Unique-Verletzung
+      // beim Insert des realen Chunks → Kompensationspfad).
+      const contentHash = createHash("sha256")
+        .update(new TextEncoder().encode(SYNTHETIC_TEXT))
+        .digest("hex");
+      await db.insert(ragChunk).values({
+        sourceRefId: row.id,
+        chunkText:
+          "Vorbelegter kollidierender Chunk mit ausreichender Mindestlaenge fuer den DB-Check.",
+        pageOrSection: "—",
+        sourceVersion: 1,
+        contentHash,
+        trustLevel: "OFFICIAL_BINDING",
+      });
+
+      const deps = { db, store, blob, embedder };
+
+      // ── Act: Ingestion muss fehlschlagen (Unique-Verletzung) ──────────────
+      await expect(ingestSource(deps, row.id)).rejects.toThrow();
+
+      // ── Assert: Rest-Punkt überlebt, neue Lauf-Punkte sind weg ────────────
+      // (frischer FakeVectorStore → nur Punkte dieses Tests/dieser source_id)
+      const remaining = await store.search([], {}, 1000);
+      const ids = remaining.map((p) => p.id);
+      expect(ids).toContain("residual-old-run"); // breite Löschung hätte ihn entfernt
+      expect(remaining).toHaveLength(1); // nur der Rest-Punkt, keine neuen Punkte
     },
   );
 });

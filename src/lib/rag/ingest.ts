@@ -15,13 +15,14 @@ import { and, eq } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
 import type { VectorStore } from "@/lib/infra/qdrant";
 import type { BlobStore } from "@/lib/infra/minio";
+import { blobKeyForSource } from "@/lib/infra/minio";
 import type { Embedder } from "@/lib/infra/ollama";
 import { sourceRef } from "@/lib/db/schema/artifacts";
 import { ragChunk } from "@/lib/db/schema/rag";
 
 import { extractContent } from "./extract";
 import { chunkText } from "./chunk";
-import { ensureCollection, upsertSourceChunks, deleteBySource } from "./qdrant";
+import { ensureCollection, upsertSourceChunks, deletePoints } from "./qdrant";
 
 export interface IngestDeps {
   db: Db;
@@ -78,10 +79,11 @@ export async function ingestSource(
   // ── (2) Bytes laden ─────────────────────────────────────────────────────────
   let raw: Uint8Array;
 
-  // TODO(M2): Blob-Key-Schema ist provisorisch. contentHash bleibt bis zum
-  // erfolgreichen Ingest null → Key ist `sources/<id>/raw`. Ein stabiles,
-  // inhaltsunabhängiges Schema (z. B. nach sourceVersion) folgt mit dem Upload-Flow.
-  const blobKey = `sources/${sourceRefId}/${source.contentHash ?? "raw"}`;
+  // Stabiles, inhaltsunabhängiges Blob-Key-Schema (#42): `sources/<sourceRefId>/v<sourceVersion>`.
+  // Bewusst NICHT contentHash-basiert, da contentHash bis zum erfolgreichen Ingest
+  // null bleibt und der Key sonst über Läufe hinweg inkonsistent wäre. Schema-Definition
+  // und Abstimmung mit dem Upload-Flow: siehe blobKeyForSource() in src/lib/infra/minio.ts.
+  const blobKey = blobKeyForSource(sourceRefId, source.sourceVersion);
   try {
     raw = await blob.getObject(blobKey);
   } catch {
@@ -195,16 +197,16 @@ export async function ingestSource(
       }
     });
   } catch (pgError) {
-    // ── Kompensation: Qdrant-Punkte rückgängig machen ───────────────────────
-    // Hinweis: deleteBySource löscht ALLE Punkte dieser source_id (auch Reste
-    // früherer abgebrochener Läufe — gewollt, räumt Orphans mit auf).
-    // TODO(M2): gezielte Löschung nur der in DIESEM Lauf erzeugten pointIds.
+    // ── Kompensation: nur die in DIESEM Lauf erzeugten Qdrant-Punkte löschen (#41) ──
+    // deletePoints(pointIds) wirkt gezielt — Reste früherer (abgebrochener) Läufe
+    // derselben source_id bleiben unberührt, keine unerwünschte Breitenwirkung bei
+    // Re-Ingestion. Orphan-Cleanup ist getrennt (deleteBySource beim Re-Ingest/Widerruf).
     try {
-      await deleteBySource(store, sourceRefId);
+      await deletePoints(store, pointIds);
     } catch (qdrantErr) {
       // Kompensation fehlgeschlagen — als Warning loggen, Original-Fehler werfen
       console.error(
-        `ingestSource: Kompensations-deleteBySource fehlgeschlagen für ${sourceRefId}:`,
+        `ingestSource: Kompensations-deletePoints fehlgeschlagen für ${sourceRefId}:`,
         qdrantErr,
       );
     }

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { check, pgTable, text, timestamp, unique, uuid, integer } from "drizzle-orm/pg-core";
 import {
   confessionContextEnum,
@@ -44,3 +44,21 @@ export const ragChunk = pgTable(
     ),
   ],
 );
+
+/**
+ * Relations für rag_chunk (#44).
+ *
+ * Definiert die typsichere Zuordnung rag_chunk → source_ref (n:1) für Joins ab
+ * Retrieval (#18), z. B. `db.query.ragChunk.findMany({ with: { sourceRef: true } })`.
+ *
+ * Bewusst nur die one()-Richtung: Die Umkehrung (sourceRef → many chunks) würde
+ * voraussetzen, dass artifacts.ts ragChunk importiert — ein Import-Zyklus
+ * (rag.ts importiert sourceRef aus artifacts.ts). Retrieval fragt vom Chunk zur
+ * Quelle, daher genügt und passt die one()-Seite hier.
+ */
+export const ragChunkRelations = relations(ragChunk, ({ one }) => ({
+  sourceRef: one(sourceRef, {
+    fields: [ragChunk.sourceRefId],
+    references: [sourceRef.id],
+  }),
+}));
