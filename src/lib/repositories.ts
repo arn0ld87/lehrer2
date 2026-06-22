@@ -12,6 +12,8 @@ import type {
   CurriculumFit,
   DashboardMetric,
   DraftStatus,
+  FeedbackHistoryEntry,
+  FeedbackStatement,
   MockUser,
   PlanningStep,
   RagQuality,
@@ -56,6 +58,8 @@ export interface CorrectionRepository {
   };
   rubricScores(): RubricScore[];
   feedbackDraft(): string;
+  feedbackStatements(): FeedbackStatement[];
+  history(): FeedbackHistoryEntry[];
 }
 
 export interface SourcesRepository {

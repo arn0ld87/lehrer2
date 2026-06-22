@@ -18,6 +18,8 @@ import {
   mockDashboardMetrics,
   mockDifferentiationOptions,
   mockFeedbackDraft,
+  mockFeedbackHistory,
+  mockFeedbackStatements,
   mockGovernanceChecks,
   mockPlanningSteps,
   mockRecentWork,
@@ -58,6 +60,8 @@ export const mockCorrectionRepository: CorrectionRepository = {
   submissionMeta: () => mockSubmissionMeta(),
   rubricScores: () => mockRubricScores(),
   feedbackDraft: () => mockFeedbackDraft(),
+  feedbackStatements: () => mockFeedbackStatements(),
+  history: () => mockFeedbackHistory(),
 };
 
 export const mockSourcesRepository: SourcesRepository = {
