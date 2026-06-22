@@ -35,7 +35,7 @@ Die Anwendung ist als Set von Microservices/Modulen konzipiert, die über Docker
 
 - **Lokal/Einfach**: Docker Compose (identisch mit `compose.yaml` im Root).
 - **Produktion**: Docker Swarm (Docker Stack) oder gehärtetes Docker Compose.
-- **Skalierung**: Vertikale Skalierung der Container-Ressourcen (CPU/RAM für Ollama).
+- **Skalierung**: Vertikale Skalierung der Container-Ressourcen (CPU/RAM-Limits für Ollama zur Vermeidung von CPU-Starvation anderer Dienste; optional GPU-Passthrough via Nvidia Container Toolkit).
 
 ## Deployment-Flow (CI/CD)
 
