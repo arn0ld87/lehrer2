@@ -121,21 +121,21 @@ interface CloudReleaseGrant {
   region: "eu-central-1" | "us-east-1";
 
   // Rechtliche Basis
-  legalBasis: string;       // z.B. "Dienstanweisung Schulleitung vom 01.09.2026"
-  dsfaId: string;           // Referenz auf die Datenschutz-Folgenabschätzung
+  legalBasis: string; // z.B. "Dienstanweisung Schulleitung vom 01.09.2026"
+  dsfaId: string; // Referenz auf die Datenschutz-Folgenabschätzung
   avvStatus: "signed" | "pending";
 
   // Geltung
   scope: {
-    subjects: string[];     // ["DEUTSCH", "ETHIK"]
-    gradeBands: string[];   // ["KS9", "KS10"]
+    subjects: string[]; // ["DEUTSCH", "ETHIK"]
+    gradeBands: string[]; // ["KS9", "KS10"]
   };
 
-  validFrom: Date;          // ISO8601
-  validUntil: Date;         // ISO8601
+  validFrom: Date; // ISO8601
+  validUntil: Date; // ISO8601
 
   issuer: {
-    name: string;           // Name der Schulleitung / DSB
+    name: string; // Name der Schulleitung / DSB
     role: "SCHOOL_ADMIN" | "DSB";
   };
 }
