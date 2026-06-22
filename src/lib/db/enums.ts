@@ -52,3 +52,13 @@ export const generationArtifactTypeEnum = pgEnum("generation_artifact_type", [
   "STUDENT_FEEDBACK",
 ]);
 export const auditSeverityEnum = pgEnum("audit_severity", ["info", "warning", "error", "critical"]);
+export const sourceLifecycleEnum = pgEnum("source_lifecycle", [
+  "DISCOVERED",
+  "UNDER_REVIEW",
+  "REGISTERED",
+  "APPROVED",
+  "INGESTED",
+  "VERSIONED",
+  "EVALUATED",
+  "REVOKED",
+]);

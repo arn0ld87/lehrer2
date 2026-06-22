@@ -18,18 +18,21 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:check": "drizzle-kit check"
+    "db:check": "drizzle-kit check",
+    "db:seed": "tsx scripts/seed-sources.ts"
   },
   "engines": {
     "node": ">=20",
     "pnpm": ">=10"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1073.0",
     "better-auth": "^1.0.0",
     "docx": "^9.7.0",
     "drizzle-orm": "^0.45.0",
     "lucide-react": "^1.21.0",
     "next": "16.2.9",
+    "pdf-parse": "^2.4.5",
     "pdfkit": "^0.16.0",
     "postgres": "^3.4.0",
     "react": "19.2.4",
@@ -38,17 +41,20 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@testcontainers/postgresql": "^10.14.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20",
+    "@types/pdf-parse": "^1.1.5",
     "@types/pdfkit": "^0.12.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "drizzle-kit": "^0.31.0",
     "dotenv": "^16.4.0",
+    "drizzle-kit": "^0.31.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "js-yaml": "^4.1.0",
     "prettier": "^3.3.3",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5",
     "vitest": "^2.1.0"
   }

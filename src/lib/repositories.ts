@@ -19,6 +19,7 @@ import type {
   RubricScore,
   SourceEntry,
   SourceQuickAccess,
+  SourceTrust,
   StructurePhase,
   TrustPrinciple,
   UserContext,
@@ -79,4 +80,72 @@ export interface UserContextRepository {
  */
 export interface SourceEntriesReader {
   entries(): Promise<SourceEntry[]>;
+}
+
+// ---------------------------------------------------------------------------
+// Typen für SourceRepository-Inputs (M2)
+// ---------------------------------------------------------------------------
+
+/** Input für create() — legt eine neue Quelle mit Status DISCOVERED an. */
+export interface SourceCreateInput {
+  title: string;
+  uri?: string;
+  sourceType: SourceTrust;
+  subjectAlignment?: string;
+  confessionContext?: string;
+  licenseInfo?: string;
+}
+
+/** Metadaten für register() — Übergang DISCOVERED/UNDER_REVIEW → REGISTERED. */
+export interface SourceRegisterMeta {
+  licenseInfo?: string;
+  licenseVerified?: boolean;
+  approvalMetadata?: Record<string, unknown>;
+}
+
+/** Metadaten für approve() — Übergang REGISTERED → APPROVED (fail-closed). */
+export interface SourceApproveMeta {
+  approvalMetadata?: Record<string, unknown>;
+}
+
+/**
+ * Vollständiges async-Repository für Quellen-Lifecycle (M2).
+ *
+ * Extends SourceEntriesReader; der schreibende Pfad ergänzt den Lesevertrag.
+ * Jede Transition ist namentlich benannt und setzt Vorbedingungen durch
+ * (fail-closed: kein ad-hoc-Update beliebiger Spalten).
+ *
+ * approve() wirft einen Error, wenn:
+ *   - lifecycleStatus !== "REGISTERED", ODER
+ *   - licenseVerified !== true, ODER
+ *   - sourceType === "UNVERIFIED"
+ */
+export interface SourceRepository extends SourceEntriesReader {
+  /** Gibt alle Quellen zurück (deletedAt IS NULL). */
+  list(): Promise<SourceEntry[]>;
+
+  /** Liefert eine Quelle per ID oder null. */
+  get(id: string): Promise<SourceEntry | null>;
+
+  /** Legt eine neue Quelle mit Status DISCOVERED an. Gibt die neue ID zurück. */
+  create(input: SourceCreateInput): Promise<string>;
+
+  /**
+   * DISCOVERED / UNDER_REVIEW → REGISTERED.
+   * Setzt Lizenz-Metadaten; fail, wenn Ausgangsstatus unzulässig.
+   */
+  register(id: string, meta: SourceRegisterMeta): Promise<void>;
+
+  /**
+   * REGISTERED → APPROVED.
+   * FAIL-CLOSED: wirft Error wenn lifecycleStatus !== "REGISTERED"
+   * ODER licenseVerified !== true ODER sourceType === "UNVERIFIED".
+   */
+  approve(id: string, meta: SourceApproveMeta): Promise<void>;
+
+  /** Jeder Status → REVOKED. */
+  revoke(id: string): Promise<void>;
+
+  /** APPROVED → INGESTED. Fail, wenn Ausgangsstatus !== "APPROVED". */
+  ingestMark(id: string): Promise<void>;
 }

@@ -192,3 +192,4 @@ Diese Filter sind **nicht optional**; sie werden von der Applikation erzwungen.
 - [Citation Standard](../rag/CITATION_STANDARD.md) — Zitierformat, Transparenzanforderungen
 - [Source Registry](../rag/SOURCE_REGISTRY.md) — Verwaltung registrierter Quellen
 - [ADR-0003: Source Governance Before Ingestion](../adr/0003-source-governance-before-ingestion.md) — Kontextualisierung dieser Architektur-Entscheidung
+- [ADR-0010: RAG-Ingestierung via Qdrant](../adr/0010-rag-ingestion-qdrant.md) — Vektorraum-Strategie (EINE Collection + Payload-Filter, local-first Embedding, Schritt-1-Textextraktion)

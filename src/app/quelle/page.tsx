@@ -7,13 +7,16 @@ import { SourceFilterBar } from "@/components/sources/source-filter-bar";
 import { SourceTable } from "@/components/sources/source-table";
 import { RagQualityCard } from "@/components/sources/rag-quality-card";
 import { mockSourcesRepository } from "@/lib/mock";
+import { getSourceEntriesReader } from "@/lib/db/repositories/factory";
 
 export const metadata: Metadata = { title: "Quellen & Lehrpläne" };
 
-export default function SourcesPage() {
+export default async function SourcesPage() {
+  const reader = getSourceEntriesReader();
+  const entries = await reader.entries();
   const repo = mockSourcesRepository;
   const quality = repo.ragQuality();
-  const entries = repo.entries();
+  // RAG-Layer / M2.2 gehoert hier hin, wenn implementiert; vorlaeufig vom Mock:
   const checks = repo.governanceChecks();
 
   return (

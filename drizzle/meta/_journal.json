@@ -8,6 +8,13 @@
       "when": 1782149856556,
       "tag": "0000_sharp_eddie_brock",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782153427139,
+      "tag": "0001_closed_brother_voodoo",
+      "breakpoints": true
     }
   ]
 }

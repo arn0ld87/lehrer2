@@ -106,11 +106,11 @@ Für jedes Dokument werden vor der Extraktion folgende Felder erfasst:
 ### 5. Embedding und Ingestierung in Qdrant
 
 - **Embedding-Modell**: Standard lokal Ollama (z. B. `qwen3-embedding:4b`), kein Hard-Dependency auf Cloud-APIs
-- **Vektorraum**: Pro Fach/Konfession ggfs. separate Collections (Deutsch, Religion-Ev, Religion-Kath, etc.) — noch zu implementieren
+- **Vektorraum**: EINE Collection `ua_lsa_chunks` mit harten Payload-Filtern (trust_level, subject, confession_context) statt separater Collections pro Fach/Konfession (ADR 0010). Konfessionstrennung wird serverseitig durch Pflicht-Payload-Filter erzwungen (kein Cross-Strang-Retrieval).
 - **Batch-Ingestierung**:
   - Chunks in Batches von 100–500 parallel eingebettet
   - Fehler in einer Batch-Operation → Transaction rollback, Issue für Maintainer
-- **Metadaten-Speicherung**: Payload in Qdrant beinhaltet Quellen-Metadaten (source_id, page, retrieved_at, license, trust_level)
+- **Metadaten-Speicherung**: Payload in Qdrant beinhaltet Quellen-Metadaten (source_id, page, retrieved_at, license, trust_level, confession_context, valid_from, valid_to, revoked_at, content_hash)
 
 ---
 
