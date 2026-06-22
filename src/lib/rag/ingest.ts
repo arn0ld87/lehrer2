@@ -288,6 +288,8 @@ function guessMime(uri: string): string {
   if (lower.endsWith(".pdf")) return "application/pdf";
   if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html";
   if (lower.endsWith(".txt") || lower.endsWith(".md")) return "text/plain";
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  if (lower.endsWith(".png")) return "image/png";
   // Fallback — ExtractionFailedError wird in extractContent geworfen
   return "application/octet-stream";
 }
