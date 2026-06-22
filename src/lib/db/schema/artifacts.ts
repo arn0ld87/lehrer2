@@ -46,9 +46,9 @@ export const teachingUnit = pgTable(
 );
 
 /**
- * Lesson (Schulstunde / Unterrichtsstunde)
- * Part of TeachingUnit; 1:1 relationship in this model
- */
+  objectives: text("objectives"),
+  phasePlan: jsonb("phase_plan"),
+  ownerTeacherId: ownerTeacherId(),
 export const lesson = pgTable(
   "lesson",
   {
