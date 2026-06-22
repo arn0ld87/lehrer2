@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projektstatus
 
-**Planungs- und Architekturphase. Es existiert noch kein Produktivcode/keine lauffähige App** — aber das Repo-Gerüst steht. Committet: `README.md`, `CLAUDE.md`, `AGENTS.md`, `PLAN.md`, ein weitgehend vollständiger `docs/`-Baum, das statische Design-Kit (`unterrichtsassistenz-lsa-design-kit/`) sowie Tooling-/CI-Gerüst: `package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`, `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow `ci.yml`, Issue-Templates, PR-Template).
+**M0 (Foundations & Governance) abgeschlossen; M1 Schritt 1 (UI-Shell) umgesetzt.** Es steht jetzt eine lauffähige Next.js-UI-Shell (Branch `m1/ui-shell`) — jedoch **nur UI-Struktur**, noch keine RAG-/LLM-/Korrektur-/Auth-/DB-Logik. Repo-Gerüst und Doku: `README.md`, `CLAUDE.md`, `AGENTS.md`, `PLAN.md`, ein weitgehend vollständiger `docs/`-Baum, das statische Design-Kit (`unterrichtsassistenz-lsa-design-kit/`) sowie Tooling-/CI-Gerüst: `package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`, `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow `ci.yml`, Issue-Templates, PR-Template).
 
 **`docs/` ist nahezu vollständig.** Existieren: `docs/architecture/` (ARCHITECTURE, INTEGRATION*BOUNDARIES, DATA_MODEL, RAG_ARCHITECTURE), `docs/product/` (PRODUCT_VISION, MVP_SCOPE, ACCEPTANCE_CRITERIA, USER_FLOWS), `docs/rag/` (EVALUATION_PLAN, INGESTION_POLICY, CITATION_STANDARD, SOURCE_REGISTRY), `docs/security/` (SECURITY, THREAT_MODEL, DATA_PROTECTION, RETENTION_AND_DELETION), `docs/operations/` (CI_CD, DEVELOPMENT, BACKUP_AND_RECOVERY, GITHUB_SETUP), `docs/design/DESIGN_SYSTEM.md`, `docs/adr/0001`–`0009` (0007 Auth / 0008 Export im Status \_Proposed*), `docs/decisions/OPEN_QUESTIONS.md` (alle 6 Fragen entschieden), `LICENSE-DECISION.md`.
 
@@ -16,18 +16,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **`PLAN.md` ist Source of Truth** für Scope, Roadmap (M0–M4), Datenflüsse und offene Entscheidungen — vor Architekturarbeit lesen.
 
-Konsequenz: Von den unten gelisteten Befehlen sind nur `pnpm format`, `pnpm format:check` und `pnpm verify:docs` real (siehe `package.json`); `pnpm lint`/`typecheck`/`test` sind **Sollzustand**, weil noch kein Anwendungscode existiert. Beim Anlegen der ersten Implementierung den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
+Konsequenz: `pnpm dev`, `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm format:check` und `pnpm verify:docs` sind real (siehe `package.json`); `pnpm test` bleibt **Sollzustand**, da noch kein Test-Framework existiert. Beim Erweitern den im README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
 
 ## Design-Kit und UI-Implementierung
 
-`unterrichtsassistenz-lsa-design-kit/` enthält statische HTML-Mockups (`dashboard.html`, `planner.html`, `worksheet-builder.html`, `correction.html`, `sources.html`, `ui-kit.html`) plus `design-tokens.json` und `handoff/CLAUDE_CODE_HANDOFF.md`. Der Handoff ist die Arbeitsanweisung für die erste UI-Implementierung in Next.js — verbindlich für diesen Schritt:
+`unterrichtsassistenz-lsa-design-kit/` enthält statische HTML-Mockups (`dashboard.html`, `planner.html`, `worksheet-builder.html`, `correction.html`, `sources.html`, `ui-kit.html`) plus `design-tokens.json` und `handoff/CLAUDE_CODE_HANDOFF.md`. Der Handoff war die Arbeitsanweisung für die erste UI-Implementierung — **M1 Schritt 1 ist umgesetzt** (Branch `m1/ui-shell`):
 
-- **Nur UI-Struktur**, keine echten RAG-/Korrektur-/Lehrplan-/LLM-Funktionen (Nicht-Ziele im Handoff).
-- Routen: `/dashboard`, `/planung`, `/arbeitsblaetter`, `/korrektur`, `/quelle`, `/design-system`.
-- Next.js App Router, TypeScript strict, Tailwind; Tokens zentral aus `design-tokens.json` (keine verstreuten Hex-Werte), Icons via `lucide-react` (keine Inline-SVG-Duplikate).
-- Demodaten als Mock-Factories/Repository-Interfaces trennen — keine echten Schülerdaten, Tokens oder Lehrplandokumente.
-- Desktop-Sidebar 260px, Seitenfläche `#F7F7FB`, Primärfarbe `#5D3DF5`, Kartenradius 22px, max. eine primäre Aktion pro Seitenkopf.
-- Quellen- und Unsicherheitszustände dürfen nie verdeckt werden; UI kopiert keine Bewertung automatisch in ein finales Ergebnis (menschliche Finalentscheidung wahren).
+- **Nur UI-Struktur**, keine echten RAG-/Korrektur-/Lehrplan-/LLM-Funktionen (Nicht-Ziele im Handoff) — eingehalten.
+- Routen realisiert: `/dashboard`, `/planung`, `/arbeitsblaetter`, `/korrektur`, `/quelle`, `/design-system`.
+- Next.js 16 App Router, React 19, TypeScript strict, Tailwind v4, `lucide-react`.
+- Tokens zentral in `src/app/globals.css` (`@theme`), kanonisch aus `design-tokens.json` — **keine verstreuten Hex-Werte** in Komponenten (Review bestätigt: 0 Inline-Hex außerhalb `design-system/page.tsx` Swatches). Icons via zentralem Mapper `src/components/ui/icon.tsx` (keine Inline-SVG-Duplikate).
+- Demodaten über Mock-Factories/Repository-Interfaces (`src/lib/mock/`), keine echten Schülerdaten/Tokens/Lehrplandokumente. Das angezeigte Nutzerprofil (Jana Zwarg) ist die echte Zielnutzerin.
+- Desktop-Sidebar 260px, Seitenfläche `#F7F7FB`, Primärfarbe `#5D3DF5`, Kartenradius 22px, max. eine primäre Aktion pro Seitenkopf — umgesetzt.
+- Quellen-/Unsicherheitszustände bleiben sichtbar (`StatusChip`, `Notice`); UI übernimmt keine Bewertung automatisch („Prüfen" statt „Übernehmen").
+
+Akzeptanzkriterien des Handoffs sind erfüllt (Reviewer-Check); `pnpm lint`, `typecheck`, `format:check`, `build` sind grün.
 
 ## Worum es geht
 
@@ -80,22 +83,22 @@ Fachliche Modellierung: Sek I und Sek II getrennt; Religion **nicht** pauschal �
 
 Datenklassifizierung steuert Cloud-Zulässigkeit: `PUBLIC` und `INTERNAL` (Cloud nach Freigabe), `PERSONAL_TEACHER` (nur freigegeben), `SENSITIVE_STUDENT` (nur pseudonymisiert + dokumentierte Schulfreigabe; Klarnamen verlassen das System nie). Cloud-LLM nur mit `CloudReleaseGrant` (Rechtsgrundlage, AVV, DSFA, Provider/Region).
 
-## Geplante Befehle
+## Befehle
 
-Paketmanager ist **`pnpm`** (nicht npm/yarn). Lokale Umgebung über Docker Compose.
+Paketmanager ist **`pnpm`** (nicht npm/yarn). Die UI-Shell läuft ohne Docker; Docker Compose wird erst für Persistenz/Worker (M1/M2) gebraucht.
 
 ```bash
-cp .env.example .env
+cp .env.example .env   # Werte niemals committen
 pnpm install
-docker compose up -d
+pnpm dev               # Dev-Server (http://localhost:3000)
 
-pnpm lint
-pnpm format:check
-pnpm typecheck
-pnpm test
+pnpm lint              # ESLint (flat config)
+pnpm typecheck         # tsc --noEmit (strict)
+pnpm format:check      # Prettier (md/yml/yaml/json)
+pnpm build             # Produktionsbuild (statisches Prerender)
 ```
 
-Vor Commit erwartet (siehe README „Beitragen"): `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`.
+`pnpm test` ist noch **Sollzustand** (kein Test-Framework vorhanden). Vor Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm build`.
 
 ## Beitragsregeln
 
