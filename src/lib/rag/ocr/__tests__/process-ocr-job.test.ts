@@ -18,9 +18,16 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 
 // ── pdf-parse mock (Scan-PDF-Simulation) ─────────────────────────────────
+// pdf-parse v2 exportiert eine PDFParse-Klasse; der Mock liefert leeren Text,
+// damit der OCR-Pfad (FakeOcrEngine) greift — ohne echtes Scan-PDF.
 vi.mock("pdf-parse", () => {
   return {
-    default: async (_buf: Buffer) => ({ text: "" }),
+    PDFParse: class {
+      async getText() {
+        return { text: "" };
+      }
+      async destroy() {}
+    },
   };
 });
 
@@ -63,7 +70,10 @@ const TS = Date.now();
 function makePdfBlob(sourceRefId: string): FakeBlobStore {
   const blob = new FakeBlobStore();
   const key = `sources/${sourceRefId}/v1`;
-  const buf = new TextEncoder().encode("%PDF-1.4 (scan-fake)");
+  // Bytes je Quelle eindeutig → eindeutiger contentHash; sonst triggert die
+  // Dedup-Früherkennung (DuplicateContentError) statt des erwarteten Pfads.
+  // pdf-parse ist gemockt (leerer Text), der Inhalt selbst ist irrelevant.
+  const buf = new TextEncoder().encode(`%PDF-1.4 (scan-fake ${sourceRefId})`);
   blob.putObject(key, buf, "application/pdf").catch(() => {});
   return blob;
 }
