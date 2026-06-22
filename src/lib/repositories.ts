@@ -67,3 +67,16 @@ export interface UserContextRepository {
   current(): UserContext;
   user(): MockUser;
 }
+
+/**
+ * Schmales async-Interface für DB-gestützte Quellenabfragen (M1/M2).
+ *
+ * Nur `entries()` ist in M1 DB-seitig bedienbar. `ragQuality()` und
+ * `governanceChecks()` hängen am RAG-Layer (M2) und sind absichtlich
+ * ausgeschlossen — kein Fake-Daten-Pfad.
+ *
+ * Implementierungen: PgSourcesRepository (DB), factory.getSourceEntriesReader() (Mock-Adapter).
+ */
+export interface SourceEntriesReader {
+  entries(): Promise<SourceEntry[]>;
+}
