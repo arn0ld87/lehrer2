@@ -19,6 +19,18 @@ afterAll(async () => {
 });
 
 describe("Löschung schreibt Audit-Log", () => {
+  it("soft-delete einer nicht existierenden ID schlägt fehl und schreibt keinen Audit-Eintrag", async () => {
+    const nonExistentId = "00000000-0000-0000-0000-000000000000";
+    const beforeCount = (await db.select().from(auditLog)).length;
+
+    await expect(
+      softDeleteWorksheetWithAudit(db, nonExistentId, "actor-x"),
+    ).rejects.toThrow();
+
+    const afterCount = (await db.select().from(auditLog)).length;
+    expect(afterCount).toBe(beforeCount);
+  });
+
   it("soft-delete erzeugt audit_log-Eintrag", async () => {
     // Arrange: Seed teacher user (FILE-UNIQUE)
     const teacherId = "t-prov";

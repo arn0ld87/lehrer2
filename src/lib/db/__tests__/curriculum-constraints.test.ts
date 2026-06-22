@@ -41,6 +41,20 @@ describe("Konfessions-CHECK am curriculum_strand", () => {
     expect(row.subject).toBe("RELIGION");
   });
 
+  it("lehnt validTo vor validFrom ab", async () => {
+    await expect(
+      db.insert(curriculumStrand).values({
+        subject: "DEUTSCH",
+        confessionContext: "NICHT_ANWENDBAR",
+        schoolStage: "SEK_I",
+        frameworkAuthority: "Test",
+        validFrom: "2024-08-01",
+        validTo: "2023-07-31", // vor validFrom → CHECK-Verletzung
+        version: "1.0.0",
+      }),
+    ).rejects.toThrow();
+  });
+
   it("lehnt Schulform bei Sek II ab", async () => {
     await expect(
       db.insert(curriculumStrand).values({

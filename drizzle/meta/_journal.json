@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1782144311062,
-      "tag": "0000_majestic_brood",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1782144694216,
-      "tag": "0001_slim_the_watchers",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1782145253439,
-      "tag": "0002_narrow_mole_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1782145654095,
-      "tag": "0003_motionless_shen",
+      "when": 1782149856556,
+      "tag": "0000_sharp_eddie_brock",
       "breakpoints": true
     }
   ]

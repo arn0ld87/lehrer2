@@ -54,6 +54,10 @@ export const curriculumStrand = pgTable(
       "track_requires_form",
       sql`${t.educationTrack} IS NULL OR ${t.schoolForm} IS NOT NULL`,
     ),
+    check(
+      "valid_to_after_valid_from",
+      sql`${t.validTo} IS NULL OR ${t.validTo} >= ${t.validFrom}`,
+    ),
     foreignKey({
       columns: [t.supersedesId],
       foreignColumns: [t.id],

@@ -168,8 +168,8 @@ describe("Artifact Schema & Soft-Delete", () => {
       .values({
         rubricId: rub.id,
         label: "Korrektheit",
-        weight: JSON.stringify(0.5),
-        levelDescriptors: JSON.stringify(["Falsch", "Teils korrekt", "Korrekt"]),
+        weight: 0.5,
+        levelDescriptors: ["Falsch", "Teils korrekt", "Korrekt"],
         ownerTeacherId: testUser.id,
       })
       .returning();
@@ -184,7 +184,7 @@ describe("Artifact Schema & Soft-Delete", () => {
         sourceType: "OPEN_CURATED",
         title: "Source Document",
         uri: "https://example.org/doc",
-        confidence: JSON.stringify(0.9),
+        confidence: 0.9,
         ownerTeacherId: testUser.id,
       })
       .returning();

@@ -10,7 +10,12 @@ export async function softDeleteWorksheetWithAudit(
   actorId: string,
 ): Promise<void> {
   await db.transaction(async (tx) => {
-    await tx.update(worksheet).set({ deletedAt: new Date() }).where(eq(worksheet.id, worksheetId));
+    const [updated] = await tx
+      .update(worksheet)
+      .set({ deletedAt: new Date() })
+      .where(eq(worksheet.id, worksheetId))
+      .returning();
+    if (!updated) throw new Error(`Worksheet ${worksheetId} nicht gefunden`);
     await tx.insert(auditLog).values({
       eventType: "soft_delete_worksheet",
       actorId,

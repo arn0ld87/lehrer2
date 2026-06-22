@@ -13,6 +13,7 @@ export const teacherProfile = pgTable("teacher_profile", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
     .notNull()
+    .unique()
     .references(() => user.id, { onDelete: "cascade" }),
   schoolId: uuid("school_id")
     .notNull()

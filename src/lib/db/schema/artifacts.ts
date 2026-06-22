@@ -1,7 +1,8 @@
 import { relations } from "drizzle-orm";
 import {
+  doublePrecision,
   integer,
-  json,
+  jsonb,
   pgTable,
   text,
   unique,
@@ -57,7 +58,7 @@ export const lesson = pgTable(
       .notNull()
       .references(() => teachingUnit.id, { onDelete: "cascade" }),
     objectives: text("objectives"),
-    phasePlan: json("phase_plan"), // JSON: Ablauf (Einstieg, Erarbeitung, Sicherung, Hausaufgabe)
+    phasePlan: jsonb("phase_plan"), // JSON: Ablauf (Einstieg, Erarbeitung, Sicherung, Hausaufgabe)
     ownerTeacherId: text("owner_teacher_id")
       .notNull()
       .references(() => user.id, { onDelete: "restrict" }),
@@ -135,8 +136,8 @@ export const expectationHorizon = pgTable(
       .notNull()
       .references(() => task.id, { onDelete: "cascade" }),
     modelSolution: text("model_solution"),
-    acceptanceCriteria: json("acceptance_criteria"), // JSON: strukturierte Kriterien
-    partialCreditRules: json("partial_credit_rules"), // JSON: Regeln für Teilpunkte
+    acceptanceCriteria: jsonb("acceptance_criteria"), // JSON: strukturierte Kriterien
+    partialCreditRules: jsonb("partial_credit_rules"), // JSON: Regeln für Teilpunkte
     ownerTeacherId: text("owner_teacher_id")
       .notNull()
       .references(() => user.id, { onDelete: "restrict" }),
@@ -181,8 +182,8 @@ export const rubricCriterion = pgTable(
       .notNull()
       .references(() => rubric.id, { onDelete: "cascade" }),
     label: text("label").notNull(),
-    weight: json("weight"), // Float stored as JSON for precision (e.g., 0.5)
-    levelDescriptors: json("level_descriptors"), // JSON Array: descriptors per level
+    weight: doublePrecision("weight").notNull(), // numeric weight (e.g., 0.5)
+    levelDescriptors: jsonb("level_descriptors").notNull(), // JSON Array: descriptors per level
     ownerTeacherId: text("owner_teacher_id")
       .notNull()
       .references(() => user.id, { onDelete: "restrict" }),
@@ -205,7 +206,7 @@ export const sourceRef = pgTable(
     sourceType: sourceTrustEnum("source_type").notNull(),
     title: text("title").notNull(),
     uri: text("uri"), // URL or DOI
-    confidence: json("confidence"), // Float (0–1) stored as JSON for precision
+    confidence: doublePrecision("confidence"), // Float (0–1), nullable
     ownerTeacherId: text("owner_teacher_id").references(() => user.id, {
       onDelete: "set null",
     }), // Only for USER_APPROVED
