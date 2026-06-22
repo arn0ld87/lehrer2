@@ -22,6 +22,13 @@
       "when": 1782145253439,
       "tag": "0002_narrow_mole_man",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782145654095,
+      "tag": "0003_motionless_shen",
+      "breakpoints": true
     }
   ]
 }

@@ -64,4 +64,28 @@ describe("PgSourcesRepository.entries()", () => {
     const shouldBeAbsent = entries.find((e) => e.id === deleted.id);
     expect(shouldBeAbsent).toBeUndefined();
   });
+
+  it("mapped OPEN_CURATED korrekt in die UI (1:1 Trust-Mapping)", async () => {
+    // --- Arrange: Quelle mit OPEN_CURATED einfügen ---
+    const [curated] = await db
+      .insert(sourceRef)
+      .values({
+        contentHash: "h3-sources-repo-open-curated",
+        sourceType: "OPEN_CURATED",
+        title: "Kuratierte offene Quelle",
+      })
+      .returning();
+
+    expect(curated.id).toBeDefined();
+
+    // --- Act ---
+    const repo = new PgSourcesRepository();
+    const entries = await repo.entries();
+
+    // --- Assert: OPEN_CURATED wird nicht zu UNVERIFIED gemappt ---
+    const found = entries.find((e) => e.id === curated.id);
+    expect(found).toBeDefined();
+    expect(found!.trust).toBe("OPEN_CURATED");
+    expect(found!.title).toBe("Kuratierte offene Quelle");
+  });
 });

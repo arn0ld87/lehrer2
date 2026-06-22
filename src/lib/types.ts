@@ -22,6 +22,7 @@ export type Grade = 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export type SourceTrust =
   | "OFFICIAL_BINDING"
   | "OFFICIAL_GUIDANCE"
+  | "OPEN_CURATED"
   | "USER_APPROVED"
   | "UNVERIFIED";
 

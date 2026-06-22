@@ -17,17 +17,14 @@ import { sourceRef } from "@/lib/db/schema/artifacts";
 /**
  * Mapping source_trust (DB-Enum) → UI SourceTrust.
  *
- * Die UI-Union kennt nur vier Stufen; DB-OPEN_CURATED hat kein direktes
- * Gegenstück. Fail-safe: OPEN_CURATED → "UNVERIFIED", damit die Quelle
- * in der UI sichtbar bleibt und manuell geprüft werden kann.
- * Eine spätere UI-Erweiterung kann OPEN_CURATED als eigene Stufe einführen.
- *
- * UNVERIFIED bleibt sichtbar — Governance verdeckt nichts.
+ * 1:1 Abbildung (kein Mapping mehr nötig; die UI kennt jetzt alle fünf Stufen).
+ * Unbekannte Werte fallen auf "UNVERIFIED" zurück (fail-safe).
+ * Governance verdeckt keine Vertrauensstufe.
  */
 const trustToUi: Record<string, SourceEntry["trust"]> = {
   OFFICIAL_BINDING: "OFFICIAL_BINDING",
   OFFICIAL_GUIDANCE: "OFFICIAL_GUIDANCE",
-  OPEN_CURATED: "UNVERIFIED", // kein UI-Gegenstück in M1; fail-safe bis zur UI-Erweiterung
+  OPEN_CURATED: "OPEN_CURATED",
   USER_APPROVED: "USER_APPROVED",
   UNVERIFIED: "UNVERIFIED",
 };

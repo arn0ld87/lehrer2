@@ -26,6 +26,7 @@ const STATUS_CLASSES: Record<StatusKind, string> = {
 const TRUST_LABEL: Record<SourceTrust, string> = {
   OFFICIAL_BINDING: "OFFICIAL_BINDING",
   OFFICIAL_GUIDANCE: "OFFICIAL_GUIDANCE",
+  OPEN_CURATED: "OPEN_CURATED",
   USER_APPROVED: "USER_APPROVED",
   UNVERIFIED: "UNVERIFIED",
 };
@@ -33,6 +34,7 @@ const TRUST_LABEL: Record<SourceTrust, string> = {
 const TRUST_CLASS: Record<SourceTrust, string> = {
   OFFICIAL_BINDING: "bg-success-soft text-status-ready-fg",
   OFFICIAL_GUIDANCE: "bg-warning-soft text-status-progress-fg",
+  OPEN_CURATED: "bg-chip-bg text-status-draft-fg",
   USER_APPROVED: "bg-chip-bg text-status-draft-fg",
   // UNVERIFIED darf produktiv nie im RAG stehen — Status deutlich markieren.
   UNVERIFIED: "bg-danger-soft text-status-review-fg",
