@@ -50,7 +50,7 @@ Die Anwendung ist als Set von Microservices/Modulen konzipiert, die über Docker
 Für Installationen innerhalb von Schulnetzen gelten besondere Anforderungen:
 
 - **Air-gapped Betrieb**: Der Stack muss (nach initialem Image-Pull) ohne Internetverbindung lauffähig sein (lokales Ollama).
-- **Auto-Updates**: Optionaler Watchtower-Container zur automatischen Aktualisierung bei neuen Image-Releases in der Registry.
+- **Auto-Updates**: Optionaler Pull-basierter Mechanismus auf dem Host (z. B. via Cronjob), um den Docker-Socket nicht über Watchtower exponieren zu müssen (inkompatibel mit Air-gapped Betrieb).
 - **Resilienz**: Automatischer Restart der Services bei Server-Reboot.
 
 ## Infrastruktur-Anforderungen
