@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/*
+ * Zentrale Theme-Definition (Tailwind v4 @theme).
+ * Werte stammen kanonisch aus
+ *   unterrichtsassistenz-lsa-design-kit/design-tokens.json
+ * und dürfen an anderer Stelle nicht als Hex-Literale verstreut werden.
+ * Änderungen hier UND in design-tokens.json gemeinsam pflegen.
+ */
+@theme {
+  /* Brand — Oberflächen, Tinte, Linien, Primärfarbe */
+  --color-ink: #12162e;
+  --color-ink-2: #252b47;
+  --color-ink-muted: #59617b;
+  --color-muted: #68708a;
+  --color-muted-2: #8e95aa;
+  --color-canvas: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-surface-2: #fcfcfe;
+  --color-line: #e6e8f0;
+  --color-line-strong: #d9dce7;
+  --color-primary: #5d3df5;
+  --color-primary-strong: #4022c9;
+  --color-primary-soft: #efeaff;
+  --color-primary-soft-2: #e4ddff;
+
+  /* Fach-Farben (semantisch, nicht dekorativ) */
+  --color-deutsch: #7c3aed;
+  --color-religion: #0f9b7a;
+  --color-correction: #e05a38;
+  --color-sources: #2563eb;
+
+  /* Semantic — Status */
+  --color-success: #0f9b7a;
+  --color-warning: #c97910;
+  --color-danger: #c24135;
+  --color-info: #2563eb;
+  --color-success-soft: #e7f9f4;
+  --color-warning-soft: #fff6e4;
+  --color-danger-soft: #fff0e8;
+  --color-info-soft: #eaf2ff;
+
+  /* Radien */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* Schatten (subtil, nicht gamifiziert) */
+  --shadow-soft: 0 12px 40px rgba(25, 28, 52, 0.08);
+  --shadow-subtle: 0 4px 18px rgba(25, 28, 52, 0.06);
+
+  /* Typografie — Self-hosted via next/font (kein CDN zur Laufzeit) */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+:root {
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Sichtbare, einheitliche Fokuszustände (Barrierefreiheit) */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Dezente Scrollbar im Verwaltungsstil */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
