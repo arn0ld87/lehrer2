@@ -26,6 +26,13 @@ export interface VectorStore {
     limit?: number,
   ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown> }>>;
   deleteByFilter(filter: SearchFilter): Promise<void>;
+  /**
+   * Löscht gezielt die Punkte mit den angegebenen IDs.
+   * Im Gegensatz zu deleteByFilter({ sourceId }) wirkt das ausschließlich auf
+   * die übergebenen IDs — Reste früherer Läufe derselben source_id bleiben unberührt.
+   * Genutzt für die Kompensation einer einzelnen Ingestion (nur deren pointIds).
+   */
+  deletePoints(ids: string[]): Promise<void>;
 }
 
 export class QdrantStore implements VectorStore {
@@ -119,15 +126,14 @@ export class QdrantStore implements VectorStore {
     const qdrantFilter = this.buildQdrantFilter(filter);
 
     const url = `${this.url}/collections/${this.collection}/points/search`;
+    const body: Record<string, unknown> = { vector, limit, with_payload: true };
+    // Leeren Filter NICHT mitsenden — Qdrant lehnt einen leeren/match_all-Filter
+    // als Bad Request ab. Ohne filter-Feld sucht Qdrant über alle Punkte.
+    if (qdrantFilter) body.filter = qdrantFilter;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        vector,
-        filter: qdrantFilter,
-        limit,
-        with_payload: true,
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -146,6 +152,15 @@ export class QdrantStore implements VectorStore {
   async deleteByFilter(filter: SearchFilter): Promise<void> {
     const qdrantFilter = this.buildQdrantFilter(filter);
 
+    // Schutz fail-closed: ohne konkrete Filterklausel würde delete ALLE Punkte
+    // der Collection treffen. deleteByFilter wird produktiv nur mit Klausel
+    // (z. B. sourceId) aufgerufen; ein leerer Filter ist hier ein Programmierfehler.
+    if (!qdrantFilter) {
+      throw new Error(
+        "QdrantStore.deleteByFilter: leerer Filter — würde die gesamte Collection löschen (abgelehnt)",
+      );
+    }
+
     const url = `${this.url}/collections/${this.collection}/points/delete?wait=true`;
     const response = await fetch(url, {
       method: "POST",
@@ -159,9 +174,29 @@ export class QdrantStore implements VectorStore {
   }
 
   /**
-   * Übersetzt SearchFilter zu Qdrant-Filter-Syntax
+   * Löscht gezielt die Punkte mit den angegebenen IDs (Qdrant points/delete mit { points: [...] }).
    */
-  private buildQdrantFilter(filter: SearchFilter): Record<string, unknown> {
+  async deletePoints(ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+
+    const url = `${this.url}/collections/${this.collection}/points/delete?wait=true`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ points: ids }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Qdrant deletePoints failed: ${response.statusText}`);
+    }
+  }
+
+  /**
+   * Übersetzt SearchFilter zu Qdrant-Filter-Syntax.
+   * Gibt `undefined` zurück, wenn keine Filterklausel vorliegt — der Aufrufer
+   * lässt das filter-Feld dann weg (Qdrant akzeptiert keinen leeren Filter).
+   */
+  private buildQdrantFilter(filter: SearchFilter): Record<string, unknown> | undefined {
     const must: Array<Record<string, unknown>> = [];
     const mustNot: Array<Record<string, unknown>> = [];
 
@@ -197,7 +232,7 @@ export class QdrantStore implements VectorStore {
     if (must.length > 0) result.must = must;
     if (mustNot.length > 0) result.must_not = mustNot;
 
-    return Object.keys(result).length > 0 ? result : { match_all: {} };
+    return Object.keys(result).length > 0 ? result : undefined;
   }
 }
 
@@ -296,6 +331,12 @@ export class FakeVectorStore implements VectorStore {
     }
 
     for (const id of toDelete) {
+      this.points.delete(id);
+    }
+  }
+
+  async deletePoints(ids: string[]): Promise<void> {
+    for (const id of ids) {
       this.points.delete(id);
     }
   }

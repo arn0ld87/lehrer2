@@ -50,3 +50,19 @@ export async function deleteBySource(
 ): Promise<void> {
   await store.deleteByFilter({ sourceId });
 }
+
+/**
+ * Löscht gezielt die in EINEM Ingestion-Lauf erzeugten Qdrant-Punkte.
+ * Wird zur Kompensation genutzt, wenn der DB-Teil nach dem Qdrant-Upsert
+ * fehlschlägt — anders als deleteBySource bleiben Punkte früherer Läufe
+ * derselben source_id unberührt.
+ *
+ * @param store     VectorStore-Instanz
+ * @param pointIds  in diesem Lauf erzeugte Punkt-IDs
+ */
+export async function deletePoints(
+  store: VectorStore,
+  pointIds: string[],
+): Promise<void> {
+  await store.deletePoints(pointIds);
+}

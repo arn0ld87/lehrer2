@@ -9,7 +9,7 @@
  *   ODER licenseVerified !== true ODER sourceType === "UNVERIFIED".
  */
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import type { SourceEntry } from "@/lib/types";
 import type {
@@ -20,8 +20,17 @@ import type {
   SourceRepository,
 } from "@/lib/repositories";
 import { db } from "@/lib/db/client";
-import { sourceRef } from "@/lib/db/schema/artifacts";
+import {
+  sourceRef,
+  teachingUnit,
+  worksheet,
+  worksheetSourceRef,
+} from "@/lib/db/schema/artifacts";
+import { curriculumStrand } from "@/lib/db/schema/curriculum";
 import { dbSubjectToUi, type DbConfession, type DbSubject } from "./mapping";
+
+/** Reales Fach/Konfession einer Quelle, aufgelöst über den Curriculum-Join (#39). */
+type ResolvedSubject = { subject: DbSubject; confession: DbConfession };
 
 /**
  * Mapping source_trust (DB-Enum) → UI SourceTrust.
@@ -39,25 +48,31 @@ const trustToUi: Record<string, SourceEntry["trust"]> = {
 };
 
 /**
- * Mappt eine sourceRef-DB-Zeile auf SourceEntry für die UI.
+ * Mappt eine sourceRef-DB-Zeile auf SourceEntry für die UI (#39).
  *
- * subjectAlignment/confessionContext: wenn vorhanden, via dbSubjectToUi;
- * sonst "deutsch" als neutraler Interim-Placeholder.
- * TODO(M2): Join auf curriculum_strand auflösen, sobald RELIGION/ETHIK-Quellen
- * korrekt aufgelöst werden sollen.
+ * Fach/Konfession werden REAL aufgelöst, niemals als Placeholder verdeckt:
+ *   1. direktes `subjectAlignment` (+ confessionContext) der Quelle, falls gesetzt;
+ *   2. sonst über den Curriculum-Join aufgelöster Wert (`resolved`);
+ *   3. nur wenn die Quelle weder ein Alignment noch eine Lehrplan-Verknüpfung hat,
+ *      bleibt sie fachneutral ("deutsch") — das ist dann KEINE verdeckte Konfession,
+ *      sondern eine genuin noch nicht zugeordnete Quelle.
+ *
+ * Konfessionstrennung bleibt sichtbar: eine RELIGION-Quelle erscheint als
+ * „Ev./Kath. Religion", nicht als „Deutsch".
  */
-function rowToSourceEntry(r: typeof sourceRef.$inferSelect): SourceEntry {
+function rowToSourceEntry(
+  r: typeof sourceRef.$inferSelect,
+  resolved?: ResolvedSubject,
+): SourceEntry {
   let subject: SourceEntry["subject"] = "deutsch";
-  if (r.subjectAlignment && r.confessionContext) {
+  if (r.subjectAlignment) {
     subject = dbSubjectToUi(
       r.subjectAlignment as DbSubject,
-      r.confessionContext as DbConfession,
+      (r.confessionContext as DbConfession | null) ?? "NICHT_ANWENDBAR",
     );
+  } else if (resolved) {
+    subject = dbSubjectToUi(resolved.subject, resolved.confession);
   }
-  // TODO(M2): subject = "deutsch" ist nur ein Interim-Placeholder für Quellen
-  // ohne subjectAlignment. RELIGION/ETHIK-Quellen werden bis zur Implementierung
-  // des Joins (worksheet_source_ref → worksheet → teaching_unit → curriculum_strand)
-  // ebenfalls als "deutsch" angezeigt.
 
   return {
     id: r.id,
@@ -70,6 +85,50 @@ function rowToSourceEntry(r: typeof sourceRef.$inferSelect): SourceEntry {
     license: r.licenseInfo ?? "—",
     status: r.lifecycleStatus === "REVOKED" ? "rejected" : "active",
   };
+}
+
+/**
+ * Löst Fach/Konfession für Quellen OHNE direktes `subjectAlignment` über den
+ * Curriculum-Join auf (#39):
+ *   source_ref → worksheet_source_ref → worksheet → teaching_unit → curriculum_strand.
+ *
+ * Eine Quelle kann an mehrere Arbeitsblätter/Stränge gebunden sein; genommen wird
+ * der erste gefundene Strang (deterministisch über die DB-Reihenfolge). Quellen mit
+ * gesetztem subjectAlignment werden hier übersprungen — sie mappen direkt.
+ *
+ * Ein einziger Batch-Query (kein N+1) für alle übergebenen Zeilen.
+ *
+ * @returns Map sourceRef.id → { subject, confession } (nur für aufgelöste Quellen)
+ */
+async function resolveSubjectsForUnaligned(
+  rows: Array<typeof sourceRef.$inferSelect>,
+): Promise<Map<string, ResolvedSubject>> {
+  const unalignedIds = rows.filter((r) => !r.subjectAlignment).map((r) => r.id);
+  const out = new Map<string, ResolvedSubject>();
+  if (unalignedIds.length === 0) return out;
+
+  const links = await db
+    .select({
+      sourceRefId: worksheetSourceRef.sourceRefId,
+      subject: curriculumStrand.subject,
+      confession: curriculumStrand.confessionContext,
+    })
+    .from(worksheetSourceRef)
+    .innerJoin(worksheet, eq(worksheet.id, worksheetSourceRef.worksheetId))
+    .innerJoin(teachingUnit, eq(teachingUnit.id, worksheet.unitId))
+    .innerJoin(curriculumStrand, eq(curriculumStrand.id, teachingUnit.strandId))
+    .where(inArray(worksheetSourceRef.sourceRefId, unalignedIds));
+
+  for (const link of links) {
+    // Erster Treffer pro Quelle gewinnt (deterministisch, keine stille Mehrfachwahl).
+    if (!out.has(link.sourceRefId)) {
+      out.set(link.sourceRefId, {
+        subject: link.subject as DbSubject,
+        confession: (link.confession as DbConfession | null) ?? "NICHT_ANWENDBAR",
+      });
+    }
+  }
+  return out;
 }
 
 export class PgSourcesRepository implements SourceRepository {
@@ -91,7 +150,8 @@ export class PgSourcesRepository implements SourceRepository {
       .select()
       .from(sourceRef)
       .where(isNull(sourceRef.deletedAt));
-    return rows.map(rowToSourceEntry);
+    const resolved = await resolveSubjectsForUnaligned(rows);
+    return rows.map((r) => rowToSourceEntry(r, resolved.get(r.id)));
   }
 
   async get(id: string): Promise<SourceEntry | null> {
@@ -102,7 +162,8 @@ export class PgSourcesRepository implements SourceRepository {
       .where(and(eq(sourceRef.id, id), isNull(sourceRef.deletedAt)));
     const row = rows[0];
     if (!row) return null;
-    return rowToSourceEntry(row);
+    const resolved = await resolveSubjectsForUnaligned(rows);
+    return rowToSourceEntry(row, resolved.get(row.id));
   }
 
   // -------------------------------------------------------------------------

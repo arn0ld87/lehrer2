@@ -1,10 +1,28 @@
 /**
  * S3/MinIO BlobStore — lokale oder S3-kompatible Object-Speicherung
  * Nutzt @aws-sdk/client-s3; forcePathStyle für MinIO
- * Key-Konvention: sources/<sourceRefId>/<contentHash>
+ *
+ * Blob-Key-Schema (#42): `sources/<sourceRefId>/v<sourceVersion>`.
+ * Bewusst inhaltsunabhängig (NICHT contentHash-basiert), damit der Key über
+ * Upload, Ingestion und Re-Ingestion stabil bleibt — contentHash wird erst
+ * bei erfolgreicher Ingestion gesetzt. Pro Quellenversion genau ein Roh-Blob;
+ * eine neue Version (sourceVersion++) erhält einen neuen, separaten Key.
+ * Verbindlich via blobKeyForSource(); Upload-Flow und Ingestion teilen diese Funktion.
  */
 
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+
+/**
+ * Baut den stabilen, inhaltsunabhängigen Blob-Key einer Quellenversion.
+ * Einzige Quelle der Wahrheit für das Key-Schema — Upload und Ingestion nutzen sie.
+ *
+ * @param sourceRefId   sourceRef.id
+ * @param sourceVersion sourceRef.sourceVersion (>= 1)
+ * @returns             `sources/<sourceRefId>/v<sourceVersion>`
+ */
+export function blobKeyForSource(sourceRefId: string, sourceVersion: number): string {
+  return `sources/${sourceRefId}/v${sourceVersion}`;
+}
 
 export interface BlobStore {
   /**

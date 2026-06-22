@@ -54,6 +54,7 @@
     "js-yaml": "^4.1.0",
     "prettier": "^3.3.3",
     "tailwindcss": "^4",
+    "testcontainers": "^10.14.0",
     "tsx": "^4.22.4",
     "typescript": "^5",
     "vitest": "^2.1.0"

@@ -1,11 +1,15 @@
 import { afterAll, describe, expect, it } from "vitest";
+import { eq } from "drizzle-orm";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { ragChunk } from "@/lib/db/schema/rag";
 import { sourceRef } from "@/lib/db/schema/artifacts";
+import * as schema from "@/lib/db/schema";
 
 const client = postgres(process.env.DATABASE_URL!, { max: 1 });
 const db = drizzle(client);
+// Schema-fähiger Client für die relationale Query-API (#44)
+const rdb = drizzle(client, { schema });
 
 afterAll(async () => {
   await client.end();
@@ -166,5 +170,41 @@ describe("rag_chunk table constraints", () => {
     expect(chunk1.id).not.toBe(chunk2.id);
     expect(chunk1.sourceVersion).toBe(1);
     expect(chunk2.sourceVersion).toBe(2);
+  });
+
+  // #44 — Drizzle-Relations rag_chunk → source_ref (typsichere Joins ab Retrieval)
+  it("lädt die zugehörige source_ref über die Relation (with: { sourceRef })", async () => {
+    const uniqueTitle = `Source-rel-${Date.now()}-${Math.random()}`;
+    const [sourceRow] = await db
+      .insert(sourceRef)
+      .values({
+        title: uniqueTitle,
+        sourceType: "OFFICIAL_BINDING",
+        contentHash: `hash-rel-${Date.now()}-${Math.random()}`,
+        uri: `https://example.com/${Date.now()}`,
+      })
+      .returning();
+
+    const [chunk] = await db
+      .insert(ragChunk)
+      .values({
+        sourceRefId: sourceRow.id,
+        chunkText: "Relationaler Chunk mit ausreichender Mindestlaenge fuer den DB-Check hier.",
+        pageOrSection: "Page 1",
+        sourceVersion: 1,
+        contentHash: `chunk-hash-rel-${Date.now()}-${Math.random()}`,
+        trustLevel: "OFFICIAL_BINDING",
+      })
+      .returning();
+
+    const loaded = await rdb.query.ragChunk.findFirst({
+      where: eq(ragChunk.id, chunk.id),
+      with: { sourceRef: true },
+    });
+
+    expect(loaded).toBeDefined();
+    expect(loaded!.sourceRef).toBeDefined();
+    expect(loaded!.sourceRef!.id).toBe(sourceRow.id);
+    expect(loaded!.sourceRef!.title).toBe(uniqueTitle);
   });
 });
