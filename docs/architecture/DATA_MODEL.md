@@ -460,6 +460,11 @@ Verweis auf RAG-Quelle (Lehrplan, Handreichung, OER, etc.).
 - Jede Generierung wird in `GenerationProvenance` erfasst (Modell, Provider, Redaction-Flag, Quellen).
 - Soft-Delete (`deleted_at IS NOT NULL`) behält Daten für Audit / Compliance.
 
+### UI-Subsumption und RAG-Retrieval-Hinweis (M1→M2)
+
+- `KONFESSIONSSENSIBEL_UEBERGREIFEND` wird in der UI-`Subject`-Union (die keinen dritten Konfessionsstrang kennt) unter `evangelische-religion` dargestellt (siehe `src/lib/db/repositories/mapping.ts`). RAG-Retrieval-Queries müssen daher `confession_context IN ('EVANGELISCH','KONFESSIONSSENSIBEL_UEBERGREIFEND')` verwenden, nie Gleichheit.
+- Die Join-Tabelle `task_source_ref` (Task ↔ SourceRef) ist eine bewusste Erweiterung gegenüber dem ursprünglichen DATA_MODEL (Quellennachweis direkt auf Aufgabenebene); sie ist additiv und mit FK + UNIQUE abgesichert.
+
 ## Erweiterungen (nicht im MVP)
 
 - **Benutzermodell:** Rollen (Lehrkraft, Admin, später Fachkonferenz, Schuladmin), Permissions.

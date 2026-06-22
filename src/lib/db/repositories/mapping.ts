@@ -40,6 +40,13 @@ export function dbSubjectToUi(subject: DbSubject, confession: DbConfession): UiS
  *
  * Umkehrfunktion zu dbSubjectToUi. Für Ethik wird confession auf
  * RELIGIONSKUNDLICH gesetzt (inhaltlich nächster Wert; kein Konfessionsbezug).
+ *
+ * WARNUNG (M2-RAG): Ein UI-Filter für "evangelische-religion" maps zu
+ * `confession = EVANGELISCH`, ignoriert aber `KONFESSIONSSENSIBEL_UEBERGREIFEND`.
+ * RAG-Retrieval-Queries, die aus dieser Mapping-Funktion stammen, müssen
+ * daher `confession_context IN ('EVANGELISCH','KONFESSIONSSENSIBEL_UEBERGREIFEND')`
+ * verwenden, nie Gleichheit (`confession = ...`). Siehe DATA_MODEL.md.
+ * TODO(M2-RAG): Strikte Assertion für RAG-Filter-Bau aus UI-Auswahl.
  */
 export function uiSubjectToDb(ui: UiSubject): { subject: DbSubject; confession: DbConfession } {
   switch (ui) {

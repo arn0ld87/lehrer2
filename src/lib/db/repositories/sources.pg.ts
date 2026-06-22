@@ -42,6 +42,10 @@ export class PgSourcesRepository implements SourceEntriesReader {
       origin: r.uri ?? "—",
       // subject/gradeRange erfordern einen Join auf Artefakt/Strang —
       // wird in einer Folgeiteration ergänzt; hier neutraler Default.
+      // TODO(M2): subject: "deutsch" ist nur ein Interim-Placeholder. RELIGION/ETHIK-Quellen
+      // werden bis zur Implementierung der Join-Tabelle `worksheet_source_ref → worksheet → teaching_unit → curriculum_strand`
+      // ebenfalls als "deutsch" angezeigt. Diese Abhängigkeit muss aufgelöst werden, bevor
+      // REPOSITORY_BACKEND=db zum Default wird.
       subject: "deutsch" as const,
       gradeRange: "—",
       trust: trustToUi[r.sourceType] ?? "UNVERIFIED",
