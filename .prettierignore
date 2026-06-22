@@ -9,3 +9,6 @@ pnpm-lock.yaml
 yarn.lock
 # Design-Kit ist Handoff-Material (eigene Formatierung)
 unterrichtsassistenz-lsa-design-kit/
+
+# pi-Agent-Verzeichnis (lokal, nicht Teil des Projekts)
+.pi/
