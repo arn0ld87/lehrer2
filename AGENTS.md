@@ -10,26 +10,31 @@ Stack (geplant): Next.js App Router, TypeScript strict, Tailwind, PostgreSQL + D
 
 ## Status — lesen vor jedem Eingriff
 
-**Planungs-/Architekturphase. Kein Produktivcode, keine lauffähige App** — aber Repo-Gerüst und Doku stehen. Committet: `README.md`, `PLAN.md`, `CLAUDE.md`, `AGENTS.md`, ein weitgehend vollständiger `docs/`-Baum, `unterrichtsassistenz-lsa-design-kit/`, Tooling/CI (`package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`), `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow, Issue-Templates, PR-Template).
+**M0 (Foundations & Governance) abgeschlossen; M1 Schritt 1 (UI-Shell) umgesetzt.** Repo-Gerüst, Doku und nun auch eine lauffähige Next.js-UI-Shell stehen. Committet: `README.md`, `PLAN.md`, `CLAUDE.md`, `AGENTS.md`, ein weitgehend vollständiger `docs/`-Baum, `unterrichtsassistenz-lsa-design-kit/`, Tooling/CI (`package.json`, `compose.yaml`, `.env.example`, `.editorconfig`, `.nvmrc`, `.prettierrc.json`, `.prettierignore`), `scripts/` (`verify-docs.sh`, `verify-docs.mjs`), `data/source-registry.seed.yaml` und `.github/` (CI-Workflow, Issue-Templates, PR-Template).
 `PLAN.md` ist Source of Truth für Scope und Roadmap (M0–M4) — zuerst lesen.
-Lauffähig sind bislang nur `pnpm format`, `pnpm format:check` und `pnpm verify:docs`; `pnpm lint`/`typecheck`/`test` sind **Sollzustand** (noch kein Anwendungscode). Beim Anlegen der ersten Implementierung den in README/PLAN dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
 
-## Setup & Commands (Sollzustand)
+**M1 Schritt 1 — UI-Shell (Branch `m1/ui-shell`):** Next.js 16 App Router, React 19, TypeScript strict, Tailwind v4, `lucide-react`. Sechs Routen (`/dashboard`, `/planung`, `/arbeitsblaetter`, `/korrektur`, `/quelle`, `/design-system`) sind navigierbar und werden statisch prerendered. **Nur UI-Struktur** — keine echten RAG-/LLM-/Korrektur-/Auth-/DB-Funktionen. Demodaten über Mock-Factories/Repository-Interfaces (`src/lib/mock/`), keine echten Schülerdaten/Tokens/Lehrpläne. Tokens zentral in `src/app/globals.css` (`@theme`), kanonisch abgeleitet aus `unterrichtsassistenz-lsa-design-kit/design-tokens.json` — **keine Inline-Hex-Werte** in Komponenten (Ausnahme: `design-system/page.tsx` Swatches dokumentieren das Token-System). Icons via zentralem `src/components/ui/icon.tsx`-Mapper auf `lucide-react`.
 
-Paketmanager ist **`pnpm`** (niemals npm/yarn). Lokale Umgebung über Docker Compose.
+Lauffähig: `pnpm dev`, `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm format:check`, `pnpm verify:docs`. `pnpm test` ist weiterhin **Sollzustand** (noch kein Test-Framework). Beim Erweitern den dokumentierten Stack einhalten, nicht eigenmächtig ersetzen.
+
+## Setup & Commands
+
+Paketmanager ist **`pnpm`** (niemals npm/yarn). Lokale Umgebung über Docker Compose (für später Persistenz/Worker; UI-Shell läuft ohne Docker).
 
 ```bash
 cp .env.example .env   # .env.example existiert; .env (Werte) niemals committen
 pnpm install
-docker compose up -d
+# UI-Shell ohne Docker starten:
+pnpm dev               # Next.js Dev-Server
+# Optional später: docker compose up -d
 
-pnpm lint
-pnpm format:check
-pnpm typecheck
-pnpm test
+pnpm lint              # ESLint (flat config, eslint-config-next)
+pnpm typecheck         # tsc --noEmit (strict)
+pnpm format:check      # Prettier (md/yml/yaml/json)
+pnpm build             # Produktionsbuild (statisches Prerender)
 ```
 
-Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`.
+`pnpm test` ist noch **Sollzustand** (kein Test-Framework vorhanden). Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm build`.
 
 ## Critical constraints (negative instructions — nicht verhandelbar)
 
@@ -71,8 +76,12 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 
 ## Project structure
 
+- `src/app/` — Next.js App Router: Root-Layout (`layout.tsx`), `globals.css` (zentrale `@theme`-Tokens), eine Route pro Handoff-Screen (`dashboard`, `planung`, `arbeitsblaetter`, `korrektur`, `quelle`, `design-system`) je mit `page.tsx`; `/` leitet auf `/dashboard` weiter
+- `src/components/` — `app-shell/` (Sidebar, Header, Context-Switcher), `ui/` (Primitive: button, card, badge, status-chip, empty-state, icon, shared), bereichsspezifische Komponenten je Route (`dashboard/`, `planner/`, `worksheet/`, `correction/`, `sources/`)
+- `src/lib/` — `types.ts` (Domain-Typen), `repositories.ts` (Verträge), `mock/` (Mock-Factories + Implementierungen — ausschließlich synthetische Demodaten)
+- `public/` — statische Assets (`logo.svg`)
 - `docs/` — Architektur, Produkt, RAG, Security, Operations, Design, ADRs, Open Questions (nahezu vollständig)
-- `unterrichtsassistenz-lsa-design-kit/` — statische HTML-Mockups, Tokens, Handoff-Anweisung
+- `unterrichtsassistenz-lsa-design-kit/` — statische HTML-Mockups, Tokens, Handoff-Anweisung (Referenz, nicht Produktcode)
 - `scripts/` — `verify-docs.sh`/`verify-docs.mjs` (Doku-Gate)
 - `data/` — `source-registry.seed.yaml` (Seed für das Quellenregister; keine echten Schülerdaten)
 - `.github/` — `workflows/ci.yml`, `ISSUE_TEMPLATE/` (bug, feature, research, security, config), `pull_request_template.md`
@@ -90,5 +99,7 @@ Vor jedem Commit: `git diff --check`, `pnpm lint`, `pnpm format:check`, `pnpm ty
 ## Notes
 
 - Alle in `PLAN.md`/`README.md` verlinkten Dokumente existieren inzwischen (zuletzt ergänzt: `docs/operations/GITHUB_SETUP.md`). Bei neuen Links dennoch vor Referenzierung auf Existenz prüfen.
-- `.env.example`, `package.json`, `scripts/verify-docs.sh` existieren; `package.json` definiert bislang nur `format`, `format:check`, `verify:docs`.
-- Paketmanager ist **`pnpm`**: `pnpm-lock.yaml` ist vorhanden und in `package.json` via `packageManager`-Feld (`pnpm@10.x`) + `engines.pnpm` gepinnt. `package-lock.json` wurde entfernt — kein npm/yarn verwenden.
+- `package.json` definiert jetzt `dev`, `build`, `start`, `lint`, `typecheck`, `format`, `format:check`, `verify:docs` (kein `test`-Framework bisher).
+- Paketmanager ist **`pnpm`**: `pnpm-lock.yaml` ist vorhanden und in `package.json` via `packageManager`-Feld (`pnpm@10.28.2`) + `engines.pnpm` gepinnt. `package-lock.json` wurde entfernt — kein npm/yarn verwenden.
+- **Token-Disziplin:** Farben/Radien/Schatten ausschließlich über `src/app/globals.css` (`@theme`) bzw. `:root`-Gradient-Variablen. Keine Inline-Hex-Literale in `src/components/**` oder `src/app/**` (Ausnahme: `design-system/page.tsx` Swatches). Neue Werte dort zentral pflegen und mit `design-tokens.json` abstimmen.
+- **Mock-Layer:** `src/lib/mock/` enthält ausschließlich synthetische Demodaten. Das angezeigte Nutzerprofil (Jana Zwarg) ist die echte Zielnutzerin; alle fachlichen Inhalte (KPIs, Listen, Quellenregister, Korrekturbeispiel) sind Mock und beim Übergang auf echte Repositories zu ersetzen — die Komponenten greifen über `repositories.ts`-Interfaces zu, nicht direkt auf Factories.

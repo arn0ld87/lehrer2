@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/*
+ * Zentrale Theme-Definition (Tailwind v4 @theme).
+ * Werte stammen kanonisch aus
+ *   unterrichtsassistenz-lsa-design-kit/design-tokens.json
+ * und dürfen an anderer Stelle nicht als Hex-Literale verstreut werden.
+ * Änderungen hier UND in design-tokens.json gemeinsam pflegen.
+ */
+@theme {
+  /* Brand — Oberflächen, Tinte, Linien, Primärfarbe */
+  --color-ink: #12162e;
+  --color-ink-2: #252b47;
+  --color-ink-muted: #59617b;
+  --color-muted: #68708a;
+  --color-muted-2: #8e95aa;
+  --color-canvas: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-surface-2: #fcfcfe;
+  --color-line: #e6e8f0;
+  --color-line-strong: #d9dce7;
+  --color-primary: #5d3df5;
+  --color-primary-strong: #4022c9;
+  --color-primary-soft: #efeaff;
+  --color-primary-soft-2: #e4ddff;
+
+  /* Fach-Farben (semantisch, nicht dekorativ) */
+  --color-deutsch: #7c3aed;
+  --color-religion: #0f9b7a;
+  --color-correction: #e05a38;
+  --color-sources: #2563eb;
+
+  /* Semantic — Status */
+  --color-success: #0f9b7a;
+  --color-warning: #c97910;
+  --color-danger: #c24135;
+  --color-info: #2563eb;
+  --color-success-soft: #e7f9f4;
+  --color-warning-soft: #fff6e4;
+  --color-danger-soft: #fff0e8;
+  --color-info-soft: #eaf2ff;
+
+  /* Radien */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* Tints / soften Hintergründe für Badges, Reihen, Aufgaben */
+  --color-deutsch-soft: #f0eafe;
+  --color-line-row: #eef0f5;
+  --color-line-soft: #e4e6ee;
+  --color-line-feed: #e8ebf1;
+  --color-task-bg: #fcfbff;
+  --color-task-border: #e7e3fa;
+  --color-lines-fill: #edeef4;
+  --color-kbd-bg: #f5f6fa;
+  --color-kbd-border: #e9ebf1;
+  --color-chip-bg: #f4f5f9;
+  --color-anon-bg: #f2f4f8;
+  --color-source-quick-bg: #eef2ff;
+  --color-rubric-th-bg: #f3f0ff;
+
+  /* Text-Varianten (Abstufungen der Tinte) */
+  --color-ink-nav: #38405b;
+  --color-ink-body: #424a67;
+  --color-ink-feature: #5c647c;
+  --color-ink-kicker: #5f6681;
+  --color-text-placeholder: #9ba1b1;
+  --color-text-kbd: #7c8296;
+  --color-text-anon: #5d657c;
+  --color-text-filter: #505873;
+
+  /* Status-Badge Vordergrund (dunklere Kontrastshade) */
+  --color-status-draft-fg: #66708a;
+  --color-status-progress-fg: #a66100;
+  --color-status-ready-fg: #0c7d61;
+  --color-status-review-fg: #b54425;
+
+  /* Fach-Badge Vordergrund */
+  --color-deutsch-fg: #6741c5;
+  --color-religion-fg: #0d7c62;
+
+  /* Fokus / Interaktionsränder */
+  --color-focus-ring: #9d8afb;
+  --color-builder-active-border: #b9a9ff;
+  --color-builder-active-bg: #faf9ff;
+  --color-secondary-hover: #fafafd;
+  --color-icon-hover-border: #cfc8f7;
+  --color-filter-active-border: #c9beff;
+  --color-filter-active-fg: #4d30ce;
+  --color-notice-warning-border: #f5e3ba;
+  --color-notice-warning-fg: #7a4a00;
+  --color-rubric-th-fg: #4c35b4;
+  --color-highlight-line: #ffddd0;
+  --color-highlight-label-fg: #be4b2c;
+  --color-text-line-bg: #ebedf3;
+  --color-banner-p: #d9d5ff;
+
+  /* Schatten (subtil, nicht gamifiziert) */
+  --shadow-soft: 0 12px 40px rgba(25, 28, 52, 0.08);
+  --shadow-subtle: 0 4px 18px rgba(25, 28, 52, 0.06);
+  --shadow-focus-ring: 0 0 0 3px rgba(93, 61, 245, 0.1);
+
+  /* Typografie — Self-hosted via next/font (kein CDN zur Laufzeit) */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+:root {
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
+
+  /* Komplexe Verläufe (keine Tailwind-Utilities) — zentral hier definiert. */
+  --gradient-banner: radial-gradient(
+      circle at 87% 30%,
+      rgba(137, 109, 255, 0.22),
+      transparent 22%
+    ),
+    linear-gradient(105deg, #171a37, #2a1b70);
+  --gradient-avatar: linear-gradient(135deg, #e6d9d0, #93644d);
+  --gradient-feature-purple: linear-gradient(135deg, #fbfaff 0%, #f0eaff 100%);
+  --gradient-feature-green: linear-gradient(135deg, #fbfffe 0%, #e9faf4 100%);
+  --gradient-feature-orange: linear-gradient(135deg, #fffcfa 0%, #fff0e8 100%);
+  --gradient-text-line: linear-gradient(90deg, #ebedf3 68%, transparent 68%);
+  --gradient-text-line-highlight: linear-gradient(90deg, #ffddd0 65%, transparent 65%);
+  --gradient-lines-fill: repeating-linear-gradient(
+    transparent 0,
+    transparent 22px,
+    #edeef4 23px
+  );
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Sichtbare, einheitliche Fokuszustände (Barrierefreiheit) */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Dezente Scrollbar im Verwaltungsstil */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
