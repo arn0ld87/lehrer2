@@ -48,7 +48,7 @@ Eine Aussage gilt nur dann als lehrplanorientiert, wenn sie folgende Bedingungen
 
 Um den Datenschutzvorgaben (ADR 0004) zu entsprechen:
 - **Default-Modell**: Die Generierung erfolgt standardmäßig über einen lokalen Ollama-Server.
-- **Cloud-Einsatz**: Cloud-LLMs sind nur zulässig, wenn ein `CloudReleaseGrant` vorliegt und keine Schülerdaten (SENSITIVE_STUDENT) Teil des Prompts sind.
+- **Cloud-Einsatz**: Cloud-LLMs sind nur zulässig, wenn ein CloudReleaseGrant vorliegt und alle Schülerdaten (SENSITIVE_STUDENT) vorab vollständig pseudonymisiert wurden.
 - **Latenz vs. Qualität**: Bei lokaler Ausführung wird ein Modell mit mindestens 14B Parametern (z.B. Qwen2.5-14b) empfohlen, um die Zitationsgenauigkeit zu gewährleisten.
 
 ## 5. Umgang mit Risiken: Unvollständige Quellen
