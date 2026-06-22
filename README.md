@@ -4,7 +4,9 @@ Datenschutzsensibler, quellengebundener KI-Assistent für Lehrkräfte an Gesamts
 
 ## Status
 
-**Fundament und Planung.** Dieses Repository enthält **kein** Produktivcode, **keine** lauffähige Anwendung und **keine überprüfte** Konformität. Es legt Architektur, Governance-Regeln, Datenschutzvorkehrungen und Implementierungsprinzipien fest. Jede Konformitätsbehauptung wird erst gemacht, wenn sie vollständig umgesetzt und überprüft ist.
+**M0 (Fundament & Governance) abgeschlossen; M1 in Umsetzung — Schritt 1 (UI-Shell) und Schritt 2 (Datenmodell + Export) sind in `main` gemergt (CI grün).** Lauffähig sind: die Next.js-UI-Shell (sechs Routen, statisch prerendered), die persistente Datenschicht (PostgreSQL via Drizzle — Auth/Tenant, Curriculum mit Konfessions-CHECK, Artefakte, Provenienz/Audit), Better Auth (single-tenant, ADR 0007) und das Export-Subsystem (DOCX/PDF hinter `exportArtifact`, ADR 0008).
+
+**Noch nicht real:** RAG/Retrieval, LLM-Provider-Anbindung, Planungs-/Arbeitsblatt-Logik (M2) sowie Korrekturassistenz mit Pseudonymisierung/Redaction (M3). Die UI zeigt ausschließlich synthetische Demodaten (Mock-Layer) — keine echten Schülerdaten. Dieses Repository macht **keine überprüfte Konformitätsbehauptung**; jede solche Aussage wird erst getroffen, wenn sie vollständig umgesetzt und überprüft ist.
 
 Repository: `arn0ld87/lehrer2` (privat).
 
@@ -44,8 +46,8 @@ Repository: `arn0ld87/lehrer2` (privat).
 - **[docs/adr/0004-local-first-student-data.md](docs/adr/0004-local-first-student-data.md)** — Lokale Speicherung und Pseudonymisierung vor Cloud-Übertragung
 - **[docs/adr/0005-orm-drizzle.md](docs/adr/0005-orm-drizzle.md)** — Drizzle ORM für PostgreSQL
 - **[docs/adr/0006-curriculum-modeling.md](docs/adr/0006-curriculum-modeling.md)** — Curriculum-Modellierung: Sek-II-Scope, Konfessionsstrang, Ethik als eigenes Fach
-- **[docs/adr/0007-auth-solution.md](docs/adr/0007-auth-solution.md)** — Authentifizierung (Status _Proposed_; Empfehlung Better Auth)
-- **[docs/adr/0008-document-export-stack.md](docs/adr/0008-document-export-stack.md)** — DOCX/PDF-Export-Stack (Status _Proposed_; Empfehlung docx + pdfkit)
+- **[docs/adr/0007-auth-solution.md](docs/adr/0007-auth-solution.md)** — Authentifizierung (Status _Akzeptiert_ 2026-06-22; Better Auth, single-tenant)
+- **[docs/adr/0008-document-export-stack.md](docs/adr/0008-document-export-stack.md)** — DOCX/PDF-Export-Stack (Status _Akzeptiert_ 2026-06-22; docx + pdfkit)
 - **[docs/adr/0009-pseudonym-retention.md](docs/adr/0009-pseudonym-retention.md)** — Pseudonym-Stabilität und Mapping-Löschung (DSGVO Art. 17)
 
 ### RAG und Quellengovernance
