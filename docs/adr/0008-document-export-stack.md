@@ -21,22 +21,22 @@ Anforderungen:
 
 **DOCX**
 
-| Lib              | Lizenz                | Status         | Bewertung                                      |
-| ---------------- | --------------------- | -------------- | ---------------------------------------------- |
-| **docx**         | MIT                   | aktiv          | volle programmatische Kontrolle, schlank       |
-| docxtemplater    | Core MIT + Pro-Module | aktiv          | Template-basiert; HTML-/Image-Module **kostenpflichtig** |
-| officegen        | MIT                   | **deprecated** (2022) | raus                                    |
-| html-to-docx     | —                     | **abandoned/404** | raus                                        |
+| Lib           | Lizenz                | Status                | Bewertung                                                |
+| ------------- | --------------------- | --------------------- | -------------------------------------------------------- |
+| **docx**      | MIT                   | aktiv                 | volle programmatische Kontrolle, schlank                 |
+| docxtemplater | Core MIT + Pro-Module | aktiv                 | Template-basiert; HTML-/Image-Module **kostenpflichtig** |
+| officegen     | MIT                   | **deprecated** (2022) | raus                                                     |
+| html-to-docx  | —                     | **abandoned/404**     | raus                                                     |
 
 **PDF**
 
-| Lib                  | Lizenz     | Status | Footprint        | Bewertung                                  |
-| -------------------- | ---------- | ------ | ---------------- | ------------------------------------------ |
-| **pdfkit**           | MIT        | aktiv  | ~57 KB           | imperativ, gut für strukturierte Dokumente |
-| @react-pdf/renderer  | MIT        | aktiv  | ~70 KB           | deklarativ (React), Next.js-affin          |
-| pdf-lib              | MIT        | aktiv  | ~135 KB          | eher Manipulation als Layout-Generierung   |
-| Puppeteer/Playwright | Apache 2.0 | aktiv  | **300 MB–1 GB**  | beste Layout-Treue, aber Footprint untragbar |
-| Typst/LaTeX/Pandoc   | div. (frei)| aktiv  | extra Binary     | sehr drucktreu, eigener Toolchain-Aufwand  |
+| Lib                  | Lizenz      | Status | Footprint       | Bewertung                                    |
+| -------------------- | ----------- | ------ | --------------- | -------------------------------------------- |
+| **pdfkit**           | MIT         | aktiv  | ~57 KB          | imperativ, gut für strukturierte Dokumente   |
+| @react-pdf/renderer  | MIT         | aktiv  | ~70 KB          | deklarativ (React), Next.js-affin            |
+| pdf-lib              | MIT         | aktiv  | ~135 KB         | eher Manipulation als Layout-Generierung     |
+| Puppeteer/Playwright | Apache 2.0  | aktiv  | **300 MB–1 GB** | beste Layout-Treue, aber Footprint untragbar |
+| Typst/LaTeX/Pandoc   | div. (frei) | aktiv  | extra Binary    | sehr drucktreu, eigener Toolchain-Aufwand    |
 
 ## Entscheidung (vorgeschlagen)
 

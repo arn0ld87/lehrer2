@@ -102,7 +102,7 @@ Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_
 
 ## 11. Roadmap nach Milestones (ohne Zeitversprechen)
 
-- **M0 – Foundations & Governance**: Vision/Scope, ADRs, Datenschutz-/Löschkonzept, Threat Model, Quellenpolicy, initiale Quellenregistry, Curriculummodell, Dev-/CI-Grundgerüst, UX-Flows.
+- **M0 – Foundations & Governance** _(weitgehend abgeschlossen, Stand 2026-06-22)_: Vision/Scope, ADRs (0001–0009; 0007/0008 _Proposed_), Datenschutz-/Löschkonzept, Threat Model, Quellenpolicy, initiale Quellenregistry, Curriculummodell, Dev-/CI-Grundgerüst (Paketmanager auf pnpm vereinheitlicht), UX-Flows, alle sechs offenen Grundsatzentscheidungen getroffen. Verbleibend: Übergang zu M1 (erstes Code-Grundgerüst).
 - **M1 – Unterrichtsplanung MVP**: Datenmodell Artefakte, Planungsassistent, Arbeitsblattgenerator, Bewertungsraster/Erwartungshorizont, Export-Architektur.
 - **M2 – Quellen-RAG mit Nachweisen**: Quellenverwaltung, Ingestion, Chunking, Retrieval/Reranking/Zitation, Eval-Suite, Widerruf/Löschung.
 - **M3 – Korrekturassistenz MVP**: Korrekturworkflow, Pseudonymisierung/Redaction, Feedbackformat, Upload-/OCR-Sicherheit.
@@ -112,7 +112,7 @@ Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_
 
 **Risiken:** Lehrplan-Lizenzunsicherheit; Re-Identifikation aus pseudonymisiertem Freitext; Rechtslage Cloud-LLM + Schülerdaten in LSA; Curriculum-Versionskonflikte; Kostenkontrolle bei Cloud-Nutzung.
 
-**Offene Entscheidungen:** siehe [OPEN_QUESTIONS.md](docs/decisions/OPEN_QUESTIONS.md) (u. a. Sek-II-Modellierung, Klassen 11/12 im MVP, `KONFESSIONSSENSIBEL_UEBERGREIFEND` als eigener Strang, Ethik als eigenes Fach, Pseudonym-Löschfristen, Freigaberolle).
+**Entscheidungen (vormals offen):** alle sechs Grundsatzfragen sind entschieden (Stand 2026-06-22) — Sek-II-Scope (MVP Kl. 5–10), `KONFESSIONSSENSIBEL_UEBERGREIFEND` als eigener Strang, Ethik als eigenes Fach (ADR 0006); Pseudonym-Retention mit 12-Monats-Fenster und DSFA-Vorbehalt (ADR 0009); kein Cloud-LLM im MVP, nur Ollama (ADR 0002/0004); Lehrplankonflikte werden dokumentiert statt geraten (ADR 0003). Herleitung und Vorbehalte: [OPEN_QUESTIONS.md](docs/decisions/OPEN_QUESTIONS.md).
 
 **Abbruchkriterien:** Kein lizenzkonformer Quellenzugang → kein produktives RAG. Keine belastbare Pseudonymisierung → keine Korrekturassistenz mit Schülerdaten. Keine dokumentierte Rechtsgrundlage → kein Cloud-LLM für personenbezogene Daten.
 
@@ -127,4 +127,4 @@ Maßgeblich: [DATA_PROTECTION.md](docs/security/DATA_PROTECTION.md), [RETENTION_
 
 ### Bezug zu den Ausführungs-/Governance-Dokumenten
 
-ADRs: [0001](docs/adr/0001-modular-monolith-first.md) · [0002](docs/adr/0002-provider-agnostic-llm-layer.md) · [0003](docs/adr/0003-source-governance-before-ingestion.md) · [0004](docs/adr/0004-local-first-student-data.md) · [0005](docs/adr/0005-orm-drizzle.md). GitHub-Planung & Status: [GITHUB_SETUP.md](docs/operations/GITHUB_SETUP.md).
+ADRs: [0001](docs/adr/0001-modular-monolith-first.md) · [0002](docs/adr/0002-provider-agnostic-llm-layer.md) · [0003](docs/adr/0003-source-governance-before-ingestion.md) · [0004](docs/adr/0004-local-first-student-data.md) · [0005](docs/adr/0005-orm-drizzle.md) · [0006](docs/adr/0006-curriculum-modeling.md) · [0007](docs/adr/0007-auth-solution.md) _(Proposed)_ · [0008](docs/adr/0008-document-export-stack.md) _(Proposed)_ · [0009](docs/adr/0009-pseudonym-retention.md). Offene Entscheidungen: alle 6 aus [OPEN_QUESTIONS.md](docs/decisions/OPEN_QUESTIONS.md) entschieden (Stand 2026-06-22). GitHub-Planung & Status: [GITHUB_SETUP.md](docs/operations/GITHUB_SETUP.md).

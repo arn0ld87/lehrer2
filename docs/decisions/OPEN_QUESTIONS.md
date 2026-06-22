@@ -1,4 +1,19 @@
-# Offene Entscheidungen (Sekundärklasse II, Konfessionalität, Ethik, Pseudonymie, Rollen, Lehrplankonflikte)
+# Entscheidungen (Sek II, Konfessionalität, Ethik, Pseudonymie, Rollen, Lehrplankonflikte)
+
+> **Stand 2026-06-22:** Alle sechs zuvor offenen Fragen sind im Zuge des M0-Abschlusses entschieden. Engineering-Defaults (Fragen 1, 2, 3, 6) sind verbindlich; die rechts-/governance-kritischen Festlegungen (Fragen 4, 5) gelten als konservative MVP-Defaults **vorbehaltlich Stakeholder-/DSFA-Bestätigung** und sind als solche markiert. Diese Datei dokumentiert die Herleitung; die architektonisch signifikanten Entscheidungen sind zusätzlich als ADR fixiert.
+
+## Übersicht
+
+| #   | Frage                           | Entscheidung (gewählte Option)                                              | Fixiert in      | Status                                |
+| --- | ------------------------------- | --------------------------------------------------------------------------- | --------------- | ------------------------------------- |
+| 1   | Sek-II-Modellierung / MVP-Scope | MVP nur Sek I (Kl. 5–10); Schema bleibt für Sek II vorwärtskompatibel       | ADR 0006        | Entschieden (Scope-Bestätigung offen) |
+| 2   | Konfessionsstrang               | Dritter Strang `KONFESSIONSSENSIBEL_UEBERGREIFEND`, keine duale Indexierung | ADR 0006        | Entschieden                           |
+| 3   | Ethik                           | Eigenes `Subject.ETHIK`, nicht Modus von Religion                           | ADR 0006        | Entschieden                           |
+| 4   | Pseudonym-Retention             | Delayed Deletion (12-Monats-Fenster) + Vorrang Art.-17-Antrag               | ADR 0009        | Entschieden (DSFA-Vorbehalt)          |
+| 5   | Freigaberolle / Cloud im MVP    | Kein Cloud-LLM im MVP (nur Ollama); keine unbegrenzte Admin-Override-Macht  | ADR 0002 + 0004 | Entschieden (MVP-Default)             |
+| 6   | Lehrplan-Versionskonflikte      | Nicht raten — Konflikt dokumentieren (`SourceConflict` + Maintainer-Review) | ADR 0003        | Entschieden                           |
+
+---
 
 ## 1. Sekundarstufe II: GradeBand-Modellierung und MVP-Umfang
 
@@ -9,59 +24,49 @@ Wie sollen Klassen 11 und 12 (Sek II) im System modelliert werden — als `Grade
 ### Kontext
 
 - **Spec**: "Schüler Klasse 5–12"
-- **Curriculummodell** (RAG_ARCHITECTURE): Lehrpläne liegen für Klassen 5–10 vor (bundeslandabhängig, z.B. Bayern 5-10 Realschule).
-- Sek II ist in den meisten Bundesländern Kurs-organisiert (Halbjahrssystem, Wahlfachmodule), nicht Klassenstufen.
-- Bisherige Annahme: MVP fokussiert auf Klasse 5–10.
+- **Curriculummodell** (DATA_MODEL): `SchoolStage` kennt `SEK_I` (5–10) und `SEK_II`; `GradeBand` hat `KS5`–`KS10` sowie Kurshalbjahre (z.B. `Q1_HJ1`) für Sek II.
+- Sek II ist in Sachsen-Anhalt kurs-/halbjahresorganisiert, nicht jahrgangsbezogen.
 
 ### Optionen
 
-1. **MVP nur Kl. 5–10** — Sek II später (z.B. v1.2). Curriculum sieht 11/12 als `grade_band: null` oder `excluded: true`.
-2. **Sek II ab MVP mit vereinfachtem Modell** — Kurs-Halbjahrssystem in DATA_MODEL als optional abbilden, aber nur für Read/Matching, nicht für Zuordnung im Student.
-3. **Separate Sek-II-Schicht** — Klasse 5–10 = `StudentEnrollment.grade_band`, Sek II = `StudentEnrollment.course_enrollment` (neuer Type). Erfordert doppelte Curriculum-Logik.
+1. **MVP nur Kl. 5–10** — Sek II später; Schema kennt `SEK_II`, MVP nutzt es nicht produktiv.
+2. **Sek II ab MVP mit vereinfachtem Modell** — Kurshalbjahre nur für Read/Matching.
+3. **Separate Sek-II-Schicht** — eigene Enrollment-Logik; doppelte Curriculum-Logik.
 
-### Vorschlag
+### Entscheidung
 
-**Option 1 (MVP 5–10, Sek II später).** Einfacher, keine konzeptionellen Komplikationen für MVP. Curriculum sieht Lehrpläne 5–10 vor, grade_band 11–12 im System erlaubt, aber Funktionalität (Filter, Empfehlungen, Korrekturmodelle) nur für 5–10. Sek-II-Lehrpläne später ingesten wenn nachgelagerte Anforderung kommt.
+**Option 1 — MVP nur Sek I (Kl. 5–10); `SchoolStage.SEK_II` + Kurshalbjahres-Bänder bleiben im Schema vorgesehen, werden im MVP aber nicht befüllt/ausgewertet.** Fixiert in **ADR 0006**.
 
 ### Status
 
-**Offen.** Klärung mit Stakeholder Lehrkräfte (Schule vor Ort) erforderlich: Werden Sek-II-Schüler parallel mit 5–10 unterrichtet? Ist das System nur für Unterstufe gedacht oder vom Anfang schulübergreifend?
-
-### Zugehöriges Issue
-
-`#DECISION-001-sek-ii-scope` (Maintainer: zu öffnen)
+**Entschieden, 2026-06-22.** Nicht blockierend offen: Bestätigung des MVP-Schnitts mit der Pilotschule (Werden Sek-II-Schüler parallel unterrichtet?). Sek-II-Ausbau erhält ein eigenes ADR, sobald Lehrpläne kuratiert vorliegen.
 
 ---
 
-## 2. Konfessionalität: CONFESSIONALLY_OPEN als eigener dritter Strang
+## 2. Konfessionalität: KONFESSIONSSENSIBEL_UEBERGREIFEND als eigener dritter Strang
 
 ### Frage
 
-Sollen Materialien, die "konfessionsübergreifend" oder "ökumenisch" aufbereitet sind, einen eigenen `confession_context`-Wert bekommen (z.B. `CONFESSIONALLY_OPEN`), oder sollten sie dual unter `EVANGELICAL` und `CATHOLIC` indexiert werden?
+Sollen "konfessionsübergreifend"/"ökumenisch" aufbereitete Materialien einen eigenen `confessionContext`-Wert bekommen, oder dual unter `EVANGELISCH` und `KATHOLISCH` indexiert werden?
 
 ### Kontext
 
-- **Invariante**: Religion ist strikt getrennt (evangelisch/katholisch/konfessionsübergreifend/Ethik).
-- Viele Materialien (z.B. ökumenisches Schulbuch, Gemeinschaftswerk) sind bewusst beide Konfessionen abdeckend.
-- Frage: Werden diese als _ein_ Dokument mit `confession_context: CONFESSIONALLY_OPEN` indiziert, oder als zwei separate Indexierungen (eine für ev., eine für kath.)?
+- **Invariante**: Religion ist strikt getrennt (evangelisch/katholisch/konfessionssensibel-übergreifend/Ethik).
+- `DATA_MODEL` führt `KONFESSIONSSENSIBEL_UEBERGREIFEND` bereits als eigenen `ConfessionContext`-Wert.
 
 ### Optionen
 
-1. **Dritter Strang: `CONFESSIONALLY_OPEN`** — Ein Dokument, ein Index-Eintrag. Query für ev. UND kath. Schüler gibt es zurück. Klare konzeptionelle Trennung, kein Duplizieren.
-2. **Duale Indexierung** — Dokument mit `EVANGELICAL` und `CATHOLIC` als separate `SourceRef`-Einträge. Ermöglicht granulare Kontrollierbarkeit, aber redundant.
-3. **Hybrid**: `CONFESSIONALLY_OPEN` als primär, aber mit `applicable_confessions: ["EVANGELICAL", "CATHOLIC"]` Flag für explizite Aufzählung.
+1. **Dritter Strang `KONFESSIONSSENSIBEL_UEBERGREIFEND`** — ein Dokument, ein Index-Eintrag.
+2. **Duale Indexierung** — separate Einträge für ev. und kath.; redundant.
+3. **Hybrid** — übergreifend als primär + `applicable_confessions`-Flag.
 
-### Vorschlag
+### Entscheidung
 
-**Option 1 oder 3 (eher Option 1).** Dritter Strang ist semantisch klarer und verhindert "Vermischung" in der Invariante. Query-Layer muss aber sicherstellen, dass Lehrkraft ev./kath. auch `CONFESSIONALLY_OPEN`-Materialien sieht (nicht nur die je eigene Konfession).
+**Option 1 — dritter Strang, keine duale Indexierung.** Retrieval-Regel: ev./kath. Anfragen dürfen `KONFESSIONSSENSIBEL_UEBERGREIFEND` einbeziehen, aber nie direkt zwischen ev. und kath. aggregieren. Fixiert in **ADR 0006**.
 
 ### Status
 
-**Offen.** Bestätigung mit Schuladmin erforderlich: Wird der Schulrahmen (Konfessionalität des Unterrichts) auf Kursebene vorgegeben, sodass ein System "weiß", dass hier ev. UND kath. Material relevant ist?
-
-### Zugehöriges Issue
-
-`#DECISION-002-confessional-strands` (Maintainer: zu öffnen)
+**Entschieden, 2026-06-22.**
 
 ---
 
@@ -69,63 +74,53 @@ Sollen Materialien, die "konfessionsübergreifend" oder "ökumenisch" aufbereite
 
 ### Frage
 
-Ist Ethik ein **eigenständiges Fach** (wie Mathematik, Deutsch) oder ein **Modus/Perspektive von Religion** (religionskundlich-ökumenisch)?
+Ist Ethik ein eigenständiges Fach oder ein Modus/Perspektive von Religion?
 
 ### Kontext
 
-- **Aktuelles Modell**: `subject: Enum` mit Werten wie `MATHEMATICS`, `GERMAN`, `RELIGION_EVANGELICAL`, `RELIGION_CATHOLIC`, `ETHICS`.
-- In vielen Bundesländern ist "Ethik" die Wahlalternative zu konfessionellem Religionsunterricht (KMK-Länderspiegel).
-- Frage: Gehört Ethik zur `confession_context`-Dimension oder zu einer separaten `Subject`-Dimension?
+- **DATA_MODEL**: `Subject` enthält `DEUTSCH`, `RELIGION`, `ETHIK`; CHECK-Constraint bindet `ETHIK` an `confessionContext ∈ {RELIGIONSKUNDLICH, NICHT_ANWENDBAR}`.
+- In Sachsen-Anhalt ist Ethik die Wahlalternative zum konfessionellen Religionsunterricht.
 
 ### Optionen
 
-1. **Ethik als eigenes Subject** — `subject: ETHICS`, `confession_context: NONE`. Lehrplan für Ethik ≠ Lehrplan für Religion.
-2. **Ethik als Religion-Modus** — `subject: RELIGION`, `confession_context: ETHICS`. Kennzeichnet "konfessionslose" religiöse Bildung (Religionswissenschaft, Vergleich).
-3. **Beide** — Ethik kann als own Subject _und_ als `RELIGIOUS_STUDIES` (separater confession_context) dienen.
+1. **Ethik als eigenes Subject** — eigener Lehrplan, philosophisch statt theologisch.
+2. **Ethik als Religion-Modus** — über `confessionContext`.
+3. **Beide** — Subject + religionskundlicher Modus.
 
-### Vorschlag
+### Entscheidung
 
-**Option 1 (Ethik = eigenes Subject).** Ethik hat eigene Lehrpläne (meist KMK-harmonisiert), oft andere Inhalte (Philosophie statt Theologie). Praktisch einfacher zu queryin und zu filtern. `RELIGIOUS_STUDIES`-Modus für Material, das Religion wissenschaftlich behandelt (unabhängig von Fach).
+**Option 1 — `Subject.ETHIK` eigenständig.** Religionskundliche Betrachtung bleibt als `confessionContext = RELIGIONSKUNDLICH` abbildbar, ohne Ethik an Religion zu koppeln. Fixiert in **ADR 0006**.
 
 ### Status
 
-**Offen.** Klärung mit Schuladmin/Schulleiter erforderlich: Werden Schüler _alternativ_ zu Religionsunterricht in Ethik unterrichtet, oder parallel als Philosophie-Ergänzung?
-
-### Zugehöriges Issue
-
-`#DECISION-003-ethics-subject` (Maintainer: zu öffnen)
+**Entschieden, 2026-06-22.**
 
 ---
 
-## 4. Pseudonym-Stabilitäät vs. Recht auf Vergessenwerden
+## 4. Pseudonym-Stabilität vs. Recht auf Vergessenwerden
 
 ### Frage
 
-Wie lange bleibt die Mapping-Tabelle `Student.anonymous_id → Student.first_name + Student.last_name` erhalten? Können Schüler ihre Pseudonymisierung "zurücksetzen" (neue ID bei Umschüler, Schulwechsel)? Wie werden alte Mappings gelöscht?
+Wie lange bleibt das Mapping `pseudonym_id → Klarname` erhalten? Können Schüler die Pseudonymisierung zurücksetzen? Wie werden alte Mappings gelöscht?
 
 ### Kontext
 
-- **Invariante**: Schülernamen verlassen das System im Normalbetrieb nie; nur Pseudonym wird an LLM übertragen.
-- `Student.created_at` und `Student.deleted_at` sind tracking-relevant für DSGVO (Löschfristen).
-- **Frage**: Wenn ein Schüler die Schule verlässt oder das System verlässt, wird die Mapping-Tabelle sofort gelöscht (strict forget), oder nach X Monaten (Archivierungsfenster)?
+- **Invariante**: Klarnamen verlassen das System im Normalbetrieb nie; Mapping nur in SecureEnclave/HSM (Schulleitung).
+- DSGVO Art. 17; `SENSITIVE_STUDENT`-Retention in DATA_MODEL: „pro Schuljahr + 1 Jahr Archiv".
 
 ### Optionen
 
-1. **Strict Forget (DSGVO Art. 17)** — Bei Löschantrag (z.B. Schulaustritt) wird Mapping sofort gelöscht. Unmapping von pseudo_id zu Name ist irreversibel.
-2. **Delayed Deletion (Archivierungsfenster)** — Mapping wird nach Schulaustritt archiviert (z.B. 12 Monate Aufbewahrung für Audit), dann gelöscht.
-3. **Stable Pseudonym** — Mapping ist irreversibel an Student gebunden (kein Zurücksetzen); Re-Pseudonymisierung nur bei Datenschutz-Incident.
+1. **Strict Forget** — sofortige, irreversible Löschung bei Austritt.
+2. **Delayed Deletion** — Archivfenster (z.B. 12 Monate), dann Löschung.
+3. **Stable Pseudonym** — irreversibel gebunden, kein Reset.
 
-### Vorschlag
+### Entscheidung
 
-**Option 2 (Delayed Deletion mit 12-Monat-Fenster).** DSGVO-konform, erlaubt Audit-Trail für Lehrkräfte (z.B. "Wer hat X Schüler korrigiert?"), löscht aber dann komplett. Retention Policy in DATA_PROTECTION dokumentieren.
+**Option 2 — Delayed Deletion mit 12-Monats-Archivfenster ab Austritt; ein expliziter Art.-17-Löschantrag hat Vorrang (sofortige, irreversible Löschung).** Pseudonym ist während der Zugehörigkeit stabil. Fixiert in **ADR 0009**.
 
 ### Status
 
-**Offen.** Klärung mit Datenschutzbeauftragter/Schulleitung erforderlich: Archivierungsfenster basiert auf Schul-Abmeldedatum oder auf Aktivitätsfenster?
-
-### Zugehöriges Issue
-
-`#DECISION-004-pseudonym-retention` (Maintainer: zu öffnen)
+**Entschieden als MVP-Default, 2026-06-22 — DSFA-Vorbehalt.** Finale Frist und Rechtsgrundlage sind durch Datenschutz-Folgenabschätzung/Datenschutzbeauftragte zu bestätigen, bevor mit echten Daten gearbeitet wird.
 
 ---
 
@@ -133,31 +128,26 @@ Wie lange bleibt die Mapping-Tabelle `Student.anonymous_id → Student.first_nam
 
 ### Frage
 
-Spezifikation sieht Rollen `Lehrkraft`, `Admin` vor und später `Fachkonferenz` und `Schuladmin`. Wie wird bis dahin mit Freigaben (z.B. CloudReleaseGrant, Curriculumfreigabe) umgegangen?
+Spezifikation sieht später `Fachkonferenz` und `Schuladmin` vor. Wie wird bis dahin mit Freigaben (CloudReleaseGrant, Curriculumfreigabe) umgegangen?
 
 ### Kontext
 
-- **MVP**: Nur `Teacher` und `Admin` sind implementiert.
-- **Später**: `FachkonferenzVorsitz` (= Lehrkraft mit Entscheidungskompetenz auf Fachebene), `Schuladmin` (= Schulleitung mit System-Governance).
-- **Frage**: Übergangsregel bis dahin — darf `Admin` automatisch Freigaben erteilen, oder braucht es vorher explizites "Signal" von Schulleiter?
+- **MVP**: nur `Teacher` und `Admin`.
+- **Frage**: Darf `Admin` automatisch Freigaben erteilen, oder braucht es ein explizites Schulleitungs-Signal?
 
 ### Optionen
 
-1. **Admin overrides vorerst** — `Admin`-Role enthält Rechte für `FachkonferenzVorsitz` und `Schuladmin` bis MVP erweitert wird.
-2. **No CloudReleaseGrant im MVP** — Cloud-LLM erst freischalten wenn Fachkonferenz-Rollenmodell implementiert ist; MVP = Ollama nur.
-3. **Hybrid: Admin begrenzter Umfang** — `Admin` darf Freigaben für schulinterne Materialien erteilen, aber CloudReleaseGrant muss explizit vom Schulleiter signiert sein (Mailflow, manuell).
+1. **Admin overrides vorerst** — Admin erhält Fachkonferenz-/Schuladmin-Rechte bis Ausbau.
+2. **Kein CloudReleaseGrant im MVP** — Cloud-LLM erst mit Fachkonferenz-Rollenmodell; MVP = nur Ollama.
+3. **Hybrid** — Admin begrenzt; CloudReleaseGrant nur mit signiertem Schulleitungs-Mailflow.
 
-### Vorschlag
+### Entscheidung
 
-**Option 2 (Cloud-LLM im MVP nicht freigegeben).** Sauberer Schnitt: MVP = Ollama (lokal), CloudReleaseGrant erst mit Fachkonferenz-Rollup in v1.1. Keine Übergangs-Komplexität, keine unbegrenzte Admin-Macht.
+**Option 2 — im MVP kein Cloud-LLM (nur lokales Ollama), keine unbegrenzte Admin-Override-Macht.** Sauberer Schnitt ohne Übergangskomplexität; deckt sich mit Local-first (ADR 0004) und der provider-agnostischen Schicht (ADR 0002). `CloudReleaseGrant` wird erst mit dem Fachkonferenz-/Schuladmin-Rollenmodell aktiviert.
 
 ### Status
 
-**Offen.** Geschäftsanforderung mit Schulleitung klären: Ist lokale LLM (Ollama) für MVP ausreichend, oder ist Cloud-Anbindung Blockierungskriterium?
-
-### Zugehöriges Issue
-
-`#DECISION-005-freigabe-transition` (Maintainer: zu öffnen)
+**Entschieden als MVP-Default, 2026-06-22.** Geschäftsanforderung bei Bedarf mit Schulleitung verifizieren (ist lokales Ollama für den Pilot ausreichend?). Rollenausbau siehe Rollen-/Mandanten-Issue (M4).
 
 ---
 
@@ -165,37 +155,36 @@ Spezifikation sieht Rollen `Lehrkraft`, `Admin` vor und später `Fachkonferenz` 
 
 ### Frage
 
-Was tun, wenn zwei Bundesländer (oder Versionen einer Lehrplan-Serie) widersprüchliche Anforderungen für dasselbe Thema haben — z.B. "Funktionen ab Klasse 7" vs. "Funktionen ab Klasse 8"?
+Was tun, wenn zwei Quellen/Versionen widersprüchliche curriculare Anforderungen für dasselbe Thema enthalten?
 
 ### Kontext
 
-- **Invariante (RAG)**: Aussagen mit Lehrplan-Anspruch müssen `OFFICIAL_BINDING` belegt sein.
-- Bundesländer haben unterschiedliche Lehrpläne; verschiedene Editions-Jahre eine Quelle können Widersprüche enthalten.
-- **Frage**: Soll das System auf "beste Vermutung" (z.B. "meistens Klasse 7") hinarbeiten oder Konflikte dokumentieren und für Maintainer-Review blocken?
+- **Invariante (RAG)**: curriculare Aussagen müssen `OFFICIAL_BINDING` belegt sein.
+- Verschiedene Editionsjahre einer Lehrplanserie können Widersprüche enthalten.
 
 ### Optionen
 
-1. **Nicht raten — Konflikt dokumentieren** — Wenn Widerspruch erkannt wird (z.B. zwei `OFFICIAL_BINDING`-Quellen sagen unterschiedliches), wird ein `SourceConflict`-Record erstellt + Maintainer-Issue geöffnet. Aussage wird als `UNSUPPORTED_DRAFT` markiert bis Konflikt gelöst.
-2. **Gewichtung nach Quelle/Aktualität** — Lehrplan Bayern 2021 > Bayern 2015 > Bundeszentralamt Vorlage. Beleg mit höherem Gewicht gewinnt.
-3. **Permissive Mode: beide anzeigen** — System zeigt beide Belege mit Hinweis "Quelle A sagt X, Quelle B sagt Y".
+1. **Nicht raten — Konflikt dokumentieren** — `SourceConflict`-Record + Maintainer-Issue; Aussage als unklar markieren, bis gelöst.
+2. **Gewichtung nach Quelle/Aktualität** — neuere/höherrangige Quelle gewinnt automatisch.
+3. **Permissive Mode** — beide Belege mit Hinweis anzeigen.
 
-### Vorschlag
+### Entscheidung
 
-**Option 1 (Konflikt dokumentieren).** Verhindert stille Fehler und erfordert explizite Entscheidung durch Experte (Fachkonferenz, Lehrplan-Autor). Mit SourceConflict-Tracking leicht zu Audit + Lösung.
+**Option 1 — Konflikt dokumentieren, nicht raten.** Erkannte Widersprüche zwischen `OFFICIAL_BINDING`-Quellen erzeugen einen `SourceConflict`-Record und ein Maintainer-Review; die betroffene Aussage wird nicht stillschweigend aufgelöst. Konsistent mit der Source-Governance aus **ADR 0003**; Umsetzungsdetails in der Ingestion-/Quellenpolicy.
 
 ### Status
 
-**Offen.** Redaktionelle Strategie klären: Wird ein Maintainer-Team Konflikte knüpfen/priorisieren, oder soll es automatische Heuristik geben?
-
-### Zugehöriges Issue
-
-`#DECISION-006-lehrplan-conflicts` (Maintainer: zu öffnen)
+**Entschieden, 2026-06-22.** Redaktioneller Prozess (Maintainer-Team priorisiert Konflikte) wird mit der Quellenverwaltung (M2) konkretisiert.
 
 ---
 
 ## Verweise
 
 - [PLAN.md](../../PLAN.md) — Projekt-Meilensteine und Roadmap.
+- [ADR 0006](../adr/0006-curriculum-modeling.md) — Curriculum-Modellierung (Fragen 1–3).
+- [ADR 0009](../adr/0009-pseudonym-retention.md) — Pseudonym-Retention (Frage 4).
+- [ADR 0002](../adr/0002-provider-agnostic-llm-layer.md), [ADR 0004](../adr/0004-local-first-student-data.md) — Cloud-/Local-first (Frage 5).
+- [ADR 0003](../adr/0003-source-governance-before-ingestion.md) — Source-Governance (Frage 6).
 - [DATA_PROTECTION.md](../security/DATA_PROTECTION.md) — Datenschutz, Pseudonymisierung, Retention.
-- [CITATION_STANDARD.md](../rag/CITATION_STANDARD.md) — Zitationsstandard für Quellenbelege (Entscheidung 1, 6).
+- [CITATION_STANDARD.md](../rag/CITATION_STANDARD.md) — Zitationsstandard (Fragen 1, 6).
 - [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) — System-Ebenenmodell und Rollen.

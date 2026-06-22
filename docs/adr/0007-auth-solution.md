@@ -17,14 +17,14 @@ Anforderungen aus dem Projektrahmen:
 
 ## Optionen (Recherchestand 2026-06)
 
-| Lösung          | Typ            | Drizzle-nativ | RBAC/Mandanten        | Extra-Footprint   | Betrieb    | Reife/Risiko             |
-| --------------- | -------------- | ------------- | --------------------- | ----------------- | ---------- | ------------------------ |
-| **Better Auth** | In-App-Lib     | ja            | Plugins (RBAC, Orgs)  | 0 Container       | niedrig    | jung (v1.x), sehr aktiv  |
-| Auth.js v5      | In-App-Lib     | nein (Custom) | Eigenimplementierung  | 0 Container       | niedrig    | reif, aber deprioritisiert |
-| Lucia           | In-App-Lib     | —             | —                     | —                 | —          | **deprecated — raus**    |
-| Zitadel         | Separater IdP  | n/a (OIDC)    | Org-Hierarchie nativ  | ~400–600 MB (Go)  | mittel     | aktiv, EU/Privacy-First  |
-| Keycloak        | Separater IdP  | n/a (OIDC)    | sehr mächtig (Realms) | ~600–800 MB (JVM) | hoch       | sehr reif (CNCF)         |
-| Ory Kratos/Hydra| Separate Dienste| n/a (OIDC)   | teils, viel Custom    | ~500 MB+, 2+ Svc  | sehr hoch  | aktiv, ops-intensiv      |
+| Lösung           | Typ              | Drizzle-nativ | RBAC/Mandanten        | Extra-Footprint   | Betrieb   | Reife/Risiko               |
+| ---------------- | ---------------- | ------------- | --------------------- | ----------------- | --------- | -------------------------- |
+| **Better Auth**  | In-App-Lib       | ja            | Plugins (RBAC, Orgs)  | 0 Container       | niedrig   | jung (v1.x), sehr aktiv    |
+| Auth.js v5       | In-App-Lib       | nein (Custom) | Eigenimplementierung  | 0 Container       | niedrig   | reif, aber deprioritisiert |
+| Lucia            | In-App-Lib       | —             | —                     | —                 | —         | **deprecated — raus**      |
+| Zitadel          | Separater IdP    | n/a (OIDC)    | Org-Hierarchie nativ  | ~400–600 MB (Go)  | mittel    | aktiv, EU/Privacy-First    |
+| Keycloak         | Separater IdP    | n/a (OIDC)    | sehr mächtig (Realms) | ~600–800 MB (JVM) | hoch      | sehr reif (CNCF)           |
+| Ory Kratos/Hydra | Separate Dienste | n/a (OIDC)    | teils, viel Custom    | ~500 MB+, 2+ Svc  | sehr hoch | aktiv, ops-intensiv        |
 
 ## Entscheidung (vorgeschlagen)
 
