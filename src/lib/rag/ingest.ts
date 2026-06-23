@@ -20,9 +20,11 @@ import type { Embedder } from "@/lib/infra/ollama";
 import { sourceRef } from "@/lib/db/schema/artifacts";
 import { ragChunk } from "@/lib/db/schema/rag";
 
-import { extractContent } from "./extract";
+import type { OcrEngine } from "./ocr/engine";
+import { extractContent, ExtractionFailedError } from "./extract";
 import { chunkText } from "./chunk";
 import { ensureCollection, upsertSourceChunks, deletePoints } from "./qdrant";
+import { enqueueOcrJob } from "./ocr/queue";
 
 /**
  * DuplicateContentError — wird geworfen, wenn der berechnete contentHash bereits
@@ -78,6 +80,8 @@ export interface IngestDeps {
   store: VectorStore;
   blob: BlobStore;
   embedder: Embedder;
+  /** Optionale OCR-Engine für Scan-PDFs (wird an extractContent weitergereicht, #40) */
+  ocr?: OcrEngine;
 }
 
 /**
@@ -176,7 +180,7 @@ export async function ingestSource(
   // MIME aus sourceRef.licenseInfo? Nein — wir leiten ihn aus der URI ab.
   // Fallback auf application/octet-stream → ExtractionFailedError.
   const mime = guessMime(source.uri ?? "");
-  const text = await extractContent(source.uri ?? blobKey, raw, mime);
+  const text = await extractContent(source.uri ?? blobKey, raw, mime, deps.ocr);
 
   // ── (5) Chunking ─────────────────────────────────────────────────────────────
   const chunks = chunkText(text);
@@ -285,6 +289,8 @@ function guessMime(uri: string): string {
   if (lower.endsWith(".pdf")) return "application/pdf";
   if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html";
   if (lower.endsWith(".txt") || lower.endsWith(".md")) return "text/plain";
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  if (lower.endsWith(".png")) return "image/png";
   // Fallback — ExtractionFailedError wird in extractContent geworfen
   return "application/octet-stream";
 }

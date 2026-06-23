@@ -118,6 +118,54 @@ export interface RubricScore {
   achieved: number;
   max: number;
   note: string;
+  confidence?: Confidence;
+}
+
+/** Sicherheitseinstufung einer Aussage. */
+export type ConfidenceLevel = "HIGH" | "MEDIUM" | "LOW";
+
+/** Strukturierte Unsicherheit. */
+export interface Confidence {
+  level: ConfidenceLevel;
+  reasoning: string;
+}
+
+/** Art des Belegs. */
+export type EvidenceType = "STUDENT_TEXT" | "CURRICULUM" | "OTHER";
+
+/** Ein Beleg für eine Feedback-Aussage. */
+export interface FeedbackEvidence {
+  type: EvidenceType;
+  reference: string;
+  content?: string;
+  sourceRefId?: string;
+  label?: string;
+}
+
+/** Status einer Feedback-Aussage. */
+export type FeedbackStatementStatus = "AI_GENERATED" | "HUMAN_APPROVED" | "HUMAN_EDITED";
+
+/** Eine einzelne Feedback-Aussage. */
+export interface FeedbackStatement {
+  id: string;
+  text: string;
+  evidence: FeedbackEvidence[];
+  confidence: Confidence;
+  status: FeedbackStatementStatus;
+}
+
+/** Phasen des Korrekturverlaufs. */
+export type CorrectionHistoryAction = "CREATE_DRAFT" | "EDIT_STATEMENT" | "APPROVE_FEEDBACK" | "REJECT_FEEDBACK";
+
+/** Ein Eintrag im Korrekturverlauf. */
+export interface FeedbackHistoryEntry {
+  timestamp: string;
+  actor: string;
+  action: CorrectionHistoryAction;
+  changeSummary: string;
+  targetId?: string;
+  originalText?: string;
+  newText?: string;
 }
 
 /** Quellenregister-Eintrag. */

@@ -52,6 +52,8 @@ export const generationArtifactTypeEnum = pgEnum("generation_artifact_type", [
   "STUDENT_FEEDBACK",
 ]);
 export const auditSeverityEnum = pgEnum("audit_severity", ["info", "warning", "error", "critical"]);
+export const confidenceLevelEnum = pgEnum("confidence_level", ["HIGH", "MEDIUM", "LOW"]);
+export const correctionStatusEnum = pgEnum("correction_status", ["DRAFT", "HUMAN_CONFIRMED", "OVERRIDDEN"]);
 export const sourceLifecycleEnum = pgEnum("source_lifecycle", [
   "DISCOVERED",
   "UNDER_REVIEW",

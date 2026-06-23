@@ -93,6 +93,7 @@ Das Projekt verarbeitet Daten von Schülerinnen und Schülern im Kontext von Rel
 ## Verweise
 
 - [../security/DATA_PROTECTION.md](../security/DATA_PROTECTION.md) — Datenschutz-Implementierungsrichtlinien (Guard-Logik, Redaction-Algorithmen).
+- [../security/REDACTION_AND_GUARD_SPEC.md](../security/REDACTION_AND_GUARD_SPEC.md) — Technische Spezifikation für Pseudonymisierung, Redaction und fail-closed Guards.
 - [../security/THREAT_MODEL.md](../security/THREAT_MODEL.md) — Bedrohungsanalyse, Annahmen über Angreifer-Modelle.
 - [../architecture/DATA_MODEL.md](../architecture/DATA_MODEL.md) — Datenklassen-Taxonomie (PUBLIC, INTERNAL, PERSONAL_TEACHER, SENSITIVE_STUDENT).
 - [../decisions/OPEN_QUESTIONS.md](../decisions/OPEN_QUESTIONS.md) — Offene Frage: "Wer entscheidet über Cloud-Release-Grants auf Schulträgerebeene?".
