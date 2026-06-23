@@ -64,3 +64,27 @@ export const sourceLifecycleEnum = pgEnum("source_lifecycle", [
   "EVALUATED",
   "REVOKED",
 ]);
+
+// ─── Privacy / CloudReleaseGrant ─────────────────────────────────────────────
+
+/** Cloud-LLM-Provider (REDACTION_AND_GUARD_SPEC.md §4.1) */
+export const cloudProviderEnum = pgEnum("cloud_provider", [
+  "openai",
+  "anthropic",
+  "google",
+]);
+
+/** Zulässige Regionen für Cloud-Calls (EU-Datenschutz-Anforderung) */
+export const cloudRegionEnum = pgEnum("cloud_region", [
+  "eu-central-1",
+  "us-east-1",
+]);
+
+/** AVV-Status des Cloud-Providers */
+export const avvStatusEnum = pgEnum("avv_status", ["signed", "pending"]);
+
+/** Rolle des Grant-Ausstellers */
+export const grantIssuerRoleEnum = pgEnum("grant_issuer_role", [
+  "SCHOOL_ADMIN",
+  "DSB",
+]);
