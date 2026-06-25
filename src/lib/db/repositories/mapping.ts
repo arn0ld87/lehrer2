@@ -58,5 +58,44 @@ export function uiSubjectToDb(ui: UiSubject): { subject: DbSubject; confession: 
       return { subject: "RELIGION", confession: "EVANGELISCH" };
     case "katholische-religion":
       return { subject: "RELIGION", confession: "KATHOLISCH" };
+    default: {
+      // fail-closed: ein unbekanntes UI-Fach darf nie unkontrolliert durchrutschen
+      const _exhaustive: never = ui;
+      throw new Error(`uiSubjectToDb: unbekanntes UI-Fach: ${String(_exhaustive)}`);
+    }
+  }
+}
+
+/**
+ * UI-Fach → confession_context-IN-Liste für den RAG-Retrieval-Filter (#39, M2 Schritt 2).
+ *
+ * Löst die WARNUNG in uiSubjectToDb auf: statt einfacher Gleichheit liefert diese
+ * Funktion die vollständige IN-Liste, die serverseitig für konfessionskorrektes
+ * Cross-Strang-freies Retrieval gebraucht wird.
+ *
+ * Regeln (nicht verhandelbar):
+ *   evangelische-religion → ['EVANGELISCH', 'KONFESSIONSSENSIBEL_UEBERGREIFEND']
+ *   katholische-religion  → ['KATHOLISCH',  'KONFESSIONSSENSIBEL_UEBERGREIFEND']
+ *   ethik                 → ['RELIGIONSKUNDLICH']   — NIE mit Religion-Kontexten mischen
+ *   deutsch               → []  (kein Konfessionsfilter; nur subject=DEUTSCH wird gesetzt)
+ *
+ * @returns Array der erlaubten confession_context-Werte; leer = kein Konfessionsfilter nötig.
+ */
+export function uiConfessionToDbContexts(ui: UiSubject): DbConfession[] {
+  switch (ui) {
+    case "evangelische-religion":
+      return ["EVANGELISCH", "KONFESSIONSSENSIBEL_UEBERGREIFEND"];
+    case "katholische-religion":
+      return ["KATHOLISCH", "KONFESSIONSSENSIBEL_UEBERGREIFEND"];
+    case "ethik":
+      return ["RELIGIONSKUNDLICH"];
+    case "deutsch":
+      return [];
+    default: {
+      // fail-closed: ein unbekanntes UI-Fach darf den Konfessionsfilter NIE
+      // stillschweigend deaktivieren (würde Cross-Strang-Retrieval erlauben)
+      const _exhaustive: never = ui;
+      throw new Error(`uiConfessionToDbContexts: unbekanntes UI-Fach: ${String(_exhaustive)}`);
+    }
   }
 }

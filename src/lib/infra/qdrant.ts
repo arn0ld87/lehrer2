@@ -24,7 +24,7 @@ export interface VectorStore {
     vector: number[],
     filter: SearchFilter,
     limit?: number,
-  ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown> }>>;
+  ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown>; vector?: number[] }>>;
   deleteByFilter(filter: SearchFilter): Promise<void>;
   /**
    * Löscht gezielt die Punkte mit den angegebenen IDs.
@@ -33,6 +33,27 @@ export interface VectorStore {
    * Genutzt für die Kompensation einer einzelnen Ingestion (nur deren pointIds).
    */
   deletePoints(ids: string[]): Promise<void>;
+}
+
+/**
+ * Kosinus-Ähnlichkeit zweier Vektoren. Fail-safe: 0 bei Nullvektor ODER bei
+ * ungleicher Dimension (verhindert Laufzeitfehler / stille Fehlrechnung).
+ * Zentrale Vektor-Mathematik — auch von retrieve.ts (MMR) wiederverwendet.
+ */
+export function cosineSimilarity(a: number[], b: number[]): number {
+  if (a.length === 0 || a.length !== b.length) return 0;
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    const ai = a[i] ?? 0;
+    const bi = b[i] ?? 0;
+    dot += ai * bi;
+    normA += ai * ai;
+    normB += bi * bi;
+  }
+  const denom = Math.sqrt(normA) * Math.sqrt(normB);
+  return denom === 0 ? 0 : dot / denom;
 }
 
 export class QdrantStore implements VectorStore {
@@ -122,11 +143,18 @@ export class QdrantStore implements VectorStore {
     vector: number[],
     filter: SearchFilter,
     limit: number = 10,
-  ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown> }>> {
+  ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown>; vector?: number[] }>> {
     const qdrantFilter = this.buildQdrantFilter(filter);
 
     const url = `${this.url}/collections/${this.collection}/points/search`;
-    const body: Record<string, unknown> = { vector, limit, with_payload: true };
+    // with_vector: true → Qdrant liefert den gespeicherten Vektor je Treffer mit,
+    // damit das MMR-Reranking echte Diversität (Vektor-Ähnlichkeit) berechnen kann.
+    const body: Record<string, unknown> = {
+      vector,
+      limit,
+      with_payload: true,
+      with_vector: true,
+    };
     // Leeren Filter NICHT mitsenden — Qdrant lehnt einen leeren/match_all-Filter
     // als Bad Request ab. Ohne filter-Feld sucht Qdrant über alle Punkte.
     if (qdrantFilter) body.filter = qdrantFilter;
@@ -141,7 +169,12 @@ export class QdrantStore implements VectorStore {
     }
 
     const data = (await response.json()) as {
-      result: Array<{ id: string; score: number; payload: Record<string, unknown> }>;
+      result: Array<{
+        id: string;
+        score: number;
+        payload: Record<string, unknown>;
+        vector?: number[];
+      }>;
     };
     return data.result;
   }
@@ -254,12 +287,16 @@ export class FakeVectorStore implements VectorStore {
   }
 
   async search(
-    _vector: number[],
+    vector: number[],
     filter: SearchFilter,
     limit: number = 10,
-  ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown> }>> {
-    const results: Array<{ id: string; score: number; payload: Record<string, unknown> }> =
-      [];
+  ): Promise<Array<{ id: string; score: number; payload: Record<string, unknown>; vector?: number[] }>> {
+    const matched: Array<{
+      id: string;
+      score: number;
+      payload: Record<string, unknown>;
+      vector: number[];
+    }> = [];
 
     for (const point of this.points.values()) {
       // trustLevelNot: ausschließen
@@ -281,16 +318,19 @@ export class FakeVectorStore implements VectorStore {
         continue;
       }
 
-      results.push({
+      // Score per Kosinus-Ähnlichkeit zur Query (deterministisch); Vektor mitgeben (MMR).
+      matched.push({
         id: point.id,
-        score: 1, // Deterministic score
+        score: cosineSimilarity(vector, point.vector),
         payload: point.payload,
+        vector: point.vector,
       });
-
-      if (results.length >= limit) break;
     }
 
-    return results;
+    // Deterministisch: nach Score absteigend, Tiebreak nach id (stabil).
+    matched.sort((a, b) => b.score - a.score || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+
+    return matched.slice(0, limit);
   }
 
   async deleteByFilter(filter: SearchFilter): Promise<void> {
