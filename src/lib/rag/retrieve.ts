@@ -21,6 +21,7 @@
 
 import type { Embedder } from "@/lib/infra/ollama";
 import type { VectorStore, SearchFilter } from "@/lib/infra/qdrant";
+import { cosineSimilarity } from "@/lib/infra/qdrant";
 import type { Subject as UiSubject } from "@/lib/types";
 import type { SourceRefMeta } from "./citation";
 import { assembleCitation } from "./citation";
@@ -108,23 +109,6 @@ export interface RetrieveOpts {
 // ── MMR-Reranking ─────────────────────────────────────────────────────────────
 
 /**
- * Kosinus-Ähnlichkeit zwischen zwei Vektoren.
- * Beide müssen gleiche Dimension haben. Gibt 0 zurück bei Nullvektor.
- */
-function cosineSimilarity(a: number[], b: number[]): number {
-  let dot = 0;
-  let normA = 0;
-  let normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += (a[i] ?? 0) * (b[i] ?? 0);
-    normA += (a[i] ?? 0) ** 2;
-    normB += (b[i] ?? 0) ** 2;
-  }
-  const denom = Math.sqrt(normA) * Math.sqrt(normB);
-  return denom === 0 ? 0 : dot / denom;
-}
-
-/**
  * MMR (Maximal Marginal Relevance) — deterministisches Score-basiertes Reranking.
  *
  * Wählt iterativ den Kandidaten aus, der den besten Trade-off zwischen
@@ -133,9 +117,9 @@ function cosineSimilarity(a: number[], b: number[]): number {
  *
  * MMR(d) = λ * sim(d, query) - (1 - λ) * max_{d' ∈ S} sim(d, d')
  *
- * @param candidates  Array mit {vector, score, index} — vector kann fehlen (Fake-Store
- *                    liefert keinen Vektor zurück); in diesem Fall wird nur der
- *                    ursprüngliche Score als Relevanz-Maßstab genutzt (λ = 1).
+ * @param candidates  Array mit {vector, score, index} — vector wird vom Store
+ *                    mitgeliefert (with_vector); fehlt er ausnahmsweise, wird nur
+ *                    der ursprüngliche Score als Relevanz-Maßstab genutzt (λ = 1).
  * @param queryVector Embedding-Vektor der Query.
  * @param k           Maximale Anzahl zu wählender Treffer.
  * @param lambda      Diversitäts-Lambda (0..1).
@@ -263,15 +247,14 @@ export async function retrieve(
   }
 
   // ── (5) MMR-Reranking ─────────────────────────────────────────────────────
-  // FakeVectorStore liefert keinen Vektor im Treffer zurück — vector bleibt undefined.
-  // MMR degeneriert dann zu reinem Score-Ranking (λ = 1), was deterministisch ist.
+  // Qdrant- wie FakeVectorStore liefern dank with_vector=true den gespeicherten
+  // Vektor je Treffer mit — MMR kann damit echte Diversität (Vektor-Ähnlichkeit)
+  // berechnen. Fehlt der Vektor ausnahmsweise, degeneriert MMR deterministisch
+  // zu reinem Score-Ranking (siehe mmrRerank).
   const candidates = filteredHits.map((hit, idx) => ({
     score: hit.score,
     idx,
-    // QdrantStore liefert keine Vektoren in Suchergebnissen zurück (Standard-Qdrant-API);
-    // FakeVectorStore ebenso. Vektoren stehen für MMR daher nicht zur Verfügung —
-    // wir nutzen den Score als Relevanz-Proxy (lambda-gewichtetes Fallback).
-    vector: undefined as number[] | undefined,
+    vector: hit.vector,
   }));
 
   const rankedIndices = mmrRerank(candidates, queryVector, k, MMR_LAMBDA);
