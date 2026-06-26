@@ -26,6 +26,24 @@ const TRUSTED_LEVELS = new Set(['OFFICIAL_BINDING', 'OFFICIAL_GUIDANCE']);
 
 const DRAFT_KEY = 'ua-lsa:planung-draft';
 
+// Menschenlesbare Labels für den Export (Rahmendaten-Kopf).
+const SUBJECT_LABELS: Record<string, string> = {
+  deutsch: 'Deutsch',
+  'evangelische-religion': 'Evangelische Religion',
+  'katholische-religion': 'Katholische Religion',
+  ethik: 'Ethik',
+};
+const GRADE_LABELS: Record<string, string> = {
+  '5-6': 'Klasse 5–6',
+  '7-8': 'Klasse 7–8',
+  '9-10': 'Klasse 9–10',
+  '11-12': 'Klasse 11–12',
+};
+const SCHOOLFORM_LABELS: Record<string, string> = {
+  gemeinschaftsschule: 'Gemeinschaftsschule',
+  'gymnasialer-bildungsgang': 'Gymnasialer Bildungsgang',
+};
+
 /** Vordefinierte Rahmenbedingungs-Chips (zusätzlich zu Freitext via "+ Kontext"). */
 const PRESET_CONSTRAINTS = [
   '45 Minuten',
@@ -198,10 +216,15 @@ export function PlanningForm({
     try {
       const res = await exportPlanningAction(
         {
-          title: fields.topic || 'Unterrichtsplanung',
+          topic: fields.topic || 'Unterrichtseinheit',
+          subject: SUBJECT_LABELS[fields.subject] ?? fields.subject,
+          gradeBand: GRADE_LABELS[fields.gradeBand] ?? fields.gradeBand,
+          schoolForm: SCHOOLFORM_LABELS[fields.schoolForm] ?? fields.schoolForm,
+          constraints,
           statements: state.statements.map((s) => ({
             text: s.text,
             citationRefs: s.citationRefs,
+            grounded: s.confidence === 'GROUNDED',
           })),
           citations: state.citations.map((c) => ({
             title: c.title,

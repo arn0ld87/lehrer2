@@ -19,11 +19,12 @@ import {
   worksheetSourceRef,
   sourceRef,
 } from '@/lib/db/schema/artifacts';
-import { exportArtifact } from '@/lib/export';
+import { exportArtifact, exportPlan } from '@/lib/export';
 import type {
   ExportFormat,
   ExportableWorksheet,
   ExportableTask,
+  ExportablePlan,
 } from '@/lib/export/types';
 import type { PlanExportPayload } from './shared';
 
@@ -48,17 +49,19 @@ export async function exportPlanningAction(
   const teacher = await getActiveTeacher();
   if (!teacher) return { ok: false, error: 'Kein Lehrerprofil gefunden' };
 
-  const title = payload.title?.trim() || 'Unterrichtsplanung';
-  const exportable: ExportableWorksheet = {
-    title: `Unterrichtsplanung – ${title}`,
-    instructions:
-      'Quellengebundener Entwurf. Vor dem Einsatz prüfen — die Letztentscheidung liegt bei der Lehrkraft.',
-    tasks: (payload.statements ?? []).map(
-      (s): ExportableTask => ({
-        prompt: s.citationRefs?.length ? `${s.text} [${s.citationRefs.join(', ')}]` : s.text,
-      }),
-    ),
-    sources: (payload.citations ?? []).map((c) => ({
+  const plan: ExportablePlan = {
+    topic: payload.topic?.trim() || 'Unterrichtseinheit',
+    subject: payload.subject ?? '',
+    gradeBand: payload.gradeBand ?? '',
+    schoolForm: payload.schoolForm ?? '',
+    constraints: payload.constraints ?? [],
+    statements: (payload.statements ?? []).map((s) => ({
+      text: s.text,
+      citationRefs: s.citationRefs ?? [],
+      grounded: s.grounded ?? true,
+    })),
+    sources: (payload.citations ?? []).map((c, i) => ({
+      index: i + 1,
       title: c.title,
       locator: c.locator,
       license: c.license,
@@ -66,7 +69,7 @@ export async function exportPlanningAction(
   };
 
   try {
-    const result = await exportArtifact(exportable, format);
+    const result = await exportPlan(plan, format);
     return {
       ok: true,
       filename: result.filename,

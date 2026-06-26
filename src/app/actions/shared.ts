@@ -31,8 +31,14 @@ export interface UIStatement {
 
 /** Serialisierbare Nutzlast für den Planungs-Export (DOCX/PDF) — aus dem Client-State. */
 export interface PlanExportPayload {
-  title: string;
-  statements: { text: string; citationRefs: number[] }[];
+  /** Thema der Einheit. */
+  topic: string;
+  /** Menschenlesbare Labels (z. B. "Deutsch", "Klasse 9–10"). */
+  subject: string;
+  gradeBand: string;
+  schoolForm: string;
+  constraints: string[];
+  statements: { text: string; citationRefs: number[]; grounded: boolean }[];
   citations: { title: string; locator?: string; license?: string }[];
 }
 
