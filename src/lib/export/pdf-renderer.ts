@@ -16,7 +16,10 @@ export function renderPdf(ws: ExportableWorksheet): Promise<ExportResult> {
     doc.fontSize(18).text(ws.title);
     if (ws.instructions) doc.moveDown(0.5).fontSize(11).text(ws.instructions);
     doc.moveDown();
-    ws.tasks.forEach((t, i) => doc.fontSize(11).text(`${i + 1}. [${t.difficulty}] ${t.prompt}`));
+    ws.tasks.forEach((t, i) => {
+      const prefix = t.difficulty ? `[${t.difficulty}] ` : "";
+      doc.fontSize(11).text(`${i + 1}. ${prefix}${t.prompt}`);
+    });
     doc.moveDown();
     doc.fontSize(8).fillColor("#555").text(buildFooter(ws));
     doc.end();

@@ -8,7 +8,8 @@ export interface SourceCitation {
 
 export interface ExportableTask {
   prompt: string;
-  difficulty: "EASY" | "MEDIUM" | "HARD";
+  /** Optional — Arbeitsblatt-Aufgaben tragen ein Niveau; Planungs-Statements nicht. */
+  difficulty?: "EASY" | "MEDIUM" | "HARD";
 }
 
 export interface ExportableWorksheet {

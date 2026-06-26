@@ -8,9 +8,12 @@ export async function renderDocx(ws: ExportableWorksheet): Promise<ExportResult>
     new Paragraph({ text: ws.title, heading: HeadingLevel.HEADING_1 }),
   ];
   if (ws.instructions) children.push(new Paragraph({ text: ws.instructions }));
-  ws.tasks.forEach((t, i) =>
-    children.push(new Paragraph({ children: [new TextRun({ text: `${i + 1}. [${t.difficulty}] ${t.prompt}` })] })),
-  );
+  ws.tasks.forEach((t, i) => {
+    const prefix = t.difficulty ? `[${t.difficulty}] ` : "";
+    children.push(
+      new Paragraph({ children: [new TextRun({ text: `${i + 1}. ${prefix}${t.prompt}` })] }),
+    );
+  });
   buildFooter(ws).split("\n").forEach((line) =>
     children.push(new Paragraph({ children: [new TextRun({ text: line, italics: true, size: 18 })] })),
   );

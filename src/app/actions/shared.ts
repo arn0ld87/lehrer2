@@ -29,6 +29,13 @@ export interface UIStatement {
   citationRefs: number[];
 }
 
+/** Serialisierbare Nutzlast für den Planungs-Export (DOCX/PDF) — aus dem Client-State. */
+export interface PlanExportPayload {
+  title: string;
+  statements: { text: string; citationRefs: number[] }[];
+  citations: { title: string; locator?: string; license?: string }[];
+}
+
 /**
  * Mappt eine RankedCitation auf das serialisierbare UICitation-Format.
  * Pure Funktion — kein IO, keine DB-Abhängigkeiten (einfach testbar).
