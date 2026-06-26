@@ -1,0 +1,175 @@
+# Golden-Questions-Seed für Retrieval-Evaluierung
+#
+# GROUNDING-PRINZIP (NICHT verhandelbar):
+# Golden Questions dienen der Evaluierung der RETRIEVAL-QUALITÄT, nicht als fachliche Fakten-Datenbank.
+# Die `query` ist eine neutrale Retrieval-Anfrage, abgeleitet aus einem im Lehrplan explizit benannten Kompetenzbereich.
+# KEINE erfundenen curricularen Aussagen oder Antwortinhalte — nur die erwartete QUELLE ist bekannt.
+# Konkrete Antwortinhalte werden von Fachexperten validiert (EVALUATION_PLAN.md).
+#
+# Status-Konventionen:
+#   - "active": expected_source_ids nicht leer, Quellen in der Registry und status="candidate" oder "registered"
+#   - "blocked-source-not-approved": Quellen existieren in Registry (z.B. src-027/028), aber noch status="candidate" + license_verified=false
+#   - "blocked-no-registered-source": Kein Datensatz für diese Konfession/Fach vorhanden
+#
+# Letzte Aktualisierung: 2026-06-26
+# Bezug: docs/rag/EVALUATION_PLAN.md, data/source-registry.seed.yaml
+
+golden_questions:
+  # =============================================================================
+  # DEUTSCH (Kompetenzbereich-basiert nach Fachlehrplan Sekundarschule — src-001)
+  # =============================================================================
+
+  - id: "gq-deu-001"
+    domain: "DEUTSCH"
+    confession_context: "NICHT_ANWENDBAR"
+    competence_area: "Sprechen"
+    grade_range: "5-10"
+    query: "Welche Anforderungen stellt der Lehrplan an die mündliche Kommunikation und Sprechfähigkeit in den Klassen 5–10?"
+    expected_source_ids: ["src-001"]
+    expected_section: "zu verifizieren gegen Lehrplan Sprechen-Abschnitt"
+    rationale: "Der Lehrplan src-001 definiert explizite Kompetenzen für Sprechen; Retrieval sollte diesen Abschnitt finden."
+    status: "active"
+
+  - id: "gq-deu-002"
+    domain: "DEUTSCH"
+    confession_context: "NICHT_ANWENDBAR"
+    competence_area: "Schreiben"
+    grade_range: "5-10"
+    query: "Wie werden Schreibkompetenzen (Sachtexte, Erzählungen, Argumentationen) im Lehrplan für die Sekundarstufe I strukturiert?"
+    expected_source_ids: ["src-001"]
+    expected_section: "zu verifizieren gegen Lehrplan Schreiben-Kompetenzbereich"
+    rationale: "Der Lehrplan src-001 definiert differenzierte Schreibkompetenzen nach Textsorte und Klassenstufe; Retrieval testet diese Abschnitte."
+    status: "active"
+
+  - id: "gq-deu-003"
+    domain: "DEUTSCH"
+    confession_context: "NICHT_ANWENDBAR"
+    competence_area: "Leseverstehen"
+    grade_range: "5-10"
+    query: "Welche Anforderungen werden an das Leseverstehen literarischer und Sachtexte in der Sekundarschule gestellt?"
+    expected_source_ids: ["src-001"]
+    expected_section: "zu verifizieren gegen Lehrplan Leseverstehen-Abschnitt"
+    rationale: "Der Lehrplan src-001 differenziert Leseverstehen nach Texttyp und Klassenstufe; Retrieval sollte diesen Bereich identifizieren."
+    status: "active"
+
+  - id: "gq-deu-004"
+    domain: "DEUTSCH"
+    confession_context: "NICHT_ANWENDBAR"
+    competence_area: "Grammatik und Sprachreflexion"
+    grade_range: "5-10"
+    query: "Wie wird die Vermittlung von Grammatik und Sprachstrukturen im Lehrplan der Sekundarschule Deutsch geregelt?"
+    expected_source_ids: ["src-001"]
+    expected_section: "zu verifizieren gegen Lehrplan Grammatik/Sprachreflexion-Abschnitt"
+    rationale: "Der Lehrplan src-001 enthält Kompetenzen zur Sprachreflexion und zum Grammatikerwerb; Retrieval testet diese Verankerung."
+    status: "active"
+
+  - id: "gq-deu-005"
+    domain: "DEUTSCH"
+    confession_context: "NICHT_ANWENDBAR"
+    competence_area: "Medienbildung und Textbegegnung"
+    grade_range: "5-10"
+    query: "Welche Anforderungen zur Auseinandersetzung mit Medien und verschiedenen Darstellungsformen sind im Deutschunterricht verankert?"
+    expected_source_ids: ["src-001"]
+    expected_section: "zu verifizieren gegen Lehrplan Medien/Textbegegnung"
+    rationale: "Der Lehrplan src-001 integriert Medienkompetenzen in die Deutschausbildung; Retrieval sollte diese Verknüpfung nachweisen."
+    status: "active"
+
+  # =============================================================================
+  # RELIGION — Evangelisch (Sekundarschule & Gymnasium)
+  # =============================================================================
+
+  - id: "gq-relev-001"
+    domain: "RELIGION"
+    confession_context: "evangelisch"
+    competence_area: "Schöpfung und Verantwortung"
+    grade_range: "5-10"
+    query: "Welche Kompetenzen zur theologischen Reflexion von Schöpfung und ökologischer Verantwortung sind im evangelischen Religionsunterricht verankert?"
+    expected_source_ids: ["src-024"]
+    expected_section: "zu verifizieren gegen Fachlehrplan Sekundarschule Ev. RU — Themenbereich Schöpfung"
+    rationale: "Der Fachlehrplan src-024 behandelt Schöpfung explizit als evangelisches Thema; Retrieval sollte diesen Abschnitt finden."
+    status: "active"
+
+  - id: "gq-relev-002"
+    domain: "RELIGION"
+    confession_context: "evangelisch"
+    competence_area: "Glaube und Kirche"
+    grade_range: "5-12"
+    query: "Wie werden evangelische Grundbegriffe wie Glaube, Rechtfertigung und Kirche im Gymnasial-Religionsunterricht behandelt?"
+    expected_source_ids: ["src-025"]
+    expected_section: "zu verifizieren gegen Fachlehrplan Gymnasium Ev. RU — dogmatische Grundlagen"
+    rationale: "Der Fachlehrplan src-025 für Gymnasium konkretisiert evangelische Glaubensinhalte; Retrieval testet diese Differenzierung."
+    status: "active"
+
+  - id: "gq-relev-003"
+    domain: "RELIGION"
+    confession_context: "evangelisch"
+    competence_area: "Ethisches Handeln und Verantwortung"
+    grade_range: "5-10"
+    query: "Welche ethischen Kompetenzen und Fähigkeiten zur moralischen Urteilsfindung werden im evangelischen Religionsunterricht entwickelt?"
+    expected_source_ids: ["src-024"]
+    expected_section: "zu verifizieren gegen Fachlehrplan Sekundarschule Ev. RU — Ethik-Kompetenzbereich"
+    rationale: "Der Fachlehrplan src-024 enthält Ethik als eigenständigen Kompetenzbereich; Retrieval sollte diesen isolieren können."
+    status: "active"
+
+  - id: "gq-relev-004"
+    domain: "RELIGION"
+    confession_context: "evangelisch"
+    competence_area: "Biblisches Grundwissen"
+    grade_range: "1-4"
+    query: "Wie wird die Vermittlung biblischer Grundlagen und Geschichten in der Grundschule strukturiert?"
+    expected_source_ids: ["src-003"]
+    expected_section: "zu verifizieren gegen Fachlehrplan Grundschule Ev. RU — biblische Narrative"
+    rationale: "Der Fachlehrplan src-003 legt biblische Inhalte für Klassen 1–4 fest; Retrieval testet Kontinuität zum Sekundarschul-Übergang."
+    status: "active"
+
+  # =============================================================================
+  # RELIGION — Katholisch (Status: Quellen existieren, aber noch nicht approved)
+  # =============================================================================
+
+  - id: "gq-relkath-001"
+    domain: "RELIGION"
+    confession_context: "katholisch"
+    competence_area: "Sakramentenlehre und liturgische Traditionen"
+    grade_range: "5-10"
+    query: "Welche Kompetenzen zur Vermittlung der katholischen Sakramentenlehre und liturgischen Praxis sind im Religionsunterricht der Sekundarschule verankert?"
+    expected_source_ids: []
+    expected_section: "Kandidaten-Quelle src-027 existiert (status=candidate, nicht approved)"
+    rationale: "Kandidaten-Quellen src-027 (Sekundarschule) und src-028 (Gymnasium) für katholischen RU existieren in der Registry, sind aber noch status=candidate und license_verified=false — nicht für produktives RAG freigegeben. Retrieval blockiert bis zur Freigabe."
+    status: "blocked-source-not-approved"
+
+  - id: "gq-relkath-002"
+    domain: "RELIGION"
+    confession_context: "katholisch"
+    competence_area: "Glaube und Kirche"
+    grade_range: "5-12"
+    query: "Wie werden katholische Glaubensinhalte und die Rolle der Kirche im Gymnasial-Religionsunterricht thematisiert?"
+    expected_source_ids: []
+    expected_section: "Kandidaten-Quelle src-028 existiert (status=candidate, nicht approved)"
+    rationale: "src-028 (Gymnasium katholisch) ist ein Kandidat in der Registry, benötigt aber Freigabe. Retrieval wartet auf approved-Status."
+    status: "blocked-source-not-approved"
+
+  - id: "gq-relkath-003"
+    domain: "RELIGION"
+    confession_context: "katholisch"
+    competence_area: "Soziales Engagement und Caritas"
+    grade_range: "5-10"
+    query: "Welche ethischen Kompetenzen zur sozialen Verantwortung und Caritas sind im katholischen Religionsunterricht verankert?"
+    expected_source_ids: []
+    expected_section: "Kandidaten-Quellen src-027/src-028 nicht approved"
+    rationale: "Katholische Lehrplan-Quellen existieren als Kandidaten, sind aber für produktives RAG noch nicht freigegeben. Siehe ADR 0003 Source-Governance."
+    status: "blocked-source-not-approved"
+
+  # =============================================================================
+  # RELIGION — Übergreifend / Konfessionsunabhängig
+  # =============================================================================
+
+  - id: "gq-relecu-001"
+    domain: "RELIGION"
+    confession_context: "uebergreifend"
+    competence_area: "Dialog und Toleranz zwischen Konfessionen"
+    grade_range: "5-12"
+    query: "Wie wird ein respektvoller Dialog und Austausch zwischen verschiedenen christlichen Konfessionen und Weltanschauungen im Religionsunterricht ermöglicht?"
+    expected_source_ids: ["src-025"]
+    expected_section: "zu verifizieren gegen Fachlehrplan Gymnasium Ev. RU — übergreifende Themen und ökumenischer Dialog"
+    rationale: "Der Fachlehrplan src-025 enthält ökumenische und übergreifende Themen; Retrieval sollte diese isolieren können, ohne konfessionalistische Spitzfindigkeiten."
+    status: "active"
