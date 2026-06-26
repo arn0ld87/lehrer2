@@ -23,7 +23,7 @@ import { createGenerationDeps } from '@/lib/generation/factory';
 
 // Nicht-Action-Exporte (Typen + sync mapCitation) liegen in ./shared —
 // 'use server'-Module dürfen ausschließlich async Funktionen exportieren.
-import { mapCitation } from './shared';
+import { mapCitation, parseConstraints } from './shared';
 import type { UICitation, UIStatement } from './shared';
 
 export type { UICitation, UIStatement } from './shared';
@@ -72,6 +72,7 @@ export async function generatePlanningAction(
   const schoolForm = formData.get('schoolForm')?.toString() ?? '';
   const gradeBand = formData.get('gradeBand')?.toString() ?? '';
   const topic = formData.get('topic')?.toString() ?? '';
+  const constraints = parseConstraints(formData.get('constraints')?.toString());
 
   // 4. Religion-Validierung: Konfession Pflicht bei ev./kath. Religion
   if (RELIGION_SUBJECTS.has(subject) && !confession) {
@@ -90,6 +91,7 @@ export async function generatePlanningAction(
     schoolForm,
     gradeBand,
     topic,
+    constraints,
   };
 
   try {
