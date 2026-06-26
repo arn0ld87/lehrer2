@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { Icon, type IconName } from "../ui/icon";
-import { mockUserContextRepository } from "@/lib/mock";
-import type { SchoolForm, Subject } from "@/lib/types";
+import type { SchoolForm, Subject, UserContext } from "@/lib/types";
 
 const SUBJECT_LABEL: Record<Subject, string> = {
   deutsch: "Deutsch",
@@ -19,12 +18,10 @@ const SCHOOLFORM_LABEL: Record<SchoolForm, string> = {
 
 /**
  * Kontext-Switcher — Fach / Schulform / Klasse.
- * Im UI-Schritt nur Anzeige; ein späterer Wechsel ändert nur Mock-State.
- * Religion wird konfessionssensibel getrennt dargestellt.
+ * Reine Anzeige; der Kontext wird serverseitig geladen und als Prop gereicht
+ * (kein Mock-Import mehr). Religion wird konfessionssensibel getrennt dargestellt.
  */
-export function ContextSwitcher() {
-  const ctx = mockUserContextRepository.current();
-
+export function ContextSwitcher({ ctx }: { ctx: UserContext }) {
   return (
     <section className="mt-1 border-t border-line pt-[18px]">
       <div className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-muted-2 px-3 pb-[7px] pt-1">

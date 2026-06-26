@@ -6,8 +6,8 @@ import { SectionBanner } from "@/components/ui/shared";
 import { SourceFilterBar } from "@/components/sources/source-filter-bar";
 import { SourceTable } from "@/components/sources/source-table";
 import { RagQualityCard } from "@/components/sources/rag-quality-card";
-import { mockSourcesRepository } from "@/lib/mock";
 import { getSourceEntriesReader } from "@/lib/db/repositories/factory";
+import { getGovernanceChecks } from "@/lib/db/repositories/governance.pg";
 import { db } from "@/lib/db/client";
 import { ragChunk } from "@/lib/db/schema/rag";
 import { sql } from "drizzle-orm";
@@ -37,8 +37,9 @@ export default async function SourcesPage() {
     sourcesNeedingReview: needingReview,
     indexFreshness: chunks > 0 ? "aktuell" : "leer",
   };
-  // Governance-Hinweise (statische Regeln) weiterhin aus der Mock-Schicht.
-  const checks = mockSourcesRepository.governanceChecks();
+  // Governance-Hinweise aus dem echten Quellen-Lifecycle-Zustand (dynamische Counts
+  // + bindende Regeln); fällt ohne DB auf Mock-Hinweise zurück.
+  const checks = await getGovernanceChecks();
 
   return (
     <>

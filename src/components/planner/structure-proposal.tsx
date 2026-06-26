@@ -46,6 +46,12 @@ export function StructureProposal({
         }
       />
       <div className="grid gap-2">
+        {items.length === 0 && (
+          <p className="text-[11px] text-muted p-3 border border-line border-dashed rounded-[12px]">
+            Noch keine Struktur. Gib oben die Rahmendaten ein und wähle „Struktur vorschlagen“ —
+            der quellengestützte Entwurf erscheint dann hier.
+          </p>
+        )}
         {items.map((p, i) => (
           <div
             key={p.id}

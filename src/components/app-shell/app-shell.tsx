@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import type { UserContext } from "@/lib/types";
 import { AppSidebar } from "./app-sidebar";
 
 interface NavContextValue {
@@ -28,9 +29,11 @@ export function useMobileNav(): NavContextValue {
 export function AppShell({
   children,
   teacherName,
+  userContext,
 }: {
   children: React.ReactNode;
   teacherName?: string | null;
+  userContext: UserContext;
 }) {
   const [navOpen, setNavOpen] = React.useState(false);
 
@@ -58,6 +61,7 @@ export function AppShell({
           open={navOpen}
           onNavigate={() => setNavOpen(false)}
           teacherName={teacherName}
+          userContext={userContext}
         />
         {navOpen ? (
           <button

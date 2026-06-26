@@ -7,17 +7,19 @@ import { RecentWorkList } from "@/components/dashboard/recent-work-list";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { ActionCard, QuickSourcesCard } from "@/components/dashboard/action-card";
 import { TrustPrinciples } from "@/components/dashboard/trust-principles";
-import { mockDashboardRepository } from "@/lib/mock";
+import { getDashboardRepository } from "@/lib/db/repositories/dashboard.pg";
 
 export const metadata: Metadata = { title: "Übersicht" };
 
-export default function DashboardPage() {
-  const repo = mockDashboardRepository;
-  const metrics = repo.metrics();
-  const recent = repo.recentWork();
-  const activities = repo.activities();
-  const quickSources = repo.sourceQuickAccess();
-  const trust = repo.trustPrinciples();
+export default async function DashboardPage() {
+  const repo = getDashboardRepository();
+  const [metrics, recent, activities, quickSources, trust] = await Promise.all([
+    repo.metrics(),
+    repo.recentWork(),
+    repo.activities(),
+    repo.sourceQuickAccess(),
+    repo.trustPrinciples(),
+  ]);
 
   return (
     <>

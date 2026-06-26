@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "../ui/icon";
-import type { NavRoute } from "@/lib/types";
+import type { NavRoute, UserContext } from "@/lib/types";
 import { ContextSwitcher } from "./context-switcher";
 
 export const NAV_ROUTES: NavRoute[] = [
@@ -21,13 +21,15 @@ export interface AppSidebarProps {
   onNavigate: () => void;
   /** Anzeigename des aktiven Lehrer-Profils (single-tenant, kein Login). */
   teacherName?: string | null;
+  /** Aktueller Fach-/Schulform-/Klassen-Kontext (serverseitig geladen). */
+  userContext: UserContext;
 }
 
 /**
  * Desktop-Sidebar 260px — sticky, mit Hauptnavigation, Kontext-Panel und
  * Nutzerkarte. Auf Mobil ein Drawer (translateX).
  */
-export function AppSidebar({ open, onNavigate, teacherName }: AppSidebarProps) {
+export function AppSidebar({ open, onNavigate, teacherName, userContext }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -79,7 +81,7 @@ export function AppSidebar({ open, onNavigate, teacherName }: AppSidebarProps) {
         })}
       </nav>
 
-      <ContextSwitcher />
+      <ContextSwitcher ctx={userContext} />
 
       <SidebarUser teacherName={teacherName} />
     </aside>

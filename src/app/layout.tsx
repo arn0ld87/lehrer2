@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { getActiveTeacher } from "@/lib/auth";
+import { getUserContextRepository } from "@/lib/db/repositories/user-context.pg";
 
 export const dynamic = "force-dynamic";
 
@@ -32,14 +33,19 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const teacher = await getActiveTeacher();
+  const [teacher, userContext] = await Promise.all([
+    getActiveTeacher(),
+    getUserContextRepository().current(),
+  ]);
   return (
     <html
       lang="de"
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AppShell teacherName={teacher?.displayName ?? null}>{children}</AppShell>
+        <AppShell teacherName={teacher?.displayName ?? null} userContext={userContext}>
+          {children}
+        </AppShell>
       </body>
     </html>
   );

@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import { AppHeader } from "@/components/app-shell";
 import { SectionBanner } from "@/components/ui/shared";
 import { PlanningForm } from "@/components/planner/planning-form";
-import { mockPlanningRepository } from "@/lib/mock";
+import { getPlanningRepository } from "@/lib/db/repositories/planning.pg";
 
 export const metadata: Metadata = { title: "Unterrichtsplanung" };
 
-export default function PlanningPage() {
-  const repo = mockPlanningRepository;
-  const steps = repo.steps();
-  const phases = repo.structureProposal();
-  const curriculum = repo.curriculumFit();
+export default async function PlanningPage() {
+  const repo = getPlanningRepository();
+  const [steps, phases, curriculum] = await Promise.all([
+    repo.steps(),
+    repo.structureProposal(),
+    repo.curriculumFit(),
+  ]);
 
   return (
     <>
