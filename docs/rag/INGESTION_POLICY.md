@@ -175,6 +175,55 @@ Wenn eine aktualisierte Version eines existierenden Dokuments erscheint (z. B. n
 
 ---
 
+## Re-Ingestion-Flow
+
+Re-Ingestion bezeichnet das erneute Einlesen einer Quelle nach Widerruf, Korrektur oder Aktualisierung. Sie ist kein stilles Überschreiben — die Versions- und Provenienz-Kette muss vollständig erhalten bleiben.
+
+### Voraussetzungen
+
+- Die alte Version muss **vor** Re-Ingestion auf `REVOKED` gesetzt sein (`revokeSourceRefWithAudit`; Enum-Wert `REVOKED` in `sourceLifecycleEnum`, `src/lib/db/enums.ts`).
+- Das korrigierte Dokument muss erneut das vollständige Freigabe-Gate (Abschnitt „Freigabe-Gate vor Ingestierung") durchlaufen — keine Abkürzungen.
+- Der neue `content_hash` (SHA-256) muss sich vom alten unterscheiden. Ein identischer Hash bedeutet keine inhaltliche Änderung; in diesem Fall wird keine neue Version angelegt (Idempotenz — siehe [./DEDUPLICATION.md](./DEDUPLICATION.md)).
+
+### Ablauf
+
+```
+[1] Alte Quelle auf REVOKED setzen (revokeSourceRefWithAudit)
+    → Retrieval-Ausschluss sofort wirksam
+    ↓
+[2] Korrigiertes Dokument vorbereiten
+    → Freigabe-Gate vollständig durchlaufen (Lizenz, Inhalt, Konfession)
+    ↓
+[3] Neuen source_ref-Record anlegen
+    → Neuer content_hash, erhöhte version (z. B. "2024-01" → "2024-02")
+    → predecessor_id verweist auf den widerrufenen Vorgänger (Versionskette)
+    ↓
+[4] Neue Chunks + Embeddings erzeugen und ingestieren
+    → Alter Qdrant-Vektor-Bestand bleibt bis zur 30-Tage-Karenz des REVOKED-Records
+    → Neuer Bestand sofort produktiv im Retrieval
+    ↓
+[5] Audit-Eintrag: Re-Ingestion-Event mit old_source_id + new_source_id
+```
+
+### Idempotenz und Deduplication
+
+- **Gleicher `content_hash`** → kein neuer Record, kein neues Embedding (Dedup-Gate, [./DEDUPLICATION.md](./DEDUPLICATION.md))
+- **Unterschiedlicher `content_hash`** bei gleicher `source_url` → neue Version (dieser Flow)
+- **Nicht erlaubt:** bestehende Chunks ohne vorherige `REVOKED`-Markierung der alten Version überschreiben
+
+### Versionsverkettung
+
+Jeder `source_ref`-Record trägt nach der ersten Versionierung einen Rückverweis auf die supersedierte Vorgängerversion (`predecessor_id`). Dies ermöglicht:
+
+- **Lückenlose Provenienz:** Welche Lehrplan-Version stand wann im produktiven Retrieval?
+- **DSB-Review:** Welche generierten Inhalte stützten sich auf die widerrufene Version?
+
+### Fristen nach Re-Ingestion
+
+Die widerrufene Vorgängerversion unterliegt der 30-Tage-Karenz für physische Löschung gemäß [../security/RETENTION_AND_DELETION.md — Quellenwiderruf](../security/RETENTION_AND_DELETION.md). Retrieval-Ausschluss der alten Version: unverzüglich (Schritt 1). Physische Qdrant-Bereinigung der alten Chunks: nach Ablauf der Karenz.
+
+---
+
 ## Fehlerbehandlung und Maintainer-Eskalation
 
 | Fehler                              | Behandlung                                                               |
@@ -192,10 +241,11 @@ Wenn eine aktualisierte Version eines existierenden Dokuments erscheint (z. B. n
 
 ## Bezug: Widerruf und Löschung
 
-Für die Behandlung von Dokumenten-Widerruf (z. B. bei neuer Rechtslage, fehlerhaften Inhalten oder Lizenz-Problemen) siehe [../security/RETENTION_AND_DELETION.md](../security/RETENTION_AND_DELETION.md). Wichtig:
+Vollständige Spezifikation von Widerruf, Fristen und kaskadierender Löschung über alle vier Stores (PostgreSQL, Qdrant, MinIO, Audit-Log) in [../security/RETENTION_AND_DELETION.md — Quellenwiderruf](../security/RETENTION_AND_DELETION.md). Kurzfassung:
 
-- **Revoked**: Status-Änderung zu `REVOKED`, bleibt in DB (historisch abrufbar)
-- **Deleted**: Nur bei Rechtspflicht (DSGVO, Vorwurf von IP-Verletzung) — anonymisierte Archive mit `anonymized_at`-Zeitstempel
+- **REVOKED**: `lifecycleStatus = 'REVOKED'` via `revokeSourceRefWithAudit` (`src/lib/db/repositories/deletion.ts`); Retrieval-Ausschluss sofort; Roh-Provenienz und Audit-Eintrag bleiben erhalten.
+- **DELETED**: Physische Löschung nach 30-Tage-Karenz (PostgreSQL-Record + Qdrant-Chunks + MinIO-Roh-Dokument), sofern kein Rechts-/Audit-Vorbehalt. Audit-Eintrag bleibt dauerhaft.
+- **Re-Ingestion**: Korrigierte Version → neuer `source_ref`-Record mit neuem `content_hash` und erhöhter `version`; Vorgänger-Record auf `REVOKED` (kein stilles Überschreiben). Vollständiger Ablauf: Abschnitt „Re-Ingestion-Flow" oben.
 
 ---
 

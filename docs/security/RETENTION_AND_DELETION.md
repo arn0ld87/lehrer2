@@ -35,17 +35,17 @@ Daten werden nur für den dokumentierten Zweck verarbeitet:
 
 ## Aufbewahrungsfristen (je Datenklasse)
 
-| Datenklasse                                 | Inhalt                                      | Aufbewahrungsfrist                                | Begründung                                                                                                            | Status                                                                                     |
-| ------------------------------------------- | ------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `PERSONAL_TEACHER`                          | Lehrkraft-Profil, Login-Daten, Credentials  | Während aktiver Nutzung + 1 Jahr nach Kündigungen | Arbeitsrecht, Audit                                                                                                   | ✓ Zu definieren: Aufbewahrung nach Schulaustritt                                           |
-| `INTERNAL`                                  | Admin-Logs, Audit Trails, Metadaten         | 7 Jahre                                           | Handelsrecht (HGB § 257), steuerliche Aufbewahrung                                                                    | ✓ Standard-Gesetzesfristen                                                                 |
-| `SENSITIVE_STUDENT` — Arbeits-/Test-Inhalte | Schülertexte, Arbeiten, Feedback            | Während Schuljahr + 2 Schuljahre danach           | Noten-Archivierung (Schulgesetz Sachsen-Anhalt: mind. 2 Jahre); Lernfortschritt-Tracking über Schuljahre              | ⚠️ **Zu definieren:** Verständigung mit Schulleitung (abhängig von Lehrplan-Anforderungen) |
-| `SENSITIVE_STUDENT` — Religion-Daten        | Religiöse Zugehörigkeit, Konfessionskennung | Schuljahr der Verarbeitung + 1 Jahr               | Art. 9 DSGVO (besondere Kategorie); Religion darf nicht über Schulaustritt hinaus erfasst sein                        | ⚠️ **Zu definieren:** Explizite Zustimmung Schulleitung + Eltern                           |
-| `PUBLIC`                                    | Lehrplan-Texte (offiziell)                  | Zeitlich unbegrenzt (solange Lehrplan gültig)     | Unterrichtsmaterial; Änderung dokumentieren, alte Versionen archivieren                                               | ✓ Standard                                                                                 |
-| `INTERNAL` — RAG-Quellen (User-Uploads)     | Von Lehrkraft hochgeladene Materialien      | 3 Jahre oder bis Widerruf                         | Lernmaterial-Archiv; Widerruf erlaubt Löschung sofort                                                                 | ⚠️ **Zu definieren:** Widerrufsfristen und -mechanik                                       |
-| `INTERNAL` — Qdrant Vectors                 | Vektorisierte Texte (Embeddings)            | Synchron mit Quelltexten                          | Qdrant ist Derivat der Original-Daten; Vektoren ohne Text sind identifikationsrisiko-arm aber sollten gelöscht werden | ✓ Kaskadierend (siehe unten)                                                               |
-| `INTERNAL` — Object Store (MinIO)           | Uploaded Dateien, OCR-Output                | Synchron mit `SENSITIVE_STUDENT`                  | Ablage von Arbeitsdateien                                                                                             | ✓ Kaskadierend                                                                             |
-| `INTERNAL` — Audit & System Logs            | Login-Events, Fehler, Warnung               | 1–7 Jahre (abhängig von Log-Typ)                  | Sicherheit + Compliance; Logs mit PII nach 1 Jahr, Metadaten-Logs nach 7 Jahren                                       | ⚠️ **Zu definieren:** Log-Klassifikation + Tier-System                                     |
+| Datenklasse                                 | Inhalt                                      | Aufbewahrungsfrist                                                                                                                                                    | Begründung                                                                                                            | Status                                                                                                                    |
+| ------------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `PERSONAL_TEACHER`                          | Lehrkraft-Profil, Login-Daten, Credentials  | Während aktiver Nutzung + 1 Jahr nach Kündigungen                                                                                                                     | Arbeitsrecht, Audit                                                                                                   | ✓ Zu definieren: Aufbewahrung nach Schulaustritt                                                                          |
+| `INTERNAL`                                  | Admin-Logs, Audit Trails, Metadaten         | 7 Jahre                                                                                                                                                               | Handelsrecht (HGB § 257), steuerliche Aufbewahrung                                                                    | ✓ Standard-Gesetzesfristen                                                                                                |
+| `SENSITIVE_STUDENT` — Arbeits-/Test-Inhalte | Schülertexte, Arbeiten, Feedback            | Während Schuljahr + 2 Schuljahre danach                                                                                                                               | Noten-Archivierung (Schulgesetz Sachsen-Anhalt: mind. 2 Jahre); Lernfortschritt-Tracking über Schuljahre              | ⚠️ **Zu definieren:** Verständigung mit Schulleitung (abhängig von Lehrplan-Anforderungen)                                |
+| `SENSITIVE_STUDENT` — Religion-Daten        | Religiöse Zugehörigkeit, Konfessionskennung | Schuljahr der Verarbeitung + 1 Jahr                                                                                                                                   | Art. 9 DSGVO (besondere Kategorie); Religion darf nicht über Schulaustritt hinaus erfasst sein                        | ⚠️ **Zu definieren:** Explizite Zustimmung Schulleitung + Eltern                                                          |
+| `PUBLIC`                                    | Lehrplan-Texte (offiziell)                  | Zeitlich unbegrenzt (solange Lehrplan gültig)                                                                                                                         | Unterrichtsmaterial; Änderung dokumentieren, alte Versionen archivieren                                               | ✓ Standard                                                                                                                |
+| `INTERNAL` — RAG-Quellen (User-Uploads)     | Von Lehrkraft hochgeladene Materialien      | 3 Jahre oder bis Widerruf; Retrieval-Ausschluss **sofort** bei `REVOKED`; physische Löschung (Roh-Dok. + Chunks) nach **30-Tage-Karenz**; Audit-Eintrag **dauerhaft** | Lernmaterial-Archiv; Widerruf sofort wirksam (kein Retrieval); verzögerte physische Löschung sichert Audit-Trail      | ✓ Spezifiziert: Mechanik s. Abschnitt „Quellenwiderruf"; `revokeSourceRefWithAudit`, Enum `REVOKED` (sourceLifecycleEnum) |
+| `INTERNAL` — Qdrant Vectors                 | Vektorisierte Texte (Embeddings)            | Synchron mit Quelltexten                                                                                                                                              | Qdrant ist Derivat der Original-Daten; Vektoren ohne Text sind identifikationsrisiko-arm aber sollten gelöscht werden | ✓ Kaskadierend (siehe unten)                                                                                              |
+| `INTERNAL` — Object Store (MinIO)           | Uploaded Dateien, OCR-Output                | Synchron mit `SENSITIVE_STUDENT`                                                                                                                                      | Ablage von Arbeitsdateien                                                                                             | ✓ Kaskadierend                                                                                                            |
+| `INTERNAL` — Audit & System Logs            | Login-Events, Fehler, Warnung               | 1–7 Jahre (abhängig von Log-Typ)                                                                                                                                      | Sicherheit + Compliance; Logs mit PII nach 1 Jahr, Metadaten-Logs nach 7 Jahren                                       | ⚠️ **Zu definieren:** Log-Klassifikation + Tier-System                                                                    |
 
 **Status-Legende:**
 
@@ -169,6 +169,19 @@ WHERE student_pseudo_id = ?
 
 **Offene Frage:** Siehe [../decisions/OPEN_QUESTIONS.md](../decisions/OPEN_QUESTIONS.md) — Wann genau wird Pseudonym-Mapping gelöscht? Aufbewahrungsfrist? Abhängig von Audit-Log-Dauer?
 
+#### (E) Kaskadierende Löschung bei Quellen-Widerruf
+
+Quellen-Widerruf (Auslöser: Lizenzentzug, fehlerhafte/überholte Inhalte, Datenschutzbeanstandung, Schulleitungs-Entscheidung) löst eine `source_id`-basierte Kaskade über vier Stores aus:
+
+| Store          | Widerruf (sofort)                                                  | Physische Löschung (nach 30-Tage-Karenz)                              | Audit                                      |
+| -------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------- | ------------------------------------------ |
+| **PostgreSQL** | `lifecycleStatus = 'REVOKED'` (via `revokeSourceRefWithAudit`)     | Hard-Delete `source_ref` + `rag_chunk` nach Ablauf der Karenz         | `revoke_source_ref`-Event bleibt dauerhaft |
+| **Qdrant**     | Chunks per `source_id`-Payload-Filter aus Retrieval ausgeschlossen | `collection.delete(filter={source_id})` nach Ablauf der Karenz        | Lösch-Event in Audit-Log eingetragen       |
+| **MinIO**      | Roh-Dokument gesperrt (kein produktiver Zugriff)                   | `remove_object("sources", prefix=f"sources/{source_id}")` nach Ablauf | Lösch-Event in Audit-Log eingetragen       |
+| **Audit-Log**  | Widerrufs-Event eingetragen (`eventType: 'revoke_source_ref'`)     | Bleibt dauerhaft (Compliance, min. 7 Jahre)                           | —                                          |
+
+**Wichtig:** `revokeSourceRefWithAudit` (`src/lib/db/repositories/deletion.ts`) setzt `lifecycleStatus = 'REVOKED'` transaktional mit Audit-Eintrag und bildet Schritt 1 dieser Kaskade. Qdrant-Löschung und MinIO-Bereinigung werden in einem nachgelagerten Bereinigungsjob nach Ablauf der 30-Tage-Karenz ausgeführt (M2/M3).
+
 ---
 
 ## Recht auf Vergessenwerden (Art. 17 DSGVO)
@@ -191,16 +204,56 @@ Anfrage muss innerhalb von **30 Tagen** bearbeitet werden (DSGVO Art. 12(3)).
 
 ---
 
-## Quellenwiderruf in RAG (../rag/INGESTION_POLICY.md)
+## Quellenwiderruf — Lebenszyklus und Fristen
 
-Wenn Lehrkraft eine RAG-Quelle widerruft:
+### Auslöser
 
-1. Quelle wird im Index mit `is_revoked = true` markiert
-2. Bei Retrieval: revoked Sources **nicht** zurückgeben
-3. Alte Q&A-Pairs mit dieser Quelle werden markiert (for DSB review)
-4. Qdrant Vektoren dieser Quelle werden **nicht** gelöscht (weil nicht für jeden Vektor die Quelle einzeln bekannt ist), sondern gekennzeichnet + manuell überprüft
+Ein Quellen-Widerruf wird durch folgende Ereignisse ausgelöst:
 
-**Offen:** Absprache mit Schulleitung, wie lange revoked Sources noch indexiert bleiben (Audit-Trail vs. Datensparsamkeit).
+- **Lizenzentzug oder Urheberrechtsbeanstandung** — Rechteinhaber entzieht Nutzungserlaubnis nachträglich
+- **Fachlich fehlerhafte oder überholte Quelle** — inhaltliche Fehler nach Ingestion entdeckt
+- **Datenschutzbeanstandung** — unzulässige PII im Quelldokument nachträglich erkannt
+- **Schulleitungs-Entscheidung** — Beschluss zur Nicht-Verwendung bestimmter Materialien
+
+### Quellenzustände und Übergänge
+
+```mermaid
+stateDiagram-v2
+    [*] --> ACTIVE : Ingestion abgeschlossen (APPROVED → INGESTED)
+    ACTIVE --> REVOKED : Widerruf ausgelöst (revokeSourceRefWithAudit)
+    REVOKED --> DELETED : 30-Tage-Karenz abgelaufen (physische Löschung)
+    DELETED --> [*]
+```
+
+> Re-Ingestion einer korrigierten Version erzeugt einen **neuen** `source_ref`-Record (neuer `content_hash`); der alte Record wird auf `REVOKED` gesetzt. Es ist kein Übergang innerhalb desselben Records, sondern eine Versionsverkettung — siehe [../rag/INGESTION_POLICY.md — Re-Ingestion-Flow](../rag/INGESTION_POLICY.md).
+
+**Zustandsbeschreibung:**
+
+| Zustand   | Retrieval   | PostgreSQL-Record      | Qdrant-Chunks                      | Roh-Dokument (MinIO) | Audit-Eintrag   |
+| --------- | ----------- | ---------------------- | ---------------------------------- | -------------------- | --------------- |
+| `ACTIVE`  | ✓ verfügbar | `INGESTED`/`EVALUATED` | vorhanden, filterbar               | vorhanden            | laufend         |
+| `REVOKED` | ✗ gesperrt  | `REVOKED`              | gefiltert gesperrt (noch physisch) | gesperrt             | Widerrufs-Event |
+| `DELETED` | ✗ gelöscht  | gelöscht               | gelöscht                           | gelöscht             | dauerhaft       |
+
+### Widerrufsfristen
+
+| Maßnahme                                       | Frist                             | Begründung                                               |
+| ---------------------------------------------- | --------------------------------- | -------------------------------------------------------- |
+| Retrieval-Ausschluss                           | **unverzüglich** (Status REVOKED) | Kein produktiver RAG-Einsatz widerrufener Quellen        |
+| DSB-/Schulleitungs-Benachrichtigung            | **innerhalb von 5 Werktagen**     | Nachvollziehbarkeit, Policy-Compliance                   |
+| Physische Löschung Roh-Dokument + Chunks       | **30 Tage** nach Widerruf         | Karenz für Audit-Prüfung und mögliche Rücknahme          |
+| Physische Löschung bei Rechts-/Audit-Vorbehalt | Bis Vorbehalt aufgehoben          | Rechtssicherheit (z. B. laufende IP-/Datenschutzprüfung) |
+| Audit-Eintrag (`revoke_source_ref`)            | **dauerhaft** (min. 7 Jahre)      | Compliance, lückenlose Provenienz                        |
+
+### Technische Grundlage (bestehend — nicht ändern)
+
+- **`revokeSourceRefWithAudit(db, id, actorId)`** — `src/lib/db/repositories/deletion.ts`: Setzt `lifecycleStatus = 'REVOKED'` transaktional mit Audit-Log-Eintrag (`eventType: 'revoke_source_ref'`, `severity: 'warning'`).
+- **`sourceLifecycleEnum`** — `src/lib/db/enums.ts`: Enthält `'REVOKED'` als benannten Zustandswert innerhalb der vollständigen Lebenszyklus-Sequenz `DISCOVERED → … → REVOKED`.
+- Qdrant-Löschung und MinIO-Bereinigung erfolgen in einem nachgelagerten Bereinigungsjob nach Ablauf der 30-Tage-Karenz (noch zu implementieren, M2/M3).
+
+Für die vollständige Kaskade über alle vier Stores siehe Abschnitt „Kaskadierende Löschung bei Quellen-Widerruf" (Abschnitt (E) oben).
+
+**Querverweis:** [../rag/INGESTION_POLICY.md — Re-Ingestion-Flow](../rag/INGESTION_POLICY.md) — wie eine korrigierte Quelle nach Widerruf erneut eingelesen wird.
 
 ---
 
