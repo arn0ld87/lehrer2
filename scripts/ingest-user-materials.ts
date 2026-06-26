@@ -23,7 +23,9 @@
  *
  * Voraussetzungen:
  *   - docker compose up -d  (Postgres + Qdrant + MinIO müssen laufen)
- *   - ollama läuft mit aktivem Embedding-Modell (qwen3-embedding:4b)
+ *   - aktiver Embedding-Provider gemäß .env (EMBEDDING_PROVIDER):
+ *     lokal Ollama (qwen3-embedding:4b) oder OpenAI-kompatibel (text-embedding-3-small).
+ *     Ingestion und Retrieval MÜSSEN dieselbe Provider-/Dimensions-Config nutzen.
  *   - Tesseract-Binary + deu traineddata installiert
  *     macOS:          brew install tesseract tesseract-lang
  *     Debian/Ubuntu:  apt install tesseract-ocr tesseract-ocr-deu
@@ -38,6 +40,8 @@
  *   --dry-run        Nur klassifizieren und zählen, NICHT in DB/Blob schreiben
  */
 
+// .env laden, BEVOR src/lib/db/client.ts process.env.DATABASE_URL beim Import liest
+import "dotenv/config";
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join, relative, extname, basename } from "path";
 import { pathToFileURL } from "url";

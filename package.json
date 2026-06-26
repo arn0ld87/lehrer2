@@ -20,7 +20,9 @@
     "db:migrate": "drizzle-kit migrate",
     "db:check": "drizzle-kit check",
     "db:seed": "tsx scripts/seed-sources.ts",
-    "db:seed:user": "tsx scripts/seed-user.ts"
+    "db:seed:user": "tsx scripts/seed-user.ts",
+    "db:ingest": "tsx scripts/ingest-curriculum.ts",
+    "db:ingest:user": "tsx scripts/ingest-user-materials.ts"
   },
   "engines": {
     "node": ">=20",

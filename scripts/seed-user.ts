@@ -13,6 +13,8 @@
  *  3. teacherProfile sicherstellen (userId + schoolId + role + displayName).
  */
 
+// .env laden, BEVOR src/lib/db/client.ts process.env.DATABASE_URL beim Import liest
+import "dotenv/config";
 import { db } from "../src/lib/db/client";
 import { auth } from "../src/lib/auth/auth";
 import { school, teacherProfile } from "../src/lib/db/schema/tenant";

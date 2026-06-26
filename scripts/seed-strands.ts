@@ -32,6 +32,8 @@
  *   für Sachsen-Anhalt vorliegen und verifiziert sind (Quellenpflicht, AGENTS.md).
  */
 
+// .env laden, BEVOR src/lib/db/client.ts process.env.DATABASE_URL beim Import liest
+import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { db } from "../src/lib/db/client";
 import { curriculumStrand } from "../src/lib/db/schema/curriculum";
