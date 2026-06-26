@@ -19,7 +19,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:check": "drizzle-kit check",
-    "db:seed": "tsx scripts/seed-sources.ts"
+    "db:seed": "tsx scripts/seed-sources.ts",
+    "db:seed:user": "tsx scripts/seed-user.ts"
   },
   "engines": {
     "node": ">=20",
@@ -33,6 +34,7 @@
     "drizzle-orm": "^0.45.0",
     "ioredis": "^5.11.1",
     "lucide-react": "^1.21.0",
+    "mammoth": "^1.12.0",
     "next": "16.2.9",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.16.0",

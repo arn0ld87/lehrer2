@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import { pathToFileURL } from "url";
 import YAML from "js-yaml";
 import { db } from "../src/lib/db/client";
 import { sourceRef } from "../src/lib/db/schema/artifacts";
@@ -56,26 +57,45 @@ function mapSourceType(
 }
 
 /**
- * Mappt YAML subject → sourceRef.subjectAlignment
- * BLOCKER: Die YAML nutzt RELIGION_EV/RELIGION_KA, aber das Enum kennt nur RELIGION.
- * Laut Spec: NUR wenn subject in {DEUTSCH,RELIGION,ETHIK} → dieser Wert.
- * → RELIGION_EV/RELIGION_KA werden zu null (nicht in der Ziel-Liste).
- * Konfessionstrennung muss separat implementiert werden (siehe Maintainer-Notes in der YAML).
+ * Mappt YAML subject → { subjectAlignment, confessionContext }
+ *
+ * RELIGION_EV / RELIGION_KA werden nicht mehr auf null gemappt, sondern auf
+ * subjectAlignment="RELIGION" + jeweiliger confessionContext (EVANGELISCH / KATHOLISCH).
+ * DEUTSCH  → NICHT_ANWENDBAR, ETHIK → RELIGIONSKUNDLICH, RELIGION (plain)
+ * → KONFESSIONSSENSIBEL_UEBERGREIFEND.
  */
-function mapSubject(yamlSubject: string): "DEUTSCH" | "RELIGION" | "ETHIK" | null {
+function mapSubject(yamlSubject: string): {
+  subjectAlignment: "DEUTSCH" | "RELIGION" | "ETHIK" | null;
+  confessionContext:
+    | "NICHT_ANWENDBAR"
+    | "EVANGELISCH"
+    | "KATHOLISCH"
+    | "KONFESSIONSSENSIBEL_UEBERGREIFEND"
+    | "RELIGIONSKUNDLICH"
+    | null;
+} {
   const normalized = yamlSubject.toUpperCase();
 
-  if (normalized === "DEUTSCH") return "DEUTSCH";
-  if (normalized === "ETHIK") return "ETHIK";
-  // BLOCKER: RELIGION_EV / RELIGION_KA sind nicht im Enum; mappieren zu null
-  if (["RELIGION_EV", "RELIGION_KA", "RELIGION"].includes(normalized)) {
-    // Falls exakt "RELIGION": akzeptieren
-    if (normalized === "RELIGION") return "RELIGION";
-    // Falls RELIGION_EV / RELIGION_KA: Spec sagt → null
-    return null;
+  if (normalized === "DEUTSCH") {
+    return { subjectAlignment: "DEUTSCH", confessionContext: "NICHT_ANWENDBAR" };
+  }
+  if (normalized === "ETHIK") {
+    return { subjectAlignment: "ETHIK", confessionContext: "RELIGIONSKUNDLICH" };
+  }
+  if (normalized === "RELIGION_EV") {
+    return { subjectAlignment: "RELIGION", confessionContext: "EVANGELISCH" };
+  }
+  if (normalized === "RELIGION_KA") {
+    return { subjectAlignment: "RELIGION", confessionContext: "KATHOLISCH" };
+  }
+  if (normalized === "RELIGION") {
+    return {
+      subjectAlignment: "RELIGION",
+      confessionContext: "KONFESSIONSSENSIBEL_UEBERGREIFEND",
+    };
   }
 
-  return null;
+  return { subjectAlignment: null, confessionContext: null };
 }
 
 export interface SeedResult {
@@ -115,7 +135,9 @@ export async function seedSources(seedDb = db): Promise<SeedResult> {
 
     // Mapping
     const mappedSourceType = mapSourceType(entry.trust_level, entry.source_type);
-    const mappedSubject = mapSubject(entry.subject);
+    const { subjectAlignment: mappedSubject, confessionContext: mappedConfession } = mapSubject(
+      entry.subject,
+    );
 
     // Insert
     await seedDb.insert(sourceRef).values({
@@ -133,7 +155,7 @@ export async function seedSources(seedDb = db): Promise<SeedResult> {
       validFrom: null,
       validTo: null,
       subjectAlignment: mappedSubject,
-      confessionContext: null, // Seed trägt keine Konfession
+      confessionContext: mappedConfession,
       lifecycleStatus: "DISCOVERED",
       approvalMetadata: {
         sourceSeedId: entry.id,
@@ -157,12 +179,14 @@ export async function seedSources(seedDb = db): Promise<SeedResult> {
   return { inserted, skipped };
 }
 
-// CLI entry point
-seedSources()
-  .then(() => {
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error("❌ Seed import failed:", error);
-    process.exit(1);
-  });
+// CLI entry point — nur bei direktem Aufruf, nicht beim Import (Test-Safe, Modul-Guard)
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  seedSources()
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error("❌ Seed import failed:", error);
+      process.exit(1);
+    });
+}
