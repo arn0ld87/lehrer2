@@ -10,6 +10,40 @@
  * -Array heraus. Sie erfindet nichts: ist kein JSON enthalten, bleibt der Rückgabe-
  * Wert ungültig und der Aufrufer wirft weiterhin StructuredParseError.
  */
+/**
+ * coerceToSchemaShape — normalisiert ein geparstes LLM-Ergebnis auf die vom
+ * Schema verlangte Form.
+ *
+ * Hintergrund (Bug 2026-06-26): gpt-oss über Ollama-Cloud ignoriert
+ * `strict: true json_schema` und flacht Single-Property-Wrapper-Schemata ab —
+ * statt `{ statements: [...] }` kommt ein BARE ARRAY `[...]` zurück. Die
+ * Generierung las dann `parsed.statements` = undefined → fail-closed 0 Statements,
+ * und /planung + /arbeitsblaetter fielen still auf Mock-Daten zurück.
+ *
+ * Diese Funktion erfindet nichts: Sie wickelt ein bare Array NUR dann ein, wenn
+ * das Schema ein Objekt mit GENAU EINER Array-typisierten Property beschreibt
+ * (eindeutiger Wrapper). In allen anderen Fällen bleibt der Wert unverändert.
+ */
+export function coerceToSchemaShape(
+  parsed: unknown,
+  schema: Record<string, unknown>,
+): unknown {
+  if (!Array.isArray(parsed)) return parsed;
+  if (!schema || typeof schema !== "object" || schema.type !== "object") {
+    return parsed;
+  }
+  const properties = schema.properties;
+  if (!properties || typeof properties !== "object") return parsed;
+
+  const arrayProps = Object.entries(properties as Record<string, unknown>).filter(
+    ([, def]) =>
+      def != null && typeof def === "object" && (def as { type?: unknown }).type === "array",
+  );
+  if (arrayProps.length !== 1) return parsed;
+
+  return { [arrayProps[0][0]]: parsed };
+}
+
 export function stripJsonFences(raw: string): string {
   let s = raw.trim();
 
