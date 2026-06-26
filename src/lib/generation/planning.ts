@@ -259,7 +259,7 @@ export async function generatePlanning(
       `${subject} ${topic} ${gradeBand}`,
       {
         subject: subject as import("@/lib/types").Subject,
-        minTrust: "OFFICIAL_GUIDANCE",
+        minTrust: "USER_APPROVED", // Override 2026-06-26: 0_FGS (USER_APPROVED) im Retrieval freigegeben
         k: 5,
       },
     );

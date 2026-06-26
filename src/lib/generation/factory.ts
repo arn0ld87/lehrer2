@@ -7,15 +7,17 @@
  *   - severity wird direkt durchgereicht (Subset von auditSeverityEnum).
  *
  * createGenerationDeps():
- *   Erzeugt vollständig verdrahtete GenerationDeps für den lokalen Pfad.
- *   Slice: CLOUD_LLM_ENABLED=false — NIEMALS createGatedCloudProvider hier.
- *   providerKind ist fix auf 'local' (BLOCKER-B aus gate.ts).
+ *   Erzeugt vollständig verdrahtete GenerationDeps.
+ *   Default: local-first (withGate(OllamaChatProvider, providerKind:'local')).
+ *   Override: CLOUD_LLM_ENABLED=true → createGatedCloudProvider('openai')
+ *   (gegateter Cloud-Pfad; nur mit dokumentiertem, aktivem CloudReleaseGrant
+ *   wirksam — Redaction + Grant-Check + Guard + Audit bleiben fail-closed).
  */
 
 import { db as defaultDb } from "@/lib/db/client";
 import type { Db } from "@/lib/db/client";
 import { auditLog } from "@/lib/db/schema/provenance";
-import { createLLMProvider, withGate, type AuditSink } from "@/lib/llm";
+import { createGatedCloudProvider, createLLMProvider, withGate, type AuditSink } from "@/lib/llm";
 import { createEmbedder, createVectorStore } from "@/lib/infra";
 import { PgGrantReader } from "@/lib/db/repositories/grants.pg";
 import { PgSourceRefReader } from "@/lib/rag/source-ref-reader.pg";
@@ -74,18 +76,24 @@ export class PgAuditSink implements AuditSink {
  *   - store        → QdrantStore
  *   - sourceRefReader → PgSourceRefReader
  *
- * WICHTIG: NIE createGatedCloudProvider hier — lokaler Pfad ist Default.
- * providerKind ist fix auf 'local' (BLOCKER-B, gate.ts).
+ * Cloud-Override (explizite Nutzerfreigabe 2026-06-26): bei CLOUD_LLM_ENABLED=true
+ * wird createGatedCloudProvider('openai') verwendet — fail-closed nur mit aktivem
+ * CloudReleaseGrant (gate.ts). Sonst bleibt der lokale Pfad Default.
  */
 export function createGenerationDeps(): GenerationDeps {
   const db = defaultDb;
   const audit = new PgAuditSink(db);
   const grantReader = new PgGrantReader();
-  const provider = withGate(createLLMProvider(), {
-    providerKind: "local",
-    grantReader,
-    audit,
-  });
+  // Embeddings bleiben IMMER lokal (OllamaEmbedder via createEmbedder()).
+  // Nur der Chat-/Generierungs-Provider wird bei aktivem Cloud-Flag umgeschaltet.
+  const provider =
+    process.env.CLOUD_LLM_ENABLED === "true"
+      ? createGatedCloudProvider({ name: "openai", grantReader, audit })
+      : withGate(createLLMProvider(), {
+          providerKind: "local",
+          grantReader,
+          audit,
+        });
   const embedder = createEmbedder();
   const store = createVectorStore();
   const sourceRefReader = new PgSourceRefReader();
