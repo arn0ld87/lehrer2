@@ -3,9 +3,6 @@ import { AppHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui";
 import { SectionBanner } from "@/components/ui/shared";
 import { PlanningForm } from "@/components/planner/planning-form";
-import { PlanningProgress } from "@/components/planner/planning-progress";
-import { StructureProposal } from "@/components/planner/structure-proposal";
-import { CurriculumFitCard } from "@/components/planner/curriculum-fit-card";
 import { mockPlanningRepository } from "@/lib/mock";
 
 export const metadata: Metadata = { title: "Unterrichtsplanung" };
@@ -31,15 +28,14 @@ export default function PlanningPage() {
           action={<Button variant="secondary">Vorlage verwenden</Button>}
         />
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
-          <PlanningForm />
-          <PlanningProgress steps={steps} />
-        </div>
-
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.92fr)]">
-          <StructureProposal phases={phases} />
-          <CurriculumFitCard items={curriculum} />
-        </div>
+        {/* PlanningForm ist Client-Shell: kapselt beide Grid-Reihen
+            (Formular+Fortschritt, Proposal+Fit) damit useActionState-State
+            ohne Context an die Ergebnis-Komponenten fließen kann. */}
+        <PlanningForm
+          initialSteps={steps}
+          initialPhases={phases}
+          initialCurriculum={curriculum}
+        />
       </div>
     </>
   );

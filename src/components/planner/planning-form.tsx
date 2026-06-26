@@ -1,96 +1,242 @@
-import { Button } from "../ui/button";
-import { StatusChip } from "../ui/status-chip";
+'use client';
 
-/** Planungsformular — Rahmendaten, Thema, Ziel, Rahmenbedingungen. */
-export function PlanningForm() {
+import { useActionState, useState } from 'react';
+import { Button } from '../ui/button';
+import { StatusChip } from '../ui/status-chip';
+import { Notice } from '../ui';
+import { PlanningProgress } from './planning-progress';
+import { StructureProposal } from './structure-proposal';
+import { CurriculumFitCard } from './curriculum-fit-card';
+import {
+  generatePlanningAction,
+  type UIStatement,
+  type UICitation,
+} from '@/app/actions/planning';
+import type { PlanningStep, StructurePhase, CurriculumFit } from '@/lib/types';
+
+interface PlanningFormProps {
+  initialSteps: PlanningStep[];
+  initialPhases: StructurePhase[];
+  initialCurriculum: CurriculumFit[];
+}
+
+const RELIGION_SUBJECTS = new Set(['evangelische-religion', 'katholische-religion']);
+const TRUSTED_LEVELS = new Set(['OFFICIAL_BINDING', 'OFFICIAL_GUIDANCE']);
+
+function statementsToPhases(statements: UIStatement[]): StructurePhase[] {
+  return statements.map((s, i) => ({
+    id: String(i),
+    title: s.text.length > 90 ? s.text.slice(0, 90) + '…' : s.text,
+    detail:
+      s.confidence === 'GROUNDED'
+        ? `Quellengestützt${s.citationRefs.length ? ' · [' + s.citationRefs.join(', ') + ']' : ''}`
+        : 'Entwurf — noch nicht quellengestützt',
+  }));
+}
+
+function citationsToFit(citations: UICitation[]): CurriculumFit[] {
+  return citations.map((c) => ({
+    id: String(c.index),
+    label: c.title,
+    detail: [c.publisher, c.locator].filter(Boolean).join(' · '),
+    sourceHint: c.license,
+    status: TRUSTED_LEVELS.has(c.trustLevel)
+      ? ('belegt' as const)
+      : ('pruefen' as const),
+  }));
+}
+
+/**
+ * PlanningForm — Client-Shell für /planung.
+ *
+ * Kapselt beide Grid-Reihen (Form+Fortschritt, Proposal+Fit), damit
+ * useActionState-State ohne Context an StructureProposal/CurriculumFitCard
+ * fließen kann. Vor dem ersten Submit: Mock-Daten aus initialPhases/initialCurriculum.
+ * Nach Submit mit Ergebnis: echte Statements/Citations (kein Mock mehr sichtbar).
+ */
+export function PlanningForm({
+  initialSteps,
+  initialPhases,
+  initialCurriculum,
+}: PlanningFormProps) {
+  const [state, formAction, pending] = useActionState(generatePlanningAction, null);
+  const [subject, setSubject] = useState('deutsch');
+
+  const showConfession = RELIGION_SUBJECTS.has(subject);
+  // hasStatements: ok=true, nicht unavailable, mindestens eine Aussage
+  const hasStatements =
+    !!state?.ok && !state.unavailable && state.statements.length > 0;
+
+  const phases = hasStatements
+    ? statementsToPhases(state.statements)
+    : initialPhases;
+  const curriculum = hasStatements
+    ? citationsToFit(state.citations)
+    : initialCurriculum;
+
   return (
-    <form className="bg-surface border border-line rounded-[22px] shadow-subtle p-[19px]">
-      <div className="flex items-center justify-between gap-2.5 mb-[15px]">
-        <div>
-          <h2 className="font-display text-base font-extrabold tracking-[-0.025em] m-0">
-            Neue Unterrichtseinheit
-          </h2>
-          <p className="text-xs text-muted mt-[3px] m-0">
-            Rahmendaten zuerst, danach entstehen Ziele und Stundenlogik.
-          </p>
-        </div>
-        <StatusChip status="draft" />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        <Field label="Fach">
-          <Select>
-            <option>Deutsch</option>
-            <option>Evangelische Religion</option>
-            <option>Katholische Religion</option>
-            <option>Ethik</option>
-          </Select>
-        </Field>
-        <Field label="Klasse">
-          <Select>
-            <option>8</option>
-            <option>7</option>
-            <option>9</option>
-          </Select>
-        </Field>
-        <Field label="Bildungsgang">
-          <Select>
-            <option>Gemeinschaftsschule</option>
-            <option>Gymnasialer Bildungsgang</option>
-          </Select>
-        </Field>
-        <Field label="Zeitrahmen">
-          <Select>
-            <option>4 Unterrichtsstunden</option>
-            <option>6 Unterrichtsstunden</option>
-            <option>8 Unterrichtsstunden</option>
-          </Select>
-        </Field>
-      </div>
-
-      <div className="mt-3.5">
-        <Field label="Thema der Einheit">
-          <input
-            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
-            defaultValue="Eine Charakterisierung schreiben"
-          />
-        </Field>
-      </div>
-
-      <div className="mt-3.5">
-        <Field label="Ziel in eigenen Worten">
-          <textarea
-            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full min-h-[94px] resize-y"
-            defaultValue="Die Lernenden beschreiben eine literarische Figur begründet, verwenden Textbelege und formulieren einen strukturierten Charakterisierungstext."
-          />
-        </Field>
-      </div>
-
-      <div className="mt-3.5">
-        <Field label="Besondere Rahmenbedingungen">
-          <div className="flex flex-wrap gap-1.5">
-            <Chip>45 Minuten</Chip>
-            <Chip>heterogene Lerngruppe</Chip>
-            <Chip>LRS-Unterstützung</Chip>
-            <button
-              type="button"
-              className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line hover:bg-chip-bg"
-            >
-              + Kontext
-            </button>
+    <div className="grid gap-5">
+      {/* Reihe 1: Formular + Fortschritt */}
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
+        <form
+          action={formAction}
+          className="bg-surface border border-line rounded-[22px] shadow-subtle p-[19px]"
+        >
+          <div className="flex items-center justify-between gap-2.5 mb-[15px]">
+            <div>
+              <h2 className="font-display text-base font-extrabold tracking-[-0.025em] m-0">
+                Neue Unterrichtseinheit
+              </h2>
+              <p className="text-xs text-muted mt-[3px] m-0">
+                Rahmendaten zuerst, danach entstehen Ziele und Stundenlogik.
+              </p>
+            </div>
+            <StatusChip
+              status={pending ? 'progress' : hasStatements ? 'ready' : 'draft'}
+            />
           </div>
-        </Field>
+
+          {/* Fehler */}
+          {state && !state.ok && state.error && (
+            <div className="mb-3.5">
+              <Notice icon="alert" title="Fehler" tone="warning">
+                {state.error}
+              </Notice>
+            </div>
+          )}
+
+          {/* RAG nicht verfügbar */}
+          {state?.unavailable && (
+            <div className="mb-3.5">
+              <Notice icon="shield" title="Wissensbasis nicht verfügbar" tone="info">
+                {state.message ??
+                  'Die Wissensbasis ist vorübergehend offline. Bitte später erneut versuchen.'}
+              </Notice>
+            </div>
+          )}
+
+          {/* Konfessionsübergreifende Warnung */}
+          {state?.crossDenominationWarning && (
+            <div className="mb-3.5">
+              <Notice icon="alert" title="Konfessionsübergreifende Inhalte" tone="warning">
+                Einige Quellen decken mehrere Konfessionen ab — bitte prüfen.
+              </Notice>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <Field label="Fach">
+              <SelectField
+                name="subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              >
+                <option value="deutsch">Deutsch</option>
+                <option value="evangelische-religion">Evangelische Religion</option>
+                <option value="katholische-religion">Katholische Religion</option>
+                <option value="ethik">Ethik</option>
+              </SelectField>
+            </Field>
+
+            {/* Konfession: nur bei ev./kath. Religion, nie bei Ethik */}
+            {showConfession && (
+              <Field label="Konfession (Pflichtfeld)">
+                <SelectField name="confession">
+                  <option value="evangelisch">Evangelisch</option>
+                  <option value="katholisch">Katholisch</option>
+                </SelectField>
+              </Field>
+            )}
+
+            <Field label="Klasse / Jahrgangsstufe">
+              <SelectField name="gradeBand">
+                <option value="5-6">Klasse 5–6</option>
+                <option value="7-8">Klasse 7–8</option>
+                <option value="9-10">Klasse 9–10</option>
+                <option value="11-12">Klasse 11–12</option>
+              </SelectField>
+            </Field>
+
+            <Field label="Bildungsgang">
+              <SelectField name="schoolForm">
+                <option value="gemeinschaftsschule">Gemeinschaftsschule</option>
+                <option value="gymnasialer-bildungsgang">
+                  Gymnasialer Bildungsgang
+                </option>
+              </SelectField>
+            </Field>
+          </div>
+
+          <div className="mt-3.5">
+            <Field label="Thema der Einheit">
+              <input
+                name="topic"
+                className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
+                placeholder="z. B. Eine Charakterisierung schreiben"
+              />
+            </Field>
+          </div>
+
+          <div className="mt-3.5">
+            <Field label="Ziel in eigenen Worten">
+              {/* Kein name= — Action liest dieses Feld nicht; bleibt als UX-Unterstützung */}
+              <textarea
+                className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full min-h-[94px] resize-y"
+                placeholder="Die Lernenden …"
+              />
+            </Field>
+          </div>
+
+          <div className="mt-3.5">
+            <Field label="Besondere Rahmenbedingungen">
+              <div className="flex flex-wrap gap-1.5">
+                <Chip>45 Minuten</Chip>
+                <Chip>heterogene Lerngruppe</Chip>
+                <Chip>LRS-Unterstützung</Chip>
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line hover:bg-chip-bg"
+                >
+                  + Kontext
+                </button>
+              </div>
+            </Field>
+          </div>
+
+          <div className="flex gap-2.5 justify-end mt-5">
+            <Button variant="secondary" type="button">
+              Entwurf speichern
+            </Button>
+            <Button variant="primary" type="submit" disabled={pending}>
+              {pending ? 'Wird generiert …' : 'Struktur vorschlagen'}
+            </Button>
+          </div>
+        </form>
+
+        <PlanningProgress steps={initialSteps} />
       </div>
 
-      <div className="flex gap-2.5 justify-end mt-5">
-        <Button variant="secondary">Entwurf speichern</Button>
-        <Button variant="primary">Struktur vorschlagen</Button>
+      {/* Reihe 2: Vorgeschlagene Struktur + Curriculum-Fit
+          Vor erstem Submit zeigen initialPhases/initialCurriculum (Mock).
+          Nach Submit mit Ergebnis: Statements → StructurePhase,
+          Citations → CurriculumFit — kein Mock mehr sichtbar. */}
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.92fr)]">
+        <StructureProposal phases={phases} />
+        <CurriculumFitCard items={curriculum} />
       </div>
-    </form>
+    </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+// ── Lokale Hilfskomponenten ──────────────────────────────────────────────────
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="grid gap-1.5">
       <span className="text-[11px] font-bold text-ink-body">{label}</span>
@@ -99,9 +245,21 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function Select({ children }: { children: React.ReactNode }) {
+interface SelectFieldProps {
+  children: React.ReactNode;
+  name?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+function SelectField({ children, name, value, onChange }: SelectFieldProps) {
   return (
-    <select className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full appearance-none pr-[30px]">
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full appearance-none pr-[30px]"
+    >
       {children}
     </select>
   );

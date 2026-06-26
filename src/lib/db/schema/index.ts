@@ -6,3 +6,4 @@ export * from "./artifacts";
 export * from "./provenance";
 export * from "./rag";
 export * from "./corrections";
+export * from "./grants";

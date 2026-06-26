@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "../ui/icon";
-import { mockUserContextRepository } from "@/lib/mock";
+import { authClient } from "@/lib/auth/client";
 import type { NavRoute } from "@/lib/types";
 import { ContextSwitcher } from "./context-switcher";
 
@@ -28,7 +28,6 @@ export interface AppSidebarProps {
  */
 export function AppSidebar({ open, onNavigate }: AppSidebarProps) {
   const pathname = usePathname();
-  const user = mockUserContextRepository.user();
 
   return (
     <aside
@@ -81,22 +80,64 @@ export function AppSidebar({ open, onNavigate }: AppSidebarProps) {
 
       <ContextSwitcher />
 
-      <div className="mt-auto border border-line p-2.5 rounded-[14px] flex items-center gap-2.5">
-        <span
-          aria-hidden
-          className="h-[33px] w-[33px] rounded-full grid place-items-center text-white font-extrabold text-[11px]"
-          style={{ background: "var(--gradient-avatar)" }}
-        >
-          {user.initials}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-xs font-bold truncate">{user.name}</span>
-          <span className="block text-[10px] text-muted">{user.role}</span>
-        </span>
-        <span aria-hidden className="text-muted">⌄</span>
-      </div>
+      <SidebarUser />
     </aside>
   );
+}
+
+/** Nutzerkarte — liest echte better-auth-Session, zeigt Name/E-Mail + Logout. */
+function SidebarUser() {
+  const { data: session, isPending } = authClient.useSession();
+
+  const displayName = session?.user?.name ?? session?.user?.email ?? "—";
+  const initials = deriveInitials(displayName);
+
+  async function handleLogout() {
+    await authClient.signOut();
+    window.location.href = "/login";
+  }
+
+  return (
+    <div className="mt-auto border border-line p-2.5 rounded-[14px] flex items-center gap-2.5">
+      <span
+        aria-hidden
+        className="h-[33px] w-[33px] rounded-full grid place-items-center text-white font-extrabold text-[11px] shrink-0"
+        style={{ background: "var(--gradient-avatar)" }}
+      >
+        {isPending ? "…" : initials}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-xs font-bold truncate">
+          {isPending ? "Wird geladen …" : displayName}
+        </span>
+        {!isPending && session?.user?.name && session.user.email && (
+          <span className="block text-[10px] text-muted truncate">
+            {session.user.email}
+          </span>
+        )}
+      </span>
+      <button
+        onClick={handleLogout}
+        aria-label="Abmelden"
+        title="Abmelden"
+        className="text-muted hover:text-danger transition-colors p-1 rounded-[6px] hover:bg-danger-bg"
+      >
+        <Icon name="logout" width={15} height={15} />
+      </button>
+    </div>
+  );
+}
+
+/** Zwei Großbuchstaben aus Namen oder E-Mail-Präfix ableiten. */
+function deriveInitials(name: string): string {
+  if (name === "—") return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  // E-Mail oder Einwortname: erste zwei Zeichen des lokalen Teils
+  const local = name.split("@")[0];
+  return local.slice(0, 2).toUpperCase();
 }
 
 function isActive(pathname: string, href: string): boolean {

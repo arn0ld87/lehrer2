@@ -28,6 +28,7 @@ import {
   Users,
   Wand2,
   Bell,
+  LogOut,
 } from "lucide-react";
 
 export type IconName =
@@ -53,7 +54,8 @@ export type IconName =
   | "chevron"
   | "menu"
   | "download"
-  | "check";
+  | "check"
+  | "logout";
 
 const ICONS: Record<IconName, LucideIcon> = {
   home: Home,
@@ -79,6 +81,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   menu: Menu,
   download: Download,
   check: Check,
+  logout: LogOut,
 };
 
 export interface IconProps extends React.ComponentProps<LucideIcon> {

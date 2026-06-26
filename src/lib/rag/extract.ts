@@ -6,6 +6,8 @@
  *   text/html           — Tag-Strip via Regex (keine externe Dep)
  *   application/pdf     — pdf-parse; leerer Text => OCR via ocrEngine (wenn übergeben)
  *                          oder ExtractionFailedError (Scan-PDF ohne OCR-Engine)
+ *   application/vnd.openxmlformats-officedocument.wordprocessingml.document
+ *                       — mammoth (lazy dynamic import, kein Next-Bundle-Impact)
  *   image/*             — OCR-only: text = ocrEngine.recognizeImage(buf)
  *                          ohne ocrEngine → ExtractionFailedError (Bild ohne OCR-Engine)
  *
@@ -102,6 +104,14 @@ export async function extractContent(
         );
       }
     }
+  } else if (
+    mime ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    // DOCX: lazy dynamic import — mammoth bleibt aus dem Next-Bundle heraus
+    const { default: mammoth } = await import("mammoth");
+    const { value } = await mammoth.extractRawText({ buffer: Buffer.from(buf) });
+    text = value ?? "";
   } else if (mime.startsWith("image/")) {
     // Bilddatei: OCR ist der einzige Extraktionsweg (#40)
     if (ocrEngine) {

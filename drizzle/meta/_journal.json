@@ -15,6 +15,13 @@
       "when": 1782153427139,
       "tag": "0001_closed_brother_voodoo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782400719163,
+      "tag": "0002_dark_riptide",
+      "breakpoints": true
     }
   ]
 }

@@ -286,6 +286,8 @@ export async function ingestSource(
 function guessMime(uri: string): string {
   const lower = uri.toLowerCase().split("?")[0] ?? "";
   if (lower.endsWith(".pdf")) return "application/pdf";
+  if (lower.endsWith(".docx"))
+    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
   if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html";
   if (lower.endsWith(".txt") || lower.endsWith(".md")) return "text/plain";
   if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
