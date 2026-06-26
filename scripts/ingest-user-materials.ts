@@ -144,8 +144,11 @@ export function classifyFgsFile(relPathFromRoot: string): ClassifyResult {
   }
 
   // (4) Nicht in Scope (Fach)
+  //   `\bgeschichte` mit Wortgrenze: das Schulfach Geschichte ist out-of-scope,
+  //   aber die Deutsch-Gattung "Kurzgeschichte" darf nicht als Teilstring matchen
+  //   (sonst landet z. B. "Lesen/kurzgeschichte.md" fälschlich im Ausschluss).
   const OUT_OF_SCOPE_RE =
-    /(biolog|englisch|\bmathe|physik|chemie|geschichte|geograf|\bmusik|\bkunst|\bsport|informatik)/i;
+    /(biolog|englisch|\bmathe|physik|chemie|\bgeschichte|geograf|\bmusik|\bkunst|\bsport|informatik)/i;
   if (OUT_OF_SCOPE_RE.test(p)) {
     return { include: false, reason: "out-of-scope-subject" };
   }
