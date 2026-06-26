@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "../ui/icon";
-import { authClient } from "@/lib/auth/client";
 import type { NavRoute } from "@/lib/types";
 import { ContextSwitcher } from "./context-switcher";
 
@@ -20,13 +19,15 @@ export const NAV_ROUTES: NavRoute[] = [
 export interface AppSidebarProps {
   open: boolean;
   onNavigate: () => void;
+  /** Anzeigename des aktiven Lehrer-Profils (single-tenant, kein Login). */
+  teacherName?: string | null;
 }
 
 /**
  * Desktop-Sidebar 260px — sticky, mit Hauptnavigation, Kontext-Panel und
  * Nutzerkarte. Auf Mobil ein Drawer (translateX).
  */
-export function AppSidebar({ open, onNavigate }: AppSidebarProps) {
+export function AppSidebar({ open, onNavigate, teacherName }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -80,22 +81,18 @@ export function AppSidebar({ open, onNavigate }: AppSidebarProps) {
 
       <ContextSwitcher />
 
-      <SidebarUser />
+      <SidebarUser teacherName={teacherName} />
     </aside>
   );
 }
 
-/** Nutzerkarte — liest echte better-auth-Session, zeigt Name/E-Mail + Logout. */
-function SidebarUser() {
-  const { data: session, isPending } = authClient.useSession();
-
-  const displayName = session?.user?.name ?? session?.user?.email ?? "—";
+/**
+ * Nutzerkarte — single-tenant ohne Login: zeigt den Namen des aktiven
+ * Lehrer-Profils. Kein Session-Read, kein Logout (Login deaktiviert).
+ */
+function SidebarUser({ teacherName }: { teacherName?: string | null }) {
+  const displayName = teacherName ?? "—";
   const initials = deriveInitials(displayName);
-
-  async function handleLogout() {
-    await authClient.signOut();
-    window.location.href = "/login";
-  }
 
   return (
     <div className="mt-auto border border-line p-2.5 rounded-[14px] flex items-center gap-2.5">
@@ -104,26 +101,11 @@ function SidebarUser() {
         className="h-[33px] w-[33px] rounded-full grid place-items-center text-white font-extrabold text-[11px] shrink-0"
         style={{ background: "var(--gradient-avatar)" }}
       >
-        {isPending ? "…" : initials}
+        {initials}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-xs font-bold truncate">
-          {isPending ? "Wird geladen …" : displayName}
-        </span>
-        {!isPending && session?.user?.name && session.user.email && (
-          <span className="block text-[10px] text-muted truncate">
-            {session.user.email}
-          </span>
-        )}
+        <span className="block text-xs font-bold truncate">{displayName}</span>
       </span>
-      <button
-        onClick={handleLogout}
-        aria-label="Abmelden"
-        title="Abmelden"
-        className="text-muted hover:text-danger transition-colors p-1 rounded-[6px] hover:bg-danger-bg"
-      >
-        <Icon name="logout" width={15} height={15} />
-      </button>
     </div>
   );
 }

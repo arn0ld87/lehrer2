@@ -40,9 +40,19 @@ export async function getActiveTeacher(): Promise<CurrentTeacher | null> {
   } catch {
     // Session-Read fehlgeschlagen → Fallback unten
   }
-  const [row] = await db.select().from(teacherProfile).limit(1);
-  if (!row) return null;
-  return { userId: row.userId, schoolId: row.schoolId, role: row.role, displayName: row.displayName };
+  try {
+    const [row] = await db.select().from(teacherProfile).limit(1);
+    if (!row) return null;
+    return {
+      userId: row.userId,
+      schoolId: row.schoolId,
+      role: row.role,
+      displayName: row.displayName,
+    };
+  } catch {
+    // DB nicht verfügbar (z.B. mock-Backend ohne Postgres) → kein Kontext
+    return null;
+  }
 }
 
 export function requireRole(teacher: CurrentTeacher, role: CurrentTeacher["role"]): void {

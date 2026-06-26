@@ -25,7 +25,13 @@ export function useMobileNav(): NavContextValue {
  * nebeneinander. Sidebar ist auf Desktop sticky (260px), auf Mobil ein Drawer
  * mit Backdrop.
  */
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  teacherName,
+}: {
+  children: React.ReactNode;
+  teacherName?: string | null;
+}) {
   const [navOpen, setNavOpen] = React.useState(false);
 
   const value = React.useMemo<NavContextValue>(
@@ -48,7 +54,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <NavContext.Provider value={value}>
       <div className="grid lg:grid-cols-[260px_minmax(0,1fr)] min-h-screen">
-        <AppSidebar open={navOpen} onNavigate={() => setNavOpen(false)} />
+        <AppSidebar
+          open={navOpen}
+          onNavigate={() => setNavOpen(false)}
+          teacherName={teacherName}
+        />
         {navOpen ? (
           <button
             type="button"

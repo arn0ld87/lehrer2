@@ -16,6 +16,7 @@
  */
 
 import { type CallContext, type JSONSchema, type LLMProvider, StructuredParseError } from "./provider";
+import { stripJsonFences } from "./json-extract";
 
 export type CloudProviderKind = "openai-compat" | "anthropic";
 
@@ -154,7 +155,9 @@ export class CloudProvider implements LLMProvider {
     }
 
     try {
-      return JSON.parse(raw) as T;
+      // Manche Cloud-Modelle (gpt-oss) verpacken JSON in Markdown-Fences trotz
+      // response_format → vor dem Parsen entfernen (sonst fail-closed 0 Ergebnisse).
+      return JSON.parse(stripJsonFences(raw)) as T;
     } catch {
       throw new StructuredParseError(
         `CloudProvider(${this.kind}): JSON.parse fehlgeschlagen (${String(raw).slice(0, 120)})`,

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell/app-shell";
+import { getActiveTeacher } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,18 +27,19 @@ export const metadata: Metadata = {
     "Datenschutzsensibler, quellengebundener KI-Assistent für Lehrkräfte in Sachsen-Anhalt. UI-Prototyp.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const teacher = await getActiveTeacher();
   return (
     <html
       lang="de"
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AppShell>{children}</AppShell>
+        <AppShell teacherName={teacher?.displayName ?? null}>{children}</AppShell>
       </body>
     </html>
   );

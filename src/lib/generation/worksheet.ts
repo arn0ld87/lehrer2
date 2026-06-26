@@ -360,9 +360,11 @@ export async function generateWorksheet(
       taskIds.push(t.id);
 
       // task_source_ref für zitierte Quellen des zugehörigen Statements
+      // dedup: ein Statement kann dieselbe Quelle mehrfach zitieren → sonst
+      // doppelte task_source_ref-Zeilen (Gemini-Finding).
       const stmtCitationIds =
         baseStatement !== undefined
-          ? baseStatement.citations.map((c) => c.sourceId)
+          ? [...new Set(baseStatement.citations.map((c) => c.sourceId))]
           : [];
 
       for (const sourceId of stmtCitationIds) {
