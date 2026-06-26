@@ -289,7 +289,13 @@ export async function ingestCurriculum(opts?: {
       ok++;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error(`  FEHLER  ${meta.ingestKey}: ${msg}`);
+      // Drizzle wickelt die eigentliche Postgres-Ursache in err.cause — diese ist
+      // für die Diagnose entscheidend (z. B. NOT-NULL-/CHECK-Verletzung).
+      const cause = (err as { cause?: unknown }).cause;
+      const causeMsg =
+        cause instanceof Error ? cause.message : cause != null ? String(cause) : "";
+      console.error(`  FEHLER  ${meta.ingestKey}: ${msg.slice(0, 160)}`);
+      if (causeMsg) console.error(`          cause: ${causeMsg.slice(0, 240)}`);
       failed.push(meta.ingestKey);
     }
   }

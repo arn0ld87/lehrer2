@@ -1,6 +1,8 @@
 /**
  * Qdrant VectorStore — REST-basierte Vektorsuche mit Payload-Filtration
- * Local-first, Collection-Name aus QDRANT_COLLECTION, Vektorgröße aus OLLAMA_EMBEDDING_DIM
+ * Local-first, Collection-Name aus QDRANT_COLLECTION, Vektorgröße aus EMBEDDING_DIM
+ * (Fallback OLLAMA_EMBEDDING_DIM). EMBEDDING_DIM muss zum aktiven Embedder passen:
+ * qwen3-embedding:4b = 2560, OpenAI text-embedding-3-small = 1536.
  */
 
 export interface VectorPoint {
@@ -65,7 +67,8 @@ export class QdrantStore implements VectorStore {
     this.url = url || process.env.QDRANT_URL || "http://localhost:6333";
     this.collection = collection || process.env.QDRANT_COLLECTION || "ua_lsa_chunks";
     this.vectorSize =
-      vectorSize || Number(process.env.OLLAMA_EMBEDDING_DIM ?? 2560);
+      vectorSize ||
+      Number(process.env.EMBEDDING_DIM ?? process.env.OLLAMA_EMBEDDING_DIM ?? 2560);
   }
 
   /**

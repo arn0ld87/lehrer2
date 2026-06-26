@@ -90,8 +90,8 @@ export interface ClassifyResult {
  * Klassifiziert eine Datei relativ zum MATERIAL_ROOT.
  * REIN (keine I/O). Alle Regeln case-insensitive auf dem gesamten relPath.
  *
- * Reihenfolge: 1→2→3→4→5/6→7.
- * PII/Tooling/Out-of-Scope schlagen Subject-Regeln.
+ * Reihenfolge: 1→2→3→3b→4→5/6→7.
+ * PII/Tooling/Leistungserhebung/Out-of-Scope schlagen Subject-Regeln (fail-closed).
  */
 export function classifyFgsFile(relPathFromRoot: string): ClassifyResult {
   const p = relPathFromRoot; // Alias für Lesbarkeit
@@ -121,11 +121,26 @@ export function classifyFgsFile(relPathFromRoot: string): ClassifyResult {
     }
   }
 
-  // (3) Schüler-PII / Verwaltung — HARTE GRENZE, fail-closed
+  // (3) Schüler-PII / Verwaltung / Leistungsbewertung — HARTE GRENZE, fail-closed
+  //   Erweitert 2026-06-26 (adversarischer Dry-Run-Befund): der ursprüngliche
+  //   Filter ließ reale Schüler-PII durch — Facharbeiten mit Klarnamen, bewertete
+  //   Leseproben/Feedback, und "Pruefung" (ue-Schreibweise) matchte pr[üu]fung nicht.
+  //   Neu erfasst: facharbeit|seminararbeit (Schülerarbeiten), bewertung|leseprobe|
+  //   feedback (Leistungsrückmeldung), pr(?:ü|ue|u)fung (alle Umlaut-Varianten).
   const PII_RE =
-    /(zeugnis|notenübersicht|notenubersicht|\bnoten?\b|klassenarbeit|klausur|pr[üu]fung|klassenliste|sch[üu]lerliste|diagnos|f[öo]rderplan|gutachten|korrekturhinweise|auswertung|anwesenheit|fehlzeit|datev|freistellung|krankmeld|elternbrief)/i;
+    /(zeugnis|notenübersicht|notenubersicht|\bnoten?\b|klassenarbeit|klausur|pr(?:ü|ue|u)fung|klassenliste|sch[üu]lerliste|diagnos|f[öo]rderplan|gutachten|korrekturhinweise|auswertung|anwesenheit|fehlzeit|datev|freistellung|krankmeld|elternbrief|facharbeit|seminararbeit|bewertung|leseprobe|feedback)/i;
   if (PII_RE.test(p)) {
     return { include: false, reason: "pii-or-admin" };
+  }
+
+  // (3b) Leistungskontrollen per Datei-Prefix — fail-closed
+  //   KA_/LK_ = Klassenarbeit/Leistungskontrolle. Diese tragen die PII-Begriffe
+  //   oft nicht im Namen (z. B. "KA_Abrahamisch_7a", "LK_8a_Gleichnis"), sind aber
+  //   schülerbezogene Leistungserhebungen. Segment-anchored, damit Wörter wie
+  //   "Lkw" o. Ä. nicht fälschlich greifen.
+  const ASSESSMENT_PREFIX_RE = /(^|\/)(KA|LK)[ _]/i;
+  if (ASSESSMENT_PREFIX_RE.test(p)) {
+    return { include: false, reason: "student-assessment" };
   }
 
   // (4) Nicht in Scope (Fach)

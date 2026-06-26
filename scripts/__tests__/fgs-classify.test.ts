@@ -111,6 +111,74 @@ describe("Regel 3 — pii-or-admin (schlägt Subject)", () => {
     expect(r.include).toBe(false);
     expect(r.reason).toBe("pii-or-admin");
   });
+
+  // ── Regression: adversarischer Dry-Run-Befund 2026-06-26 (echte Schüler-PII) ──
+
+  it("Facharbeit mit Schülernamen → exclude (facharbeit)", () => {
+    const r = classifyFgsFile(
+      "3_Religion_RAG_Auswahl/Facharbeit/Bruno Glauben soziale Medien/Facharbeit Bruno Staude.pdf",
+    );
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("pii-or-admin");
+  });
+
+  it("Pruefung (ue-Schreibweise) → exclude (frühere Regex-Lücke)", () => {
+    const r = classifyFgsFile(
+      "3_Religion_RAG_Auswahl/Oberstufe/Prüfungen/2026/1_mndl_Pruefung_Religion.docx",
+    );
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("pii-or-admin");
+  });
+
+  it("Bewertungsbogen → exclude (bewertung)", () => {
+    const r = classifyFgsFile("3_Religion_RAG_Auswahl/Klasse 11/Bewertungsbogen_individuell.pdf");
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("pii-or-admin");
+  });
+
+  it("Leseprobe/Feedback eines Schülers → exclude", () => {
+    const r = classifyFgsFile("3_Religion_RAG_Auswahl/Facharbeit/Feedback_Fragen_Bruno.docx");
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("pii-or-admin");
+  });
+
+  it("Seminararbeit → exclude", () => {
+    const r = classifyFgsFile(
+      "3_Religion_RAG_Auswahl/Facharbeit/Zwarg_Seminararbeit_Beispiel.pdf",
+    );
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("pii-or-admin");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Regel 3b — Leistungskontrollen per Prefix (KA_/LK_)
+// ---------------------------------------------------------------------------
+
+describe("Regel 3b — student-assessment (KA_/LK_-Prefix)", () => {
+  it("KA_Abrahamisch_7a.docx → exclude", () => {
+    const r = classifyFgsFile("3_Religion_RAG_Auswahl/KA_Abrahamisch_7a.docx");
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("student-assessment");
+  });
+
+  it("LK_8a_Gleichnis.docx → exclude", () => {
+    const r = classifyFgsFile("3_Religion_RAG_Auswahl/LK_8a_Gleichnis.docx");
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("student-assessment");
+  });
+
+  it("LK-Prefix in tieferem Pfad → exclude", () => {
+    const r = classifyFgsFile("3_Religion/Material/LK_Kirche_NS.pdf");
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("student-assessment");
+  });
+
+  it("'Lkw' o. Ä. greift NICHT fälschlich (kein _/Space nach LK)", () => {
+    const r = classifyFgsFile("Materialsammlung-RAG/Lkws_im_Stadtverkehr.pdf");
+    expect(r.include).toBe(true);
+    expect(r.subject).toBe("DEUTSCH");
+  });
 });
 
 // ---------------------------------------------------------------------------

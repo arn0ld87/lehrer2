@@ -181,12 +181,42 @@ export async function ingestSource(
   const mime = guessMime(source.uri ?? "");
   const text = await extractContent(source.uri ?? blobKey, raw, mime, deps.ocr);
 
-  // ── (5) Chunking ─────────────────────────────────────────────────────────────
-  const chunks = chunkText(text);
+  // ── (5) Chunking + Per-Chunk-Hash + Dedup ────────────────────────────────────
+  const rawChunks = chunkText(text);
+
+  if (rawChunks.length === 0) {
+    throw new Error(
+      `ingestSource: chunkText ergab 0 Chunks (leerer Text nach Extraktion) (sourceRef ${sourceRefId})`,
+    );
+  }
+
+  // contentHash je rag_chunk ist PER-CHUNK content-addressed (sha256 des Chunk-Texts),
+  // NICHT der Dokument-Hash. Der Unique-Constraint (sourceRefId, contentHash,
+  // sourceVersion) erlaubt sonst nur EINEN Chunk pro Dokument (Bug: zuvor wurde der
+  // Dokument-Hash in jeden Chunk geschrieben → 2. Chunk verletzt den Constraint).
+  // Exakte Chunk-Duplikate innerhalb eines Dokuments (z. B. wiederkehrender Lizenz-/
+  // Boilerplate-Block gemeinfreier Lektüren) → ersten Treffer behalten, Rest verwerfen.
+  // Mindestlänge spiegelt den DB-CHECK rag_chunk_text_min_len (char_length >= 50).
+  // OCR von bild-/scanlastigen Arbeitsblättern erzeugt mitunter Mini-/Leerfragmente,
+  // die den Constraint verletzen und sonst die gesamte Batch-Transaktion abbrechen —
+  // solche Fragmente vor Embedding/Insert verwerfen.
+  const MIN_CHUNK_CHARS = 50;
+  const seenChunkHashes = new Set<string>();
+  const chunks: typeof rawChunks = [];
+  const chunkHashes: string[] = [];
+  for (const c of rawChunks) {
+    if (c.text.length < MIN_CHUNK_CHARS) continue;
+    const h = createHash("sha256").update(c.text).digest("hex");
+    if (seenChunkHashes.has(h)) continue;
+    seenChunkHashes.add(h);
+    chunks.push(c);
+    chunkHashes.push(h);
+  }
 
   if (chunks.length === 0) {
     throw new Error(
-      `ingestSource: chunkText ergab 0 Chunks (leerer Text nach Extraktion) (sourceRef ${sourceRefId})`,
+      `ingestSource: nach Dedup/Mindestlänge (>=${MIN_CHUNK_CHARS} Zeichen) blieben 0 verwertbare Chunks ` +
+        `(vermutlich bild-/scanlastiges Dokument ohne extrahierbaren Text) (sourceRef ${sourceRefId})`,
     );
   }
 
@@ -216,7 +246,7 @@ export async function ingestSource(
       source_version: source.sourceVersion,
       license: source.licenseInfo ?? null,
       retrieved_at: source.retrievedAt?.toISOString() ?? null,
-      content_hash: contentHash,
+      content_hash: chunkHashes[i]!,
     },
   }));
 
@@ -232,7 +262,7 @@ export async function ingestSource(
         chunkText: chunk.text,
         pageOrSection: chunk.pageOrSection,
         sourceVersion: source.sourceVersion,
-        contentHash,
+        contentHash: chunkHashes[i]!,
         embeddingRef: pointIds[i]!,
         trustLevel: source.sourceType as typeof ragChunk.$inferInsert["trustLevel"],
         subject: source.subjectAlignment as typeof ragChunk.$inferInsert["subject"] ?? null,
