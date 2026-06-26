@@ -26,3 +26,27 @@ export interface ExportResult {
   filename: string;
   bytes: Buffer;
 }
+
+/** Eine quellengebundene Planungs-Aussage für den strukturierten Export. */
+export interface ExportablePlanStatement {
+  text: string;
+  citationRefs: number[];
+  /** false → als ENTWURF (nicht quellengestützt) kennzeichnen. */
+  grounded: boolean;
+}
+
+/**
+ * Strukturierte Unterrichtsplanung für den Export (DOCX/PDF).
+ * Anders als ExportableWorksheet: mit Rahmendaten-Kopf und nummerierten,
+ * quellengebundenen Aussagen statt Aufgaben-mit-Niveau.
+ */
+export interface ExportablePlan {
+  /** Thema der Einheit. */
+  topic: string;
+  subject: string;
+  gradeBand: string;
+  schoolForm: string;
+  constraints: string[];
+  statements: ExportablePlanStatement[];
+  sources: (SourceCitation & { index: number })[];
+}
