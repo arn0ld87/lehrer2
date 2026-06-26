@@ -49,6 +49,8 @@ export interface PlanningInput {
   schoolForm: string;
   gradeBand: string;
   topic: string;
+  /** Optionale didaktische Rahmenbedingungen (Chips + Freitext aus der UI). */
+  constraints?: string[];
 }
 
 export interface PlanningResult {
@@ -216,7 +218,8 @@ export async function generatePlanning(
   deps: GenerationDeps,
   input: PlanningInput,
 ): Promise<PlanningResult> {
-  const { userId, schoolId, subject, confession, schoolForm, gradeBand, topic } = input;
+  const { userId, schoolId, subject, confession, schoolForm, gradeBand, topic, constraints } =
+    input;
 
   // ── 1. Validierung ────────────────────────────────────────────────────────
   const isReligion =
@@ -287,6 +290,7 @@ export async function generatePlanning(
     topic,
     confessionLabel: confessionLabel(subject, confession),
     citations,
+    constraints,
   });
 
   const promptHash = createHash("sha256").update(prompt).digest("hex");

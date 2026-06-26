@@ -21,6 +21,8 @@ export interface BuildGroundedPromptArgs {
   topic: string;
   confessionLabel?: string;
   citations: RankedCitation[];
+  /** Optionale didaktische Rahmenbedingungen (z. B. "45 Minuten", "LRS-Unterstützung"). */
+  constraints?: string[];
 }
 
 /**
@@ -80,14 +82,21 @@ function outputFormatSection(): string {
  * Bei vorhandenen citations: Quellenblock mit nummerierten Referenzen [1..n].
  */
 export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
-  const { task, subject, gradeBand, topic, confessionLabel, citations } = args;
+  const { task, subject, gradeBand, topic, confessionLabel, citations, constraints } = args;
 
   const subjectLabel = confessionLabel ? `${subject} (${confessionLabel})` : subject;
+
+  const cleanConstraints = (constraints ?? [])
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0);
 
   const contextHeader = [
     `Fach: ${subjectLabel}`,
     `Jahrgangsstufe / Klassenstufe: ${gradeBand}`,
     `Thema: ${topic}`,
+    ...(cleanConstraints.length > 0
+      ? [`Besondere Rahmenbedingungen (verbindlich berücksichtigen): ${cleanConstraints.join("; ")}`]
+      : []),
   ].join("\n");
 
   // ── FAIL-SAFE: keine Quellen verfügbar ────────────────────────────────────

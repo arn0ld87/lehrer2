@@ -66,7 +66,7 @@ export function SectionBanner({
 }: {
   title: string;
   description: string;
-  action: React.ReactNode;
+  action?: React.ReactNode;
 }) {
   return (
     <section
@@ -79,7 +79,7 @@ export function SectionBanner({
         </h2>
         <p className="text-xs text-banner-p mt-[7px] max-w-[560px] m-0">{description}</p>
       </div>
-      <div className="relative z-1">{action}</div>
+      {action && <div className="relative z-1">{action}</div>}
     </section>
   );
 }

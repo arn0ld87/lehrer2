@@ -23,6 +23,79 @@ interface PlanningFormProps {
 const RELIGION_SUBJECTS = new Set(['evangelische-religion', 'katholische-religion']);
 const TRUSTED_LEVELS = new Set(['OFFICIAL_BINDING', 'OFFICIAL_GUIDANCE']);
 
+const DRAFT_KEY = 'ua-lsa:planung-draft';
+
+/** Vordefinierte Rahmenbedingungs-Chips (zusätzlich zu Freitext via "+ Kontext"). */
+const PRESET_CONSTRAINTS = [
+  '45 Minuten',
+  'Doppelstunde (90 Min)',
+  'heterogene Lerngruppe',
+  'LRS-Unterstützung',
+  'Inklusion',
+  'digitale Endgeräte',
+];
+
+interface PlanFields {
+  subject: string;
+  confession: string;
+  gradeBand: string;
+  schoolForm: string;
+  topic: string;
+  goal: string;
+}
+
+const DEFAULT_FIELDS: PlanFields = {
+  subject: 'deutsch',
+  confession: 'evangelisch',
+  gradeBand: '9-10',
+  schoolForm: 'gymnasialer-bildungsgang',
+  topic: '',
+  goal: '',
+};
+
+/** Startfertige Vorlagen — füllen Formular + Rahmenbedingungen in einem Klick. */
+const TEMPLATES: { id: string; label: string; fields: PlanFields; constraints: string[] }[] = [
+  {
+    id: 'kurzgeschichte',
+    label: 'Kurzgeschichte analysieren · Deutsch, Kl. 9–10',
+    fields: {
+      subject: 'deutsch',
+      confession: 'evangelisch',
+      gradeBand: '9-10',
+      schoolForm: 'gymnasialer-bildungsgang',
+      topic: 'Eine Kurzgeschichte analysieren',
+      goal: 'Die Lernenden analysieren Aufbau, Figuren und Wirkung einer Kurzgeschichte.',
+    },
+    constraints: ['45 Minuten', 'heterogene Lerngruppe'],
+  },
+  {
+    id: 'gedicht',
+    label: 'Gedicht erschließen · Deutsch, Kl. 7–8',
+    fields: {
+      subject: 'deutsch',
+      confession: 'evangelisch',
+      gradeBand: '7-8',
+      schoolForm: 'gemeinschaftsschule',
+      topic: 'Ein Gedicht erschließen',
+      goal: 'Die Lernenden erschließen Form und Inhalt eines Gedichts und deuten seine Wirkung.',
+    },
+    constraints: ['45 Minuten', 'LRS-Unterstützung'],
+  },
+  {
+    id: 'charakterisierung',
+    label: 'Charakterisierung schreiben · Deutsch, Kl. 9–10',
+    fields: {
+      subject: 'deutsch',
+      confession: 'evangelisch',
+      gradeBand: '9-10',
+      schoolForm: 'gemeinschaftsschule',
+      topic: 'Eine Charakterisierung schreiben',
+      goal: 'Die Lernenden verfassen eine strukturierte, textbelegte Charakterisierung.',
+    },
+    constraints: ['heterogene Lerngruppe'],
+  },
+];
+
 function statementsToPhases(statements: UIStatement[]): StructurePhase[] {
   return statements.map((s, i) => ({
     id: String(i),
@@ -53,6 +126,9 @@ function citationsToFit(citations: UICitation[]): CurriculumFit[] {
  * useActionState-State ohne Context an StructureProposal/CurriculumFitCard
  * fließen kann. Vor dem ersten Submit: Mock-Daten aus initialPhases/initialCurriculum.
  * Nach Submit mit Ergebnis: echte Statements/Citations (kein Mock mehr sichtbar).
+ *
+ * Interaktiv: Vorlagen (Presets), wählbare Rahmenbedingungen (fließen in die
+ * Generierung), Entwurf speichern/wiederherstellen (localStorage).
  */
 export function PlanningForm({
   initialSteps,
@@ -60,10 +136,60 @@ export function PlanningForm({
   initialCurriculum,
 }: PlanningFormProps) {
   const [state, formAction, pending] = useActionState(generatePlanningAction, null);
-  const [subject, setSubject] = useState('deutsch');
+  const [fields, setFields] = useState<PlanFields>(DEFAULT_FIELDS);
+  const [constraints, setConstraints] = useState<string[]>([]);
+  const [customOpen, setCustomOpen] = useState(false);
+  const [customValue, setCustomValue] = useState('');
+  const [draftNote, setDraftNote] = useState<string | null>(null);
 
-  const showConfession = RELIGION_SUBJECTS.has(subject);
-  // hasStatements: ok=true, nicht unavailable, mindestens eine Aussage
+  // Entwurf explizit laden (kein mount-Effect → SSR-sicher, keine Cascading Renders).
+  const loadDraft = () => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) {
+        setDraftNote('Kein gespeicherter Entwurf gefunden.');
+        return;
+      }
+      const parsed = JSON.parse(raw) as { fields?: Partial<PlanFields>; constraints?: string[] };
+      if (parsed.fields) setFields((f) => ({ ...f, ...parsed.fields }));
+      if (Array.isArray(parsed.constraints)) setConstraints(parsed.constraints);
+      setDraftNote('Gespeicherten Entwurf geladen.');
+    } catch {
+      setDraftNote('Entwurf konnte nicht geladen werden.');
+    }
+  };
+
+  const setField = (key: keyof PlanFields, value: string) =>
+    setFields((f) => ({ ...f, [key]: value }));
+
+  const toggleConstraint = (c: string) =>
+    setConstraints((cur) => (cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]));
+
+  const addCustom = () => {
+    const t = customValue.trim();
+    if (t && !constraints.includes(t)) setConstraints((cur) => [...cur, t]);
+    setCustomValue('');
+    setCustomOpen(false);
+  };
+
+  const applyTemplate = (id: string) => {
+    const tpl = TEMPLATES.find((t) => t.id === id);
+    if (!tpl) return;
+    setFields(tpl.fields);
+    setConstraints(tpl.constraints);
+    setDraftNote(`Vorlage „${tpl.label}" übernommen — anpassbar.`);
+  };
+
+  const saveDraft = () => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ fields, constraints }));
+      setDraftNote('Entwurf gespeichert (lokal in diesem Browser).');
+    } catch {
+      setDraftNote('Entwurf konnte nicht gespeichert werden.');
+    }
+  };
+
+  const showConfession = RELIGION_SUBJECTS.has(fields.subject);
   const hasStatements =
     !!state?.ok && !state.unavailable && state.statements.length > 0;
 
@@ -76,6 +202,27 @@ export function PlanningForm({
 
   return (
     <div className="grid gap-5">
+      {/* Vorlagen-Leiste */}
+      <div className="flex flex-wrap items-center gap-2 bg-surface border border-line rounded-[14px] px-3.5 py-2.5">
+        <span className="text-[11px] font-bold text-ink-body">Vorlage verwenden:</span>
+        {TEMPLATES.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => applyTemplate(t.id)}
+            className="inline-flex items-center rounded-full text-[10px] font-bold px-2.5 py-[5px] bg-chip-bg text-ink-body border border-line hover:border-focus-ring transition"
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {draftNote && (
+        <Notice icon="check" title="Hinweis" tone="info">
+          {draftNote}
+        </Notice>
+      )}
+
       {/* Reihe 1: Formular + Fortschritt */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
         <form
@@ -128,8 +275,8 @@ export function PlanningForm({
             <Field label="Fach">
               <SelectField
                 name="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
+                value={fields.subject}
+                onChange={(e) => setField('subject', e.target.value)}
               >
                 <option value="deutsch">Deutsch</option>
                 <option value="evangelische-religion">Evangelische Religion</option>
@@ -141,7 +288,11 @@ export function PlanningForm({
             {/* Konfession: nur bei ev./kath. Religion, nie bei Ethik */}
             {showConfession && (
               <Field label="Konfession (Pflichtfeld)">
-                <SelectField name="confession">
+                <SelectField
+                  name="confession"
+                  value={fields.confession}
+                  onChange={(e) => setField('confession', e.target.value)}
+                >
                   <option value="evangelisch">Evangelisch</option>
                   <option value="katholisch">Katholisch</option>
                 </SelectField>
@@ -149,7 +300,11 @@ export function PlanningForm({
             )}
 
             <Field label="Klasse / Jahrgangsstufe">
-              <SelectField name="gradeBand">
+              <SelectField
+                name="gradeBand"
+                value={fields.gradeBand}
+                onChange={(e) => setField('gradeBand', e.target.value)}
+              >
                 <option value="5-6">Klasse 5–6</option>
                 <option value="7-8">Klasse 7–8</option>
                 <option value="9-10">Klasse 9–10</option>
@@ -158,7 +313,11 @@ export function PlanningForm({
             </Field>
 
             <Field label="Bildungsgang">
-              <SelectField name="schoolForm">
+              <SelectField
+                name="schoolForm"
+                value={fields.schoolForm}
+                onChange={(e) => setField('schoolForm', e.target.value)}
+              >
                 <option value="gemeinschaftsschule">Gemeinschaftsschule</option>
                 <option value="gymnasialer-bildungsgang">
                   Gymnasialer Bildungsgang
@@ -171,6 +330,8 @@ export function PlanningForm({
             <Field label="Thema der Einheit">
               <input
                 name="topic"
+                value={fields.topic}
+                onChange={(e) => setField('topic', e.target.value)}
                 className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
                 placeholder="z. B. Eine Charakterisierung schreiben"
               />
@@ -181,6 +342,8 @@ export function PlanningForm({
             <Field label="Ziel in eigenen Worten">
               {/* Kein name= — Action liest dieses Feld nicht; bleibt als UX-Unterstützung */}
               <textarea
+                value={fields.goal}
+                onChange={(e) => setField('goal', e.target.value)}
                 className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full min-h-[94px] resize-y"
                 placeholder="Die Lernenden …"
               />
@@ -190,21 +353,67 @@ export function PlanningForm({
           <div className="mt-3.5">
             <Field label="Besondere Rahmenbedingungen">
               <div className="flex flex-wrap gap-1.5">
-                <Chip>45 Minuten</Chip>
-                <Chip>heterogene Lerngruppe</Chip>
-                <Chip>LRS-Unterstützung</Chip>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line hover:bg-chip-bg"
-                >
-                  + Kontext
-                </button>
+                {PRESET_CONSTRAINTS.map((c) => (
+                  <ToggleChip
+                    key={c}
+                    active={constraints.includes(c)}
+                    onClick={() => toggleConstraint(c)}
+                  >
+                    {c}
+                  </ToggleChip>
+                ))}
+                {/* Freitext-Rahmenbedingungen (nicht in den Presets) */}
+                {constraints
+                  .filter((c) => !PRESET_CONSTRAINTS.includes(c))
+                  .map((c) => (
+                    <ToggleChip key={c} active onClick={() => toggleConstraint(c)}>
+                      {c} ✕
+                    </ToggleChip>
+                  ))}
+                {customOpen ? (
+                  <span className="inline-flex items-center gap-1">
+                    <input
+                      value={customValue}
+                      onChange={(e) => setCustomValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addCustom();
+                        }
+                      }}
+                      autoFocus
+                      placeholder="eigene Bedingung"
+                      className="border border-line-strong bg-surface rounded-full px-2.5 py-[3px] text-[10px] outline-none focus:border-focus-ring w-[140px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustom}
+                      className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-primary text-white"
+                    >
+                      ✓
+                    </button>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setCustomOpen(true)}
+                    className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line hover:border-focus-ring transition"
+                  >
+                    + Kontext
+                  </button>
+                )}
               </div>
             </Field>
           </div>
 
+          {/* Ausgewählte Rahmenbedingungen werden mit dem Formular übermittelt */}
+          <input type="hidden" name="constraints" value={JSON.stringify(constraints)} />
+
           <div className="flex gap-2.5 justify-end mt-5">
-            <Button variant="secondary" type="button">
+            <Button variant="ghost" type="button" onClick={loadDraft}>
+              Entwurf laden
+            </Button>
+            <Button variant="secondary" type="button" onClick={saveDraft}>
               Entwurf speichern
             </Button>
             <Button variant="primary" type="submit" disabled={pending}>
@@ -221,7 +430,11 @@ export function PlanningForm({
           Nach Submit mit Ergebnis: Statements → StructurePhase,
           Citations → CurriculumFit — kein Mock mehr sichtbar. */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.92fr)]">
-        <StructureProposal phases={phases} />
+        <StructureProposal
+          key={state?.lessonId ?? 'initial'}
+          phases={phases}
+          editable={hasStatements}
+        />
         <CurriculumFitCard items={curriculum} />
       </div>
     </div>
@@ -265,10 +478,27 @@ function SelectField({ children, name, value, onChange }: SelectFieldProps) {
   );
 }
 
-function Chip({ children }: { children: React.ReactNode }) {
+function ToggleChip({
+  children,
+  active,
+  onClick,
+}: {
+  children: React.ReactNode;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
-    <span className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line">
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] border transition ${
+        active
+          ? 'bg-primary text-white border-primary'
+          : 'bg-chip-bg text-muted border-line hover:border-focus-ring'
+      }`}
+    >
       {children}
-    </span>
+    </button>
   );
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/app-shell";
-import { Button } from "@/components/ui";
 import { SectionBanner } from "@/components/ui/shared";
 import { PlanningForm } from "@/components/planner/planning-form";
 import { mockPlanningRepository } from "@/lib/mock";
@@ -25,7 +24,6 @@ export default function PlanningPage() {
         <SectionBanner
           title="Aus einer Idee wird eine nachvollziehbare Unterrichtseinheit."
           description="Kompetenzen, Methoden, Differenzierung und Quellen werden an einer Stelle zusammengeführt. Keine Zettelarchäologie mehr."
-          action={<Button variant="secondary">Vorlage verwenden</Button>}
         />
 
         {/* PlanningForm ist Client-Shell: kapselt beide Grid-Reihen
