@@ -143,13 +143,19 @@ export function classifyFgsFile(relPathFromRoot: string): ClassifyResult {
     return { include: false, reason: "student-assessment" };
   }
 
-  // (4) Nicht in Scope (Fach)
-  //   `\bgeschichte` mit Wortgrenze: das Schulfach Geschichte ist out-of-scope,
-  //   aber die Deutsch-Gattung "Kurzgeschichte" darf nicht als Teilstring matchen
-  //   (sonst landet z. B. "Lesen/kurzgeschichte.md" fälschlich im Ausschluss).
+  // (4) Nicht in Scope (Fach) — NUR auf den Verzeichnisteil prüfen, nicht auf den
+  //   Dateinamen. Die Fachzuordnung folgt in der realen FGS-Ablage der ORDNER-
+  //   struktur (z. B. ".../Biologie/zelle.pdf"), während Fach-Homonyme im DATEI-
+  //   namen legitim sein können (Deutsch-Gattung "kurzgeschichte.md",
+  //   "eine-geschichte.md"; Bibel-"Die Geschichte von Moses.pdf"). Würde der
+  //   Filter den Basename mitprüfen, verwürfe er solche Materialien fälschlich,
+  //   noch bevor Regel (5)/(7) greifen (Gemini-Review #63).
+  //   `\bgeschichte\b`: trennt das Schulfach "Geschichte" (Ordner) von den
+  //   Deutsch-Begriffen "Geschichten"/"Kurzgeschichte" (kein abschließendes \b).
+  const dirPart = pLower.split("/").slice(0, -1).join("/");
   const OUT_OF_SCOPE_RE =
-    /(biolog|englisch|\bmathe|physik|chemie|\bgeschichte|geograf|\bmusik|\bkunst|\bsport|informatik)/i;
-  if (OUT_OF_SCOPE_RE.test(p)) {
+    /(biolog|englisch|\bmathe|physik|chemie|\bgeschichte\b|geograf|\bmusik|\bkunst|\bsport|informatik)/i;
+  if (OUT_OF_SCOPE_RE.test(dirPart)) {
     return { include: false, reason: "out-of-scope-subject" };
   }
 

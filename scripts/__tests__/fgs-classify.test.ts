@@ -209,6 +209,21 @@ describe("Regel 4 — out-of-scope-subject", () => {
     expect(r.include).toBe(false);
     expect(r.reason).toBe("out-of-scope-subject");
   });
+
+  it("Geschichte als Fach-ORDNER → exclude", () => {
+    const r = classifyFgsFile(
+      "Lernbüro 6 2024_2025/Geschichte/franzoesische-revolution.pdf",
+    );
+    expect(r.include).toBe(false);
+    expect(r.reason).toBe("out-of-scope-subject");
+  });
+
+  it("Fach-Homonym nur im DATEINAMEN → NICHT als out-of-scope verwerfen (Gemini #63)", () => {
+    // "geschichte" steht nur im Basename, der Ordner ist Deutsch-Kontext.
+    const r = classifyFgsFile("Materialsammlung-RAG/Lesen/eine-geschichte.md");
+    expect(r.include).toBe(true);
+    expect(r.subject).toBe("DEUTSCH");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -237,6 +252,13 @@ describe("Regel 5 — religion-ev", () => {
     expect(r.include).toBe(true);
     expect(r.subject).toBe("RELIGION");
     expect(r.confession).toBe("EVANGELISCH");
+    expect(r.reason).toBe("religion-ev");
+  });
+
+  it("Bibel-'Geschichte' im Dateinamen unter 3_Religion → RELIGION, nicht out-of-scope (Gemini #63)", () => {
+    const r = classifyFgsFile("3_Religion/AT/Die Geschichte von Moses.pdf");
+    expect(r.include).toBe(true);
+    expect(r.subject).toBe("RELIGION");
     expect(r.reason).toBe("religion-ev");
   });
 });
@@ -285,6 +307,13 @@ describe("Regel 7 — deutsch (default)", () => {
     expect(r.include).toBe(true);
     expect(r.subject).toBe("DEUTSCH");
     expect(r.confession).toBe("NICHT_ANWENDBAR");
+    expect(r.reason).toBe("deutsch");
+  });
+
+  it("'Geschichten' (Plural, Deutsch-Erzählungen) als Ordner → include DEUTSCH (kein \\b am Wortende)", () => {
+    const r = classifyFgsFile("2_Deutsch/Geschichten/herbst.pdf");
+    expect(r.include).toBe(true);
+    expect(r.subject).toBe("DEUTSCH");
     expect(r.reason).toBe("deutsch");
   });
 
