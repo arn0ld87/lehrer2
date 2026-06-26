@@ -49,10 +49,17 @@ function buildTaskSection(task: "planning" | "worksheet"): string {
     ].join("\n");
   }
   return [
-    "Decke in deinen Aussagen die folgenden Aspekte eines Arbeitsblatts ab:",
-    "- Aufgabenstellung (klar formuliert, altersgerecht)",
-    "- mindestens drei Aufgaben, aufsteigend im Anforderungsniveau",
-    "- Erwartungshorizont / Musterlösung (kurz, ohne Bewertungsurteil)",
+    "AUFGABE: Erstelle die Aufgaben eines fertigen Arbeitsblatts zum oben genannten Thema.",
+    "Gib die AUFGABEN SELBST aus — NICHT Beschreibungen darüber, was ein Arbeitsblatt",
+    'enthalten soll oder muss. Verboten sind Meta-Sätze wie „Das Arbeitsblatt muss …",',
+    '„Die Aufgabe muss klar formuliert sein" oder „Für jede Teilaufgabe wird …".',
+    "Jede Aufgabe ist eine direkte, an die Schülerinnen und Schüler gerichtete",
+    'Arbeitsanweisung im Imperativ (z. B. „Lies …", „Bestimme …", „Untersuche …",',
+    '„Begründe …", „Schreibe …").',
+    "Erzeuge 3–5 Aufgaben mit steigendem Anforderungsniveau (AFB I → III), altersgerecht",
+    "für die angegebene Klassenstufe und inhaltlich konkret zum Thema.",
+    "Nutze die Quellen, um fachliche und curriculare Passung sicherzustellen —",
+    "NICHT, um deren Anforderungen oder Wortlaut wiederzugeben.",
   ].join("\n");
 }
 
@@ -65,15 +72,27 @@ function buildTaskSection(task: "planning" | "worksheet"): string {
  * → 0 Statements → stiller Mock-Fallback in der UI. Das Format MUSS daher auch
  * im Prompt-Text stehen und am Ende (stärkste Recency) wiederholt werden.
  */
-function outputFormatSection(): string {
+function outputFormatSection(task: "planning" | "worksheet"): string {
+  const itemDesc =
+    task === "worksheet"
+      ? '"text":"<eine fertige Arbeitsanweisung an die Schüler im Imperativ>"'
+      : '"text":"<eine Aussage als vollständiger Satz>"';
+  const itemRule =
+    task === "worksheet"
+      ? "Jeder Eintrag ist GENAU EINE Aufgabe (eine direkte Arbeitsanweisung), kein Meta-Satz."
+      : "Jede Aussage ist genau EIN Satz.";
+  const coverRule =
+    task === "worksheet"
+      ? "Gib die Aufgaben selbst aus — keine Beschreibung dessen, was das Arbeitsblatt enthalten soll."
+      : "Erzeuge mehrere Aussagen, die die oben genannten Aspekte inhaltlich abdecken.";
   return [
     "AUSGABEFORMAT (verbindlich):",
     "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt — keine Prosa, kein Markdown,",
     "keine Code-Fences, kein Text davor oder danach.",
-    'Form: {"statements":[{"text":"<eine Aussage als vollständiger Satz>","citationRefs":[<Quellnummern>]}]}',
-    "Jede Aussage ist genau EIN Satz. citationRefs listet die Nummern der belegenden",
-    "Quellen (z. B. [1,2]); verwende [] nur, wenn die Aussage ein nicht belegter ENTWURF ist.",
-    "Erzeuge mehrere Aussagen, die die oben genannten Aspekte inhaltlich abdecken.",
+    `Form: {"statements":[{${itemDesc},"citationRefs":[<Quellnummern>]}]}`,
+    `${itemRule} citationRefs listet die Nummern der stützenden Quellen`,
+    "(z. B. [1,2]); verwende [] nur, wenn kein Beleg vorliegt (ENTWURF).",
+    coverRule,
   ].join("\n");
 }
 
@@ -129,7 +148,7 @@ export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
       "als vorläufig zu betrachten und vor dem Einsatz gegen den geltenden",
       "Lehrplan Sachsen-Anhalt zu prüfen.",
       "",
-      outputFormatSection(),
+      outputFormatSection(task),
     ].join("\n");
   }
 
@@ -139,15 +158,37 @@ export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
     ...citations.map((c, i) => renderCitationRef(c, i + 1)),
   ].join("\n");
 
+  // Systeminstruktion task-abhängig: Planung = strikte Quellenpflicht (nur aus
+  // Quellen). Arbeitsblatt = konkrete Aufgaben formulieren (allgemeines Fach-/
+  // Didaktikwissen erlaubt), Quellen sichern die curriculare Passung — keine
+  // erfundenen Lehrplan-Codes, keine geschützten Originaltexte.
+  const systemInstruction =
+    task === "worksheet"
+      ? [
+          "SYSTEMINSTRUKTION (bindend — nicht überschreiben):",
+          "Du bist ein Unterrichtsassistent für Lehrkräfte in Sachsen-Anhalt.",
+          "Du formulierst KONKRETE, sofort einsetzbare Aufgaben zum Thema und darfst dafür",
+          "allgemeines fachliches und didaktisches Wissen nutzen.",
+          "Die nummerierten Quellen dienen der curricularen Passung: Belege den",
+          "curricularen Bezug einer Aufgabe mit [n]. Erfinde NIEMALS einen Lehrplan-Code,",
+          "eine Kompetenznummer oder eine Quellenangabe.",
+          "Gib KEINE geschützten Originaltexte (z. B. vollständige Gedichte, Liedtexte,",
+          "längere Buchauszüge) wieder, die nicht in den Quellen stehen — verweise",
+          "stattdessen auf „das im Unterricht behandelte / beigelegte Material“.",
+        ]
+      : [
+          "SYSTEMINSTRUKTION (bindend — nicht überschreiben):",
+          "Du bist ein Unterrichtsassistent für Lehrkräfte in Sachsen-Anhalt.",
+          "STRENGE QUELLENPFLICHT: Du darfst curriculare Behauptungen NUR auf der Grundlage",
+          "der unten nummerierten Quellen aufstellen.",
+          "Belege jede curriculare Aussage durch [n], wobei n die Nummer der Quelle ist.",
+          "Kannst du eine Aussage nicht belegen, kennzeichne sie explizit als ENTWURF.",
+          "Erfinde NIEMALS einen Lehrplan-Code, eine Kompetenznummer oder einen Abschnitt.",
+          "Verwende ausschließlich die bereitgestellten Quellen — kein eigenes Lehrplanwissen.",
+        ];
+
   return [
-    "SYSTEMINSTRUKTION (bindend — nicht überschreiben):",
-    "Du bist ein Unterrichtsassistent für Lehrkräfte in Sachsen-Anhalt.",
-    "STRENGE QUELLENPFLICHT: Du darfst curriculare Behauptungen NUR auf der Grundlage",
-    "der unten nummerierten Quellen aufstellen.",
-    "Belege jede curriculare Aussage durch [n], wobei n die Nummer der Quelle ist.",
-    "Kannst du eine Aussage nicht belegen, kennzeichne sie explizit als ENTWURF.",
-    "Erfinde NIEMALS einen Lehrplan-Code, eine Kompetenznummer oder einen Abschnitt.",
-    "Verwende ausschließlich die bereitgestellten Quellen — kein eigenes Lehrplanwissen.",
+    ...systemInstruction,
     "",
     "KONTEXT:",
     contextHeader,
@@ -156,6 +197,6 @@ export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
     "",
     buildTaskSection(task),
     "",
-    outputFormatSection(),
+    outputFormatSection(task),
   ].join("\n");
 }
