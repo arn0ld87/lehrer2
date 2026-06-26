@@ -1,3 +1,5 @@
+// .env laden, BEVOR src/lib/db/client.ts process.env.DATABASE_URL beim Import liest
+import "dotenv/config";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { pathToFileURL } from "url";

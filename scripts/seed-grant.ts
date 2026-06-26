@@ -14,6 +14,8 @@
  * Aufruf:  set -a; . ./.env; set +a; npx tsx scripts/seed-grant.ts
  */
 
+// .env laden, BEVOR src/lib/db/client.ts process.env.DATABASE_URL beim Import liest
+import "dotenv/config";
 import { and, eq } from "drizzle-orm";
 import { db } from "../src/lib/db/client";
 import { cloudReleaseGrant } from "../src/lib/db/schema/grants";
