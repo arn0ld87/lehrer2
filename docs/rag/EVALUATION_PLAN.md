@@ -24,7 +24,7 @@ Das System wird mit **Golden Questions** evaluiert — diese sind Testfragen pro
 - Ein häufiges pädagogisches Anliegen abbilden (z. B. "Wie unterrichte ich Kommaregeln strukturiert?")
 - Mit **Lehrplan-Bezug** (Sachsen-Anhalt Klasse 9–10 Deutsch) beantwortbar sind
 - Mehrere Quellen-Typen aktivieren (Lehrplan selbst, Handreichung, Beispiel-Unterrichtsreihe)
-- **Noch auszuarbeiten**: konkrete Fragesammlungen werden vom Fachteam gepflegt (nicht erfunden)
+- **Strukturiert gepflegt** in [`data/golden-questions.seed.yaml`](../../data/golden-questions.seed.yaml) und an registrierte Lehrplanquellen gebunden (vgl. Abschnitt „Golden-Questions-Datei" unten). Konkrete fachliche Antwortinhalte werden vom Fachteam validiert und gepflegt, nicht erfunden.
 
 **Beispiel-Struktur** (nicht konkrete Fragen, nur Template):
 
@@ -57,7 +57,7 @@ Das System wird mit **Golden Questions** evaluiert — diese sind Testfragen pro
 
 - Sachlich und glaubenstreue darstellen
 - Mit Lehrplan Sachsen-Anhalt Evangelische/Katholische Religion (Klasse 5–12) konsistent sind
-- **Noch auszuarbeiten**: konkrete Fragesammlungen werden vom Konfessionsberatungs-Team gepflegt
+- **Strukturiert gepflegt** in [`data/golden-questions.seed.yaml`](../../data/golden-questions.seed.yaml), gebunden an registrierte Quellen. Konkrete fachliche Antwortinhalte werden vom Konfessionsberatungs-Team validiert, nicht erfunden. _Hinweis: Katholische Lehrplanquellen sind registriert (`src-027`, `src-028`), aber noch nicht freigegeben (`candidate`/`license_verified=false`); katholische Golden Questions sind daher mit `status: blocked-source-not-approved` markiert und werden in der Evaluierung übersprungen (Datenlücke, wird nachgeführt)._
 - Markieren, welche Quellen neutral sein müssen (z. B. Rechtsethik) vs. welche konfessionsgebunden
 
 **Beispiel-Struktur**:
@@ -82,6 +82,45 @@ Das System wird mit **Golden Questions** evaluiert — diese sind Testfragen pro
 ```
 
 **Wichtig**: Die Golden-Questions-Datenbank wird **manuell gepflegt** und regelmäßig mit Fachexperten validiert. Keine erfundenen oder GPT-generierten Fragen.
+
+---
+
+## Golden-Questions-Datei (Schema)
+
+Die strukturierte Golden-Questions-Sammlung ist unter [`data/golden-questions.seed.yaml`](../../data/golden-questions.seed.yaml) gespeichert und bindet jede Frage an registrierte Lehrplanquellen. Die Seed-Datei definiert die Testfragen; konkrete erwartete Antwortinhalte werden durch die Quellen-Referenzen gesteuert und von Fachexperten gepflegt.
+
+**Feldstruktur pro Golden Question:**
+
+| Feld                  | Typ    | Beschreibung                                                                                                                                                                                                                                                                                                                 |
+| --------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                  | string | Eindeutige ID, z. B. `de-001`, `rel-ev-001`, `rel-kath-001`                                                                                                                                                                                                                                                                  |
+| `domain`              | string | Fachgebiet: `"Deutsch"`, `"Religion"`, `"Ethik"`                                                                                                                                                                                                                                                                             |
+| `confession_context`  | string | (nur Religion) `"evangelisch"`, `"katholisch"`, oder `"übergreifend"`                                                                                                                                                                                                                                                        |
+| `competence_area`     | string | Kompetenzbereich innerhalb des Fachs, z. B. `"Schreiben – Argumentative Texte"`                                                                                                                                                                                                                                              |
+| `grade_range`         | array  | Jahrgangsstufen, z. B. `[9, 10]` oder `[5, 12]`                                                                                                                                                                                                                                                                              |
+| `query`               | string | Die Testfrage für den LSA (z. B. "Wie unterrichte ich Kommaregeln strukturiert?")                                                                                                                                                                                                                                            |
+| `expected_source_ids` | array  | Registrierte Quellen-IDs, die die Antwort stützen müssen, z. B. `["lehrplan-de-2021", "handreichung-kommaregeln"]`                                                                                                                                                                                                           |
+| `expected_section`    | string | Optionale Seite/Abschnitt-Hinweise in der Quelle, z. B. `"Seite 42–45, Abschnitt 3.2"`                                                                                                                                                                                                                                       |
+| `rationale`           | string | Begründung, warum diese Frage relevant ist (für Fachteam-Nachvollziehbarkeit)                                                                                                                                                                                                                                                |
+| `status`              | string | `"active"` (produktiv für Evaluierung), `"blocked-source-not-approved"` (Quelle registriert, aber noch nicht freigegeben — z. B. `candidate` / `license_verified=false`) oder `"blocked-no-registered-source"` (gar keine Quelle für Fach/Konfession im Register). Beide `blocked-*` werden in der Evaluierung übersprungen. |
+
+**Beispiel-Eintrag:**
+
+```yaml
+- id: de-001
+  domain: Deutsch
+  competence_area: Schreiben – Argumentative Texte
+  grade_range: [9, 10]
+  query: Wie unterrichte ich Kommaregeln strukturiert und begründet?
+  expected_source_ids:
+    - lehrplan-deutsch-sachsen-anhalt-2021
+    - handreichung-kommaregeln-lisa
+  expected_section: Lehrplan Seite 18–20, Handreichung Abschnitt 2.1
+  rationale: Kern-Kompetenz in Sekundarstufe I, häufiges Anfragenmuster von Lehrkräften
+  status: active
+```
+
+**Datenlücke (Transparenz):** Katholische Lehrplanquellen _sind_ im Register vorhanden (`src-027` Sekundarschule, `src-028` Gymnasium, beide `subject: RELIGION_KATH`), aber noch nicht für produktives RAG freigegeben (`status: candidate`, `license_verified: false`). Die katholischen Golden Questions sind deshalb mit `status: blocked-source-not-approved` markiert und werden in der Evaluierung übersprungen, bis die Quellen freigegeben sind (M2.2).
 
 ---
 
@@ -182,7 +221,27 @@ Regelmäßig (mind. 2-wöchentlich oder nach Modell-Updates):
 
 ---
 
-## Drift- und Regressions-Prüfung
+## Drift-Erkennung
+
+Die Evaluierungs-Suite unter [`src/lib/rag/eval/`](../../src/lib/rag/eval/) berechnet Retrieval- und Zitationsmetriken für eine Baseline-Serie von Golden Questions, speichert die Metriken als Baseline-Snapshot und flaggt bei Folgeläufen alle Metriken, die um mehr als einen Schwellwert (Default `±0.05`) unter die Baseline fallen. Dies ermöglicht schnelle Erkennung von Qualitätsregression.
+
+**Metriken-Berechnung:**
+
+- `Precision@5`: Anteil relevanter Chunks in Top-5 Retrievals (pro Golden Question)
+- `Recall@10`: Anteil aller relevanten Chunks in Top-10 (pro Golden Question)
+- `Mean Reciprocal Rank (MRR)`: Durchschn. Rang des ersten relevanten Results (über alle Queries)
+- `Citation Accuracy`: Zitierte Quellen-ID in Retrieved-Chunks vorhanden? (Coverage ≥ 0.95)
+
+**Drift-Schwellwerte:**
+
+| Metrik            | Regression-Schwelle | Aktion                                 |
+| ----------------- | ------------------- | -------------------------------------- |
+| Precision@5       | -0.05               | Alert, Root-Cause analysieren          |
+| Recall@10         | -0.05               | Alert, Root-Cause analysieren          |
+| MRR               | -0.05               | Alert, Root-Cause analysieren          |
+| Citation Accuracy | -0.02               | Critical Alert, sofortige Untersuchung |
+
+Verweise auf Implementierung und Baseline-Verwaltung siehe `src/lib/rag/eval/README.md`.
 
 ### Szenario: Quellen-Update
 
