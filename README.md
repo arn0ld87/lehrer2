@@ -198,10 +198,10 @@ Dieses Repository macht **keine überprüfte Konformitätsbehauptung**; jede sol
 
 ## Entwicklungsstatus
 
-**M0 (Fundament & Governance) abgeschlossen. M1 gemergt. M2 in Umsetzung.**
+**M0 (Fundament & Governance) abgeschlossen. M1 gemergt. M2 in Umsetzung — Kern auf `main` (Stand 2026-06-26).**
 
-- **Real:** Next.js-UI-Shell (sechs Routen, statisch prerendered); PostgreSQL-Datenschicht via Drizzle (Curriculum mit Konfessions-CHECK, Artefakte, Provenienz/Audit); Better Auth (ADR 0007); DOCX/PDF-Export (ADR 0008); RAG-Gerüst mit Qdrant-Collection `ua_lsa_chunks` (ADR 0010); LLM-Provider-Abstraktion mit fail-closed PII-Gate; Retrieval/Reranking/Zitation; vertikaler Slice `/planung` + `/arbeitsblaetter`.
-- **Noch nicht real:** OCR-/Extraktions-Worker für Scan-PDFs; vollständige Ingestion-Pipeline; Korrekturassistenz mit Pseudonymisierung/Redaction (`SENSITIVE_STUDENT` = M3); produktive Cloud-LLM-Freigaben.
+- **Real:** Next.js-UI-Shell (sechs Routen, statisch prerendered); PostgreSQL-Datenschicht via Drizzle (Curriculum mit Konfessions-CHECK, Artefakte, Provenienz/Audit); Better Auth (ADR 0007); DOCX/PDF-Export (ADR 0008); RAG-Gerüst mit Qdrant-Collection `ua_lsa_chunks` (ADR 0010); Ingestion (Extraktion/Chunking/Embedding/Indexierung); Retrieval/Reranking/Zitation; provider-agnostische LLM-Schicht (Ollama Default, Cloud gegatet) mit fail-closed PII-Gate; vertikaler Slice `/planung` + `/arbeitsblaetter` mit **echter quellengebundener Generierung** (Retrieval → LLM → DB, Offline-Degradation); `/quelle` mit echten RAG-Kennzahlen; Golden-Questions-Eval; Quellenwiderruf/kaskadierende Löschung; OCR-Worker (Tesseract, jpeg/png).
+- **Noch nicht real:** Korrekturassistenz (`/korrektur` läuft gegen Mock-Daten; Pseudonymisierung/Redaction, `SENSITIVE_STUDENT` = M3 — nur spezifiziert); Dashboard (Mock-Kennzahlen); vollständiger Scan-PDF-OCR-Pfad; Job-Orchestrierung (Redis/BullMQ); produktive Cloud-LLM-Freigaben.
 
 Roadmap und Source of Truth: **[PLAN.md](PLAN.md)**. Architekturentscheidungen: **[docs/adr/](docs/adr/)** (0001–0010).
 
