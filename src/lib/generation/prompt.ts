@@ -37,20 +37,39 @@ function renderCitationRef(citation: RankedCitation, index: number): string {
 function buildTaskSection(task: "planning" | "worksheet"): string {
   if (task === "planning") {
     return [
-      "Erstelle einen strukturierten Unterrichtsplan mit folgenden Abschnitten:",
-      "1. Lernziele (mit Zitation der curricularen Grundlage [n])",
-      "2. Kompetenzerwartungen (nur aus den bereitgestellten Quellen ableiten [n])",
-      "3. Unterrichtsphasen (Einstieg, Erarbeitung, Sicherung, ggf. Hausaufgabe)",
-      "4. Differenzierungshinweise",
-      "5. Quellenangaben (nummeriert, exakt wie in den Referenzen oben)",
+      "Decke in deinen Aussagen die folgenden Aspekte eines Unterrichtsplans ab:",
+      "- Lernziele (gestützt auf die curriculare Grundlage [n])",
+      "- Kompetenzerwartungen (nur aus den bereitgestellten Quellen ableiten [n])",
+      "- Unterrichtsphasen (Einstieg, Erarbeitung, Sicherung, ggf. Hausaufgabe)",
+      "- Differenzierungshinweise",
     ].join("\n");
   }
   return [
-    "Erstelle ein strukturiertes Arbeitsblatt mit folgenden Abschnitten:",
-    "1. Aufgabenstellung (klar formuliert, altersgerecht)",
-    "2. Aufgaben (mindestens drei, aufsteigend in Anforderungsniveau)",
-    "3. Erwartungshorizont / Musterlösung (kurz, ohne Bewertungsurteil)",
-    "4. Quellenangaben (nummeriert, exakt wie in den Referenzen oben)",
+    "Decke in deinen Aussagen die folgenden Aspekte eines Arbeitsblatts ab:",
+    "- Aufgabenstellung (klar formuliert, altersgerecht)",
+    "- mindestens drei Aufgaben, aufsteigend im Anforderungsniveau",
+    "- Erwartungshorizont / Musterlösung (kurz, ohne Bewertungsurteil)",
+  ].join("\n");
+}
+
+/**
+ * Verbindliches JSON-Ausgabeformat.
+ *
+ * KRITISCH (Bug 2026-06-26): Manche Provider (gpt-oss über Ollama-Cloud)
+ * erzwingen `response_format json_schema` NICHT. Ohne explizite Format-Vorgabe
+ * im Prompt liefert das Modell Prosa/Markdown statt JSON → StructuredParseError
+ * → 0 Statements → stiller Mock-Fallback in der UI. Das Format MUSS daher auch
+ * im Prompt-Text stehen und am Ende (stärkste Recency) wiederholt werden.
+ */
+function outputFormatSection(): string {
+  return [
+    "AUSGABEFORMAT (verbindlich):",
+    "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt — keine Prosa, kein Markdown,",
+    "keine Code-Fences, kein Text davor oder danach.",
+    'Form: {"statements":[{"text":"<eine Aussage als vollständiger Satz>","citationRefs":[<Quellnummern>]}]}',
+    "Jede Aussage ist genau EIN Satz. citationRefs listet die Nummern der belegenden",
+    "Quellen (z. B. [1,2]); verwende [] nur, wenn die Aussage ein nicht belegter ENTWURF ist.",
+    "Erzeuge mehrere Aussagen, die die oben genannten Aspekte inhaltlich abdecken.",
   ].join("\n");
 }
 
@@ -92,6 +111,8 @@ export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
       "Da keine verifizierten Quellen vorliegen, sind alle curricularen Angaben",
       "als vorläufig zu betrachten und vor dem Einsatz gegen den geltenden",
       "Lehrplan Sachsen-Anhalt zu prüfen.",
+      "",
+      outputFormatSection(),
     ].join("\n");
   }
 
@@ -118,8 +139,6 @@ export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
     "",
     buildTaskSection(task),
     "",
-    "ZITIERFORMAT:",
-    "Verwende [n] direkt hinter der belegten Aussage (z. B. 'Kompetenzbereich X [2].').",
-    "Führe am Ende einen Quellenabschnitt mit vollständigen Angaben auf.",
+    outputFormatSection(),
   ].join("\n");
 }

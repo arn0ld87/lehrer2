@@ -10,7 +10,7 @@
  */
 
 import { type CallContext, type JSONSchema, type LLMProvider, StructuredParseError } from "./provider";
-import { stripJsonFences } from "./json-extract";
+import { stripJsonFences, coerceToSchemaShape } from "./json-extract";
 
 interface OllamaChatMessage {
   role: "user" | "assistant" | "system";
@@ -83,8 +83,9 @@ export class OllamaChatProvider implements LLMProvider {
     const raw = data.message.content;
 
     try {
-      // Markdown-Fences entfernen (Modelle verpacken JSON trotz format-Vorgabe).
-      return JSON.parse(stripJsonFences(raw)) as T;
+      // Markdown-Fences entfernen (Modelle verpacken JSON trotz format-Vorgabe)
+      // + bare Array in den Single-Property-Wrapper des Schemas normalisieren.
+      return coerceToSchemaShape(JSON.parse(stripJsonFences(raw)), schema) as T;
     } catch {
       // FAIL-CLOSED: nie ein Objekt erfinden, immer werfen
       throw new StructuredParseError(
