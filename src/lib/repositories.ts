@@ -93,6 +93,31 @@ export interface CorrectionRepository {
   history(): FeedbackHistoryEntry[];
 }
 
+/** Metadaten der angezeigten Korrektur (Pseudonym statt Klarname — Datensparsamkeit). */
+export interface CorrectionSubmissionMeta {
+  title: string;
+  subjectLabel: string;
+  submittedAt: string;
+  pseudonym: string;
+  status: DraftStatus;
+}
+
+/**
+ * Async-Variante des Korrektur-Vertrags (DB-gestützt).
+ *
+ * Liest den jüngsten correctionDraft der Lehrkraft: aiSuggestion → Feedback-Aussagen,
+ * provenance.rubricScores → Bewertungsraster, history → Verlauf. Die Rubric-Bewertung
+ * liegt im provenance-JSON (kein dediziertes Schemafeld). Fällt ohne Draft auf die
+ * Mock-Schicht zurück (synthetisches Beispiel, kein echtes Schüler-PII).
+ */
+export interface AsyncCorrectionRepository {
+  submissionMeta(): Promise<CorrectionSubmissionMeta>;
+  rubricScores(): Promise<RubricScore[]>;
+  feedbackDraft(): Promise<string>;
+  feedbackStatements(): Promise<FeedbackStatement[]>;
+  history(): Promise<FeedbackHistoryEntry[]>;
+}
+
 export interface SourcesRepository {
   ragQuality(): RagQuality;
   entries(): SourceEntry[];
