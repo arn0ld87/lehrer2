@@ -8,16 +8,37 @@ import { SourceTable } from "@/components/sources/source-table";
 import { RagQualityCard } from "@/components/sources/rag-quality-card";
 import { mockSourcesRepository } from "@/lib/mock";
 import { getSourceEntriesReader } from "@/lib/db/repositories/factory";
+import { db } from "@/lib/db/client";
+import { ragChunk } from "@/lib/db/schema/rag";
+import { sql } from "drizzle-orm";
+import type { RagQuality } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Quellen & Lehrpläne" };
 
 export default async function SourcesPage() {
   const reader = getSourceEntriesReader();
   const entries = await reader.entries();
-  const repo = mockSourcesRepository;
-  const quality = repo.ragQuality();
-  // RAG-Layer / M2.2 gehoert hier hin, wenn implementiert; vorlaeufig vom Mock:
-  const checks = repo.governanceChecks();
+
+  // Echte RAG-Kennzahlen aus der DB (keine Mock-Werte mehr).
+  const [{ chunks = 0, indexedSources = 0 } = {}] = await db
+    .select({
+      chunks: sql<number>`count(*)::int`,
+      indexedSources: sql<number>`count(distinct ${ragChunk.sourceRefId})::int`,
+    })
+    .from(ragChunk);
+
+  const total = entries.length;
+  const withLicense = entries.filter((e) => e.license && e.license !== "—").length;
+  const needingReview = Math.max(0, total - indexedSources);
+  const quality: RagQuality = {
+    metadataCoverage: total ? Math.round((withLicense / total) * 100) : 0,
+    // Anteil der Register-Quellen, die tatsächlich im RAG-Index liegen
+    goldenQuestionRecall: total ? Math.round((indexedSources / total) * 100) : 0,
+    sourcesNeedingReview: needingReview,
+    indexFreshness: chunks > 0 ? "aktuell" : "leer",
+  };
+  // Governance-Hinweise (statische Regeln) weiterhin aus der Mock-Schicht.
+  const checks = mockSourcesRepository.governanceChecks();
 
   return (
     <>
@@ -41,22 +62,22 @@ export default async function SourcesPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <MiniKpi
-            label="Verifizierte Quellen"
-            value="248"
-            hint="+ 5 diese Woche"
+            label="Quellen im Register"
+            value={total.toLocaleString("de-DE")}
+            hint={`${indexedSources.toLocaleString("de-DE")} im RAG-Index`}
             hintClass="text-success"
           />
           <MiniKpi
-            label="In Lizenzprüfung"
-            value="11"
-            hint="manuelle Freigabe nötig"
-            hintClass="text-warning"
+            label="Noch nicht indexiert"
+            value={needingReview.toLocaleString("de-DE")}
+            hint="Registrierung/Freigabe ausstehend"
+            hintClass={needingReview > 0 ? "text-warning" : "text-success"}
           />
           <MiniKpi
-            label="RAG-Index aktuell"
-            value="99,2 %"
-            hint={`letzte Prüfung: heute`}
-            hintClass="text-success"
+            label="Chunks im RAG-Index"
+            value={chunks.toLocaleString("de-DE")}
+            hint={chunks > 0 ? "lokal + OpenAI-Embeddings" : "noch keine Ingestion"}
+            hintClass={chunks > 0 ? "text-success" : "text-muted"}
           />
         </div>
 

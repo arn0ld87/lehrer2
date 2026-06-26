@@ -9,11 +9,9 @@
  * Datenschutz: kein PII in Logs. DB-Zugriff nur nach Sitzungsprüfung.
  */
 
-import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
 
-import { auth } from '@/lib/auth/auth';
-import { getCurrentTeacher } from '@/lib/auth/index';
+import { getActiveTeacher } from '@/lib/auth/index';
 import { db } from '@/lib/db/client';
 import {
   worksheet,
@@ -39,11 +37,8 @@ export async function exportWorksheetAction(
   worksheetId: string,
   format: ExportFormat,
 ): Promise<ExportActionResult> {
-  // 1. Session prüfen
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return { ok: false, error: 'Nicht angemeldet' };
-
-  const teacher = await getCurrentTeacher(session.user.id);
+  // 1./2. Aktiven Lehrer-Kontext ermitteln (Login deaktiviert → single-tenant-Fallback)
+  const teacher = await getActiveTeacher();
   if (!teacher) return { ok: false, error: 'Kein Lehrerprofil gefunden' };
 
   // 2. Worksheet laden

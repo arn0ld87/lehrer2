@@ -11,11 +11,9 @@
  * Cloud-Pfad: ausdrücklich kein Cloud-LLM ohne CloudReleaseGrant (AGENTS.md).
  */
 
-import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
-import { auth } from '@/lib/auth/auth';
-import { getCurrentTeacher } from '@/lib/auth/index';
+import { getActiveTeacher } from '@/lib/auth/index';
 import {
   generateWorksheet,
   GenerationBlockedError,
@@ -65,14 +63,8 @@ export async function generateWorksheetAction(
   _prev: WorksheetActionResult | null,
   formData: FormData,
 ): Promise<WorksheetActionResult> {
-  // 1. Session prüfen
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) {
-    return { ...EMPTY, error: 'Nicht angemeldet' };
-  }
-
-  // 2. Teacher-Profil laden
-  const teacher = await getCurrentTeacher(session.user.id);
+  // 1./2. Aktiven Lehrer-Kontext ermitteln (Login deaktiviert → single-tenant-Fallback)
+  const teacher = await getActiveTeacher();
   if (!teacher) {
     return { ...EMPTY, error: 'Kein Lehrerprofil gefunden' };
   }

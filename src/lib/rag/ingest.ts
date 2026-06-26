@@ -239,6 +239,10 @@ export async function ingestSource(
     vector: vectors[i]!,
     payload: {
       source_id: sourceRefId,
+      // chunk_text ist Pflicht-Payload: assembleCitation() liest den Zitat-Text
+      // aus der Qdrant-Payload (nicht aus PG). Fehlt er, gilt jeder Treffer als
+      // "incomplete" und wird verworfen → Retrieval liefert 0 Zitate.
+      chunk_text: chunk.text,
       trust_level: source.sourceType,
       subject: source.subjectAlignment ?? null,
       confession_context: source.confessionContext ?? null,
