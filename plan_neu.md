@@ -44,12 +44,15 @@ UNVERIFIED nie produktiv. Spezifikationen existieren bereits:
 ---
 
 ## Phase 0 — Baseline
+
 `pnpm install`; Dienste prüfen (`docker compose`: Postgres/Qdrant/Ollama/MinIO/Redis).
 Baseline-Gates grün ziehen: `pnpm typecheck && pnpm lint && pnpm test && pnpm db:check`,
 damit spätere Regressionen eindeutig zuordenbar sind.
 
 ## Phase 1 — LLM-Provider-Abstraktion (neu, isoliert)
+
 Neues Modul `src/lib/llm/`, Vertrag aus `INTEGRATION_BOUNDARIES.md` §1:
+
 - `provider.ts` — `LLMProvider { call; callStructured<T>; estimateTokens }` + `CallContext`;
   `JSONSchema` minimal als `Record<string,unknown>` (keine neue Dependency).
 - `ollama-chat.ts` — `OllamaChatProvider`, POST `${OLLAMA_BASE_URL}/api/chat`
@@ -66,7 +69,9 @@ Risiko: Ollama-JSON-Mode für structured Output unzuverlässig → fail-closed p
 Parse-Fehler Statement als `UNSUPPORTED_DRAFT` behandeln, nie erfinden.
 
 ## Phase 2 — PII-Gate + CloudReleaseGrant (fail-closed)
+
 Referenz: `docs/security/REDACTION_AND_GUARD_SPEC.md` (existiert; Regex-Kategorien + `guardAssertion`).
+
 - `src/lib/llm/redaction.ts` — classify+redact → `{redactedText, redactionApplied}`.
 - `src/lib/llm/guard.ts` — `guardAssertion(text): boolean` nach Spec; Fail = Abbruch.
 - `src/lib/llm/gate.ts` — `withGate(provider, {grantReader})`: vor JEDEM Call
@@ -74,14 +79,16 @@ Referenz: `docs/security/REDACTION_AND_GUARD_SPEC.md` (existiert; Regex-Kategori
   (PII-Treffer ⇒ `GateBlockedError` + `audit_log` severity=critical)→provider.call.
   Bei `CLOUD_LLM_ENABLED=false` ODER kein gültiger Grant ⇒ Cloud hart blocken.
 - Neu `src/lib/db/schema/grants.ts` — Tabelle `cloud_release_grant` (id, schoolId FK, provider,
-  scopeSubjects[], scopeGradeBands[], legalBasis, validFrom/Until, issuer*, createdAt);
+  scopeSubjects[], scopeGradeBands[], legalBasis, validFrom/Until, issuer\*, createdAt);
   in `schema/index.ts` exportieren. Repo `src/lib/db/repositories/grants.pg.ts`:
   `getActiveGrant(schoolId, provider, subject, gradeBand)` mit Zeit-/Zweckbindung.
 - Migration via `pnpm db:generate` (ADR-0005-Review, `db:check` danach grün). Commit erst auf Userwunsch.
 
 ## Phase 3 — Generierungs-Services
+
 Neu `src/lib/generation/{planning.ts,worksheet.ts,prompt.ts,grounding.ts}` und
 `src/lib/rag/source-ref-reader.pg.ts` (`PgSourceRefReader.getById` → `SourceRefMeta`; existiert noch nicht).
+
 1. Retrieval: `retrieve({embedder:createEmbedder(), store:createVectorStore(), sourceRefReader:new PgSourceRefReader()}, query, {subject, minTrust:"OFFICIAL_GUIDANCE", k})`
    (minTrust erfüllt AC „nur OFFICIAL_BINDING+OFFICIAL_GUIDANCE").
 2. `prompt.ts`: groundeter Prompt mit Systemanweisung Quellenpflicht + nummerierten Zitaten.
@@ -92,7 +99,7 @@ Neu `src/lib/generation/{planning.ts,worksheet.ts,prompt.ts,grounding.ts}` und
 5. Persistenz in DB-Transaktion: Planung → `teachingUnit`(strandId, s. R-strand)+`lesson`(phasePlan jsonb);
    Arbeitsblatt → `worksheet`+`task`(Basis/Erweiterung/Förder als difficulty)+`worksheetSourceRef`/`taskSourceRef`+optional `expectationHorizon`.
    Immer `generation_provenance` (provider/model/promptHash/redactionApplied/sourceRefs/confidenceState)
-   + `audit_log` (eventType, actorId, subject — keine Schülernamen).
+   - `audit_log` (eventType, actorId, subject — keine Schülernamen).
 6. Religion: Konfessions-Scope Pflicht; „übergreifend" ⇒ aktive Warnung im Rückgabeobjekt (für UI).
    Ethik nie mit Religion gemischt (durch `uiConfessionToDbContexts` garantiert).
 
@@ -102,6 +109,7 @@ existierenden `curriculumStrand` (Phase 6 seedet ihn). Fehlt er → fail-closed 
 Meldung „Quellenbibliothek momentan nicht verfügbar", kein Crash.
 
 ## Phase 4 — Server Actions + Pg-Repositories + UI-Wiring
+
 - Neu `src/lib/db/repositories/{planning.pg.ts,worksheet.pg.ts}`; neue async
   `PlanningWriteRepository`/`WorksheetWriteRepository` (bestehende sync-Mock-Methoden für die Shell
   unangetastet lassen). Factory-Toggle analog `src/lib/db/repositories/factory.ts`.
@@ -116,16 +124,19 @@ Meldung „Quellenbibliothek momentan nicht verfügbar", kein Crash.
   `RankedCitation→SourceCitation`), `exportArtifact(ws,"docx"|"pdf")` (`src/lib/export/`), Bytes als Download.
 
 ## Phase 5 — Auth-UI + Session-Gating
+
 - Better-Auth Next-Handler `src/app/api/auth/[...all]/route.ts` (`toNextJsHandler(auth)`).
 - `src/app/login/page.tsx` (+ client form via `createAuthClient`), Logout-Action.
 - Gating geschützter Routen (`/planung`,`/arbeitsblaetter`,`/quelle`,`/dashboard`) ohne Session → `/login`
   (Layout-Guard via `auth.api.getSession` oder `src/middleware.ts`).
 - Hardcoded Jana-Zwarg-Mock-User in `app-sidebar.tsx`/`context-switcher.tsx` durch echten Session-User
-  + `getCurrentTeacher` ersetzen. Seed-Skript `scripts/seed-user.ts` (echter `user`+`school`+`teacherProfile`,
-  Passwort-Hashing über Better-Auth-API).
+  - `getCurrentTeacher` ersetzen. Seed-Skript `scripts/seed-user.ts` (echter `user`+`school`+`teacherProfile`,
+    Passwort-Hashing über Better-Auth-API).
 
 ## Phase 6 — Reale LSA-Lehrpläne als OFFICIAL_BINDING ingestieren
+
 Referenz: ADR 0003, `scripts/seed-sources.ts`, `data/source-registry.seed.yaml`.
+
 1. **Human-Governance-Schritt (nicht voll automatisierbar):** offizielle LSA-Lehrpläne
    (Bildungsserver Sachsen-Anhalt / LISA) für Deutsch + Religion ev./kath. + Ethik, Klassen 5–10 (SEK_I)
    identifizieren; URL, Herausgeber, Version/Datum, **Lizenz/Nutzungsrecht** dokumentieren.
@@ -145,6 +156,7 @@ Referenz: ADR 0003, `scripts/seed-sources.ts`, `data/source-registry.seed.yaml`.
    R-lizenz: unklare Lizenz ⇒ Quelle bleibt REGISTERED, NIE approven (fail-closed).
 
 ## Phase 7 — Tests + Gates (Vitest/Testcontainers)
+
 - `src/lib/llm/__tests__/provider.test.ts` — Fake deterministisch; Ollama gegen gemockten fetch.
 - `src/lib/llm/__tests__/gate.test.ts` — **fail-closed:** PII→`GateBlockedError`+audit; Cloud ohne Grant→block;
   lokal/PUBLIC→pass + `redactionApplied=false`.
@@ -155,6 +167,7 @@ Referenz: ADR 0003, `scripts/seed-sources.ts`, `data/source-registry.seed.yaml`.
 - Gates: `pnpm typecheck && pnpm lint && pnpm test && pnpm format:check && pnpm db:check && pnpm build`.
 
 ## Phase 8 — End-to-End-Verifikation (manuell)
+
 1. `docker compose up -d`; `ollama pull` Chat- + Embedding-Modell.
 2. `pnpm db:migrate` (inkl. neuer grant-Migration); `pnpm db:seed` + `scripts/seed-strands.ts` + `scripts/seed-user.ts`.
 3. `scripts/ingest-curriculum.ts` für ≥1 OFFICIAL_BINDING Deutsch-Quelle; Qdrant-Punkte + `rag_chunk` +
@@ -168,11 +181,13 @@ Referenz: ADR 0003, `scripts/seed-sources.ts`, `data/source-registry.seed.yaml`.
 ---
 
 ## Sequenzierung
+
 1 → 2 (Gate umhüllt Provider) → 3 → 4. Phase 5 (Auth) blockt produktive Action-Nutzung, kann nach 4
 erfolgen (für Tests Session mocken). Phase 6 (Strang-Seed + Ingestion) ist Voraussetzung für reale
 Generierung (R-strand) und E2E, kann aber parallel zu 1–5 vorbereitet werden; Phase-7-Tests laufen mit Fakes.
 
 ## Kritische Dateien
+
 - `src/lib/rag/retrieve.ts`, `src/lib/rag/citation.ts`, `src/lib/rag/ingest.ts`
 - `src/lib/db/repositories/sources.pg.ts`, `factory.ts`, `mapping.ts`
 - `src/lib/db/schema/artifacts.ts`, `provenance.ts`, `index.ts`
@@ -181,6 +196,7 @@ Generierung (R-strand) und E2E, kann aber parallel zu 1–5 vorbereitet werden; 
 - `src/components/planner/planning-form.tsx`, `src/components/worksheet/builder-panel.tsx`
 
 ## Offene Governance-Punkte für den Nutzer (vor/ während Phase 6)
+
 - Auswahl der konkreten amtlichen Lehrplan-Quellen + Lizenz-/Nutzungsrechtsfreigabe (`licenseVerified`)
   ist eine menschliche Entscheidung — der Plan automatisiert nur register→approve→ingest danach.
 - Cloud-LLM bleibt im Slice standardmäßig AUS; `CloudReleaseGrant` wird implementiert und scharf

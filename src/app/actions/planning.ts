@@ -22,30 +22,13 @@ import {
   type PlanningInput,
 } from '@/lib/generation/planning';
 import { createGenerationDeps } from '@/lib/generation/factory';
-import type { RankedCitation } from '@/lib/rag/citation';
 
-// ── Serialisierbare UI-Typen ─────────────────────────────────────────────────
+// Nicht-Action-Exporte (Typen + sync mapCitation) liegen in ./shared —
+// 'use server'-Module dürfen ausschließlich async Funktionen exportieren.
+import { mapCitation } from './shared';
+import type { UICitation, UIStatement } from './shared';
 
-/** Zitation, die direkt in React-State übernommen werden kann (keine DB-Objekte). */
-export interface UICitation {
-  index: number;
-  title: string;
-  publisher: string;
-  /** = pageOrSection der RankedCitation */
-  locator: string;
-  license: string;
-  trustLevel: string;
-  confidence: string;
-  uri: string | null;
-  /** chunkText, auf ~240 Zeichen gekürzt */
-  snippet: string;
-}
-
-export interface UIStatement {
-  text: string;
-  confidence: 'GROUNDED' | 'UNSUPPORTED_DRAFT';
-  citationRefs: number[];
-}
+export type { UICitation, UIStatement } from './shared';
 
 export interface PlanningActionResult {
   ok: boolean;
@@ -57,31 +40,6 @@ export interface PlanningActionResult {
   lessonId?: string;
   statements: UIStatement[];
   citations: UICitation[];
-}
-
-// ── Mapping-Hilfsfunktion (exportiert für Tests / Werkzeug-Stubs) ─────────────
-
-/**
- * Mappt eine RankedCitation auf das serialisierbare UICitation-Format.
- * Pure Funktion — kein IO, keine DB-Abhängigkeiten (einfach testbar).
- *
- * @param c     Vollständige RankedCitation aus dem Retrieval
- * @param index 1-basierter Zitations-Index für die UI (entspricht citationRefs-Wert)
- */
-export function mapCitation(c: RankedCitation, index: number): UICitation {
-  const snippet =
-    c.chunkText.length > 240 ? c.chunkText.slice(0, 240) + '…' : c.chunkText;
-  return {
-    index,
-    title: c.title,
-    publisher: c.publisher,
-    locator: c.pageOrSection,
-    license: c.license,
-    trustLevel: c.trustLevel,
-    confidence: c.confidence,
-    uri: c.uri,
-    snippet,
-  };
 }
 
 // ── Konstanten ────────────────────────────────────────────────────────────────

@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
     globalSetup: "./src/lib/db/__tests__/global-setup.ts",
     testTimeout: 60_000, // Testcontainers-Start
     fileParallelism: false, // gemeinsame Test-DB

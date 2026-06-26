@@ -9,8 +9,11 @@ import { Card } from "@/components/ui/card";
 /**
  * Anmeldeseite — Email/Passwort-Formular für single-tenant LSA.
  * Kein Inline-Hex; ausschließlich Design-Tokens aus globals.css.
+ *
+ * useSearchParams() erzwingt eine Suspense-Boundary (Next.js Prerender) —
+ * deshalb liegt die eigentliche Logik in LoginForm, der Default-Export umhüllt sie.
  */
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/dashboard";
@@ -129,5 +132,17 @@ export default function LoginPage() {
         </Card>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-canvas px-4" />
+      }
+    >
+      <LoginForm />
+    </React.Suspense>
   );
 }

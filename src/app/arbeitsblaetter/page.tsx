@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/app-shell";
-import { Button } from "@/components/ui";
-import { Icon } from "@/components/ui/icon";
 import { SectionBanner } from "@/components/ui/shared";
-import { BuilderPanel } from "@/components/worksheet/builder-panel";
-import { WorksheetPreview } from "@/components/worksheet/worksheet-preview";
+import { WorksheetContainer } from "@/components/worksheet/worksheet-container";
 
 export const metadata: Metadata = { title: "Arbeitsblätter" };
 
@@ -21,18 +18,10 @@ export default function WorksheetsPage() {
         <SectionBanner
           title="Arbeitsblätter, die nach Unterricht aussehen."
           description="Kein generischer KI-Zettel, sondern klar gegliedertes Material mit Differenzierung, Lösungen und sinnvoller Typografie."
-          action={
-            <Button variant="secondary">
-              <Icon name="download" width={16} height={16} />
-              Als PDF exportieren
-            </Button>
-          }
+          action={null}
         />
 
-        <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
-          <BuilderPanel />
-          <WorksheetPreview />
-        </div>
+        <WorksheetContainer />
       </div>
     </>
   );

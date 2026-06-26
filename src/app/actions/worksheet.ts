@@ -24,9 +24,9 @@ import {
 } from '@/lib/generation/worksheet';
 import { createGenerationDeps } from '@/lib/generation/factory';
 
-// Serialisierbare UI-Typen (mapCitation/UICitation/UIStatement aus planning-Action re-nutzen)
-import { mapCitation } from './planning';
-import type { UICitation, UIStatement } from './planning';
+// Serialisierbare UI-Typen + Mapper aus ./shared (kein 'use server')
+import { mapCitation } from './shared';
+import type { UICitation, UIStatement } from './shared';
 
 // ── Serialisierbarer Ergebnistyp ─────────────────────────────────────────────
 
