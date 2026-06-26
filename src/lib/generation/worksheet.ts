@@ -49,6 +49,8 @@ export interface WorksheetInput {
   gradeBand: string;
   topic: string;
   difficulties?: WorksheetDifficulty[];
+  /** Didaktische Rahmenbedingungen (z. B. „45 Minuten", „LRS-Unterstützung"). */
+  constraints?: string[];
 }
 
 export interface WorksheetResult {
@@ -170,6 +172,7 @@ export async function generateWorksheet(
     gradeBand,
     topic,
     difficulties = ["Basis"],
+    constraints,
   } = input;
 
   // ── 1. Validierung ────────────────────────────────────────────────────────
@@ -238,6 +241,7 @@ export async function generateWorksheet(
     topic,
     confessionLabel: confessionLabel(subject, confession),
     citations,
+    constraints,
   });
 
   const promptHash = createHash("sha256").update(prompt).digest("hex");

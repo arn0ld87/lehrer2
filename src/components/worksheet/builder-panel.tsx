@@ -11,10 +11,33 @@ const DEFAULT_CONFESSION: Record<string, string> = {
   "katholische-religion": "KATHOLISCH",
 };
 
+/** Vordefinierte Rahmenbedingungs-Chips (zusätzlich zu Freitext). */
+const PRESET_CONSTRAINTS = [
+  "45 Minuten",
+  "Doppelstunde (90 Min)",
+  "heterogene Lerngruppe",
+  "LRS-Unterstützung",
+  "Inklusion",
+  "digitale Endgeräte",
+];
+
 /** Arbeitsblatt-Builder — Generierungsformular (gebunden an generateWorksheetAction). */
 export function BuilderPanel() {
   const [subject, setSubject] = React.useState("deutsch");
+  const [constraints, setConstraints] = React.useState<string[]>([]);
+  const [customOpen, setCustomOpen] = React.useState(false);
+  const [customValue, setCustomValue] = React.useState("");
   const isReligion = RELIGION_SUBJECTS.has(subject);
+
+  const toggleConstraint = (c: string) =>
+    setConstraints((cur) => (cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]));
+
+  const addCustom = () => {
+    const t = customValue.trim();
+    if (t && !constraints.includes(t)) setConstraints((cur) => [...cur, t]);
+    setCustomValue("");
+    setCustomOpen(false);
+  };
 
   return (
     <Card className="lg:sticky lg:top-5 h-max">
@@ -115,7 +138,67 @@ export function BuilderPanel() {
             </label>
           ))}
         </fieldset>
+
+        {/* Besondere Rahmenbedingungen — fließen in die Generierung (Prompt) */}
+        <fieldset className="grid gap-1.5">
+          <legend className="text-[11px] font-bold text-ink-body mb-1">
+            Besondere Rahmenbedingungen
+          </legend>
+          <div className="flex flex-wrap gap-1.5">
+            {PRESET_CONSTRAINTS.map((c) => (
+              <ToggleChip
+                key={c}
+                active={constraints.includes(c)}
+                onClick={() => toggleConstraint(c)}
+              >
+                {c}
+              </ToggleChip>
+            ))}
+            {constraints
+              .filter((c) => !PRESET_CONSTRAINTS.includes(c))
+              .map((c) => (
+                <ToggleChip key={c} active onClick={() => toggleConstraint(c)}>
+                  {c} ✕
+                </ToggleChip>
+              ))}
+            {customOpen ? (
+              <span className="inline-flex items-center gap-1">
+                <input
+                  value={customValue}
+                  onChange={(e) => setCustomValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addCustom();
+                    }
+                  }}
+                  autoFocus
+                  placeholder="eigene Bedingung"
+                  className="border border-line-strong bg-surface rounded-full px-2.5 py-[3px] text-[10px] outline-none focus:border-focus-ring w-[130px]"
+                />
+                <button
+                  type="button"
+                  onClick={addCustom}
+                  className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-primary text-white"
+                >
+                  ✓
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setCustomOpen(true)}
+                className="inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] bg-chip-bg text-muted border border-line hover:border-focus-ring transition"
+              >
+                + Kontext
+              </button>
+            )}
+          </div>
+        </fieldset>
       </div>
+
+      {/* Gewählte Rahmenbedingungen werden mit dem Formular übermittelt */}
+      <input type="hidden" name="constraints" value={JSON.stringify(constraints)} />
 
       <div className="mt-4">
         <Notice icon="lock" title="Export bleibt im Entwurfsmodus.">
@@ -173,5 +256,30 @@ function Select({
     >
       {children}
     </select>
+  );
+}
+
+function ToggleChip({
+  children,
+  active,
+  onClick,
+}: {
+  children: React.ReactNode;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex items-center rounded-full text-[10px] font-bold px-2 py-[5px] border transition ${
+        active
+          ? "bg-primary text-white border-primary"
+          : "bg-chip-bg text-muted border-line hover:border-focus-ring"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

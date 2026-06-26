@@ -35,14 +35,45 @@ export interface DashboardRepository {
   trustPrinciples(): TrustPrinciple[];
 }
 
+/**
+ * Async-Variante des Dashboard-Vertrags (DB-gestützt).
+ *
+ * Metriken/Verlauf/Aktivitäten/Schnellzugriff werden aus echten Artefakt-,
+ * Audit- und Quellen-Tabellen abgeleitet. `trustPrinciples()` bleibt eine
+ * bindende Doku-Konstante (kein Fake-Datenpfad).
+ */
+export interface AsyncDashboardRepository {
+  metrics(): Promise<DashboardMetric[]>;
+  recentWork(tab?: RecentWork["tab"]): Promise<RecentWork[]>;
+  activities(): Promise<Activity[]>;
+  sourceQuickAccess(): Promise<SourceQuickAccess[]>;
+  trustPrinciples(): Promise<TrustPrinciple[]>;
+}
+
 export interface PlanningRepository {
   steps(): PlanningStep[];
   structureProposal(): StructurePhase[];
   curriculumFit(): CurriculumFit[];
 }
 
+/**
+ * Async-Variante des Planning-Vertrags (DB-gestützt).
+ *
+ * `steps()` ist die feste Workflow-Struktur (Konstante). `structureProposal()`
+ * startet leer — der Vorschlag entsteht erst durch Generierung, kein erfundener
+ * Initialvorschlag. `curriculumFit()` listet echte Kompetenzknoten des dominanten
+ * aktiven Lehrplan-Strangs mit echter Quellenangabe.
+ */
+export interface AsyncPlanningRepository {
+  steps(): Promise<PlanningStep[]>;
+  structureProposal(): Promise<StructurePhase[]>;
+  curriculumFit(): Promise<CurriculumFit[]>;
+}
+
 export interface WorksheetRepository {
   // Im UI-Schritt nur Konfigurations-Meta, kein Generierungsergebnis.
+  // Hinweis: aktuell UI-ungenutzt — der Arbeitsblatt-Builder rendert seine
+  // Optionen direkt (an die Generierungs-Enums gekoppelt), nicht über dieses Repo.
   types(): { id: string; label: string; detail: string }[];
   differentiationOptions(): string[];
   toneOptions(): string[];
@@ -71,6 +102,21 @@ export interface SourcesRepository {
 export interface UserContextRepository {
   current(): UserContext;
   user(): MockUser;
+}
+
+/**
+ * Async-Variante des UserContext-Vertrags (DB-gestützt).
+ *
+ * `user()` kommt aus dem aktiven Teacher-Profil (getActiveTeacher).
+ * `current()` hat keine „aktive-Auswahl"-Persistenz im Datenmodell und wird
+ * daher als Vorbelegung aus dem dominanten aktiven Lehrplan-Strang abgeleitet
+ * (oder fällt auf einen dokumentierten Default zurück). Keine erfundene Persistenz.
+ *
+ * Implementierungen: PgUserContextRepository (DB), factory.getUserContextRepository() (Mock-Adapter).
+ */
+export interface AsyncUserContextRepository {
+  current(): Promise<UserContext>;
+  user(): Promise<MockUser>;
 }
 
 /**

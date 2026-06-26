@@ -23,7 +23,7 @@ import {
 import { createGenerationDeps } from '@/lib/generation/factory';
 
 // Serialisierbare UI-Typen + Mapper aus ./shared (kein 'use server')
-import { mapCitation } from './shared';
+import { mapCitation, parseConstraints } from './shared';
 import type { UICitation, UIStatement } from './shared';
 
 // ── Serialisierbarer Ergebnistyp ─────────────────────────────────────────────
@@ -81,6 +81,9 @@ export async function generateWorksheetAction(
   const difficulties: WorksheetDifficulty[] =
     rawDifficulties.filter((d) => VALID_DIFFICULTIES.has(d)) as WorksheetDifficulty[];
 
+  // Didaktische Rahmenbedingungen (JSON-Array oder ;-getrennt) → fließen in den Prompt
+  const constraints = parseConstraints(formData.get('constraints')?.toString());
+
   // 4. Religion-Validierung: Konfession Pflicht bei ev./kath. Religion
   if (RELIGION_SUBJECTS.has(subject) && !confession) {
     return {
@@ -99,6 +102,7 @@ export async function generateWorksheetAction(
     gradeBand,
     topic,
     difficulties: difficulties.length > 0 ? difficulties : undefined,
+    constraints: constraints.length > 0 ? constraints : undefined,
   };
 
   try {

@@ -11,6 +11,12 @@ export function CurriculumFitCard({ items }: { items: CurriculumFit[] }) {
         subtitle="Entwurfsbezug, noch keine rechtliche Zusicherung."
         action={<Badge subject="deutsch">Deutsch</Badge>}
       />
+      {items.length === 0 && (
+        <p className="text-[11px] text-muted py-2.5">
+          Noch keine Kompetenzbezüge. Nach der Generierung erscheinen hier die belegten
+          Lehrplan-Fundstellen.
+        </p>
+      )}
       {items.map((item) => (
         <div
           key={item.id}
