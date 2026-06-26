@@ -9,7 +9,11 @@ export function PlanningProgress({ steps }: { steps: PlanningStep[] }) {
       <CardHead
         title="Planungsfortschritt"
         subtitle="Nachvollziehbar statt „KI sagt schon irgendwas”."
-        action={<StatusChip status="progress">{`${done} / ${steps.length}`}</StatusChip>}
+        action={
+          <StatusChip status={done >= steps.length ? 'ready' : 'progress'}>
+            {`${done} / ${steps.length}`}
+          </StatusChip>
+        }
       />
       <div className="relative pl-[26px]">
         <span

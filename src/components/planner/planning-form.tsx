@@ -143,6 +143,7 @@ export function PlanningForm({
   const [customValue, setCustomValue] = useState('');
   const [draftNote, setDraftNote] = useState<string | null>(null);
   const [exporting, setExporting] = useState<null | 'docx' | 'pdf'>(null);
+  const [exported, setExported] = useState(false);
 
   // Entwurf explizit laden (kein mount-Effect → SSR-sicher, keine Cascading Renders).
   const loadDraft = () => {
@@ -212,6 +213,7 @@ export function PlanningForm({
       );
       if (res.ok && res.base64 && res.filename) {
         downloadBase64(res.base64, res.filename, format);
+        setExported(true);
         setDraftNote(`Export erstellt: ${res.filename}`);
       } else {
         setDraftNote(res.error ?? 'Export fehlgeschlagen.');
@@ -233,6 +235,20 @@ export function PlanningForm({
   const curriculum = hasStatements
     ? citationsToFit(state.citations)
     : initialCurriculum;
+
+  // Planungsfortschritt an den echten Zustand koppeln (Titel/Detail aus initialSteps):
+  // 1 Rahmendaten · 2 Lehrplanbezug (Quellen) · 3 Stundenlogik · 4 Differenzierung · 5 Prüfung & Export
+  const stepDone = [
+    fields.topic.trim().length > 0 || hasStatements,
+    hasStatements || (!!state?.ok && !state.unavailable && state.citations.length > 0),
+    hasStatements,
+    hasStatements,
+    exported,
+  ];
+  const progressSteps = initialSteps.map((s, i) => ({
+    ...s,
+    done: stepDone[i] ?? s.done,
+  }));
 
   return (
     <div className="grid gap-5">
@@ -456,7 +472,7 @@ export function PlanningForm({
           </div>
         </form>
 
-        <PlanningProgress steps={initialSteps} />
+        <PlanningProgress steps={progressSteps} />
       </div>
 
       {/* Reihe 2: Vorgeschlagene Struktur + Curriculum-Fit
