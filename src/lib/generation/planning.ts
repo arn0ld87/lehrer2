@@ -303,6 +303,10 @@ export async function generatePlanning(
         destinationProvider: "ollama",
         subject,
         gradeBand,
+        // Abo-Modell (kostenfrei) → keine Token-Sparsamkeit nötig. Hoch genug,
+        // dass das Reasoning-Modell (gpt-oss) die strukturierte Ausgabe nie
+        // abschneidet; liegt deutlich unter dem 128k-Kontext (Alex, 2026-06-26).
+        maxTokens: 32768,
       },
     );
     rawStatements = parsed.statements;
