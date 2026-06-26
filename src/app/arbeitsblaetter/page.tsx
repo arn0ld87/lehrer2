@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { AppHeader } from "@/components/app-shell";
 import { SectionBanner } from "@/components/ui/shared";
 import { WorksheetContainer } from "@/components/worksheet/worksheet-container";
+import { getAvailableSubjects } from "@/lib/db/repositories/curriculum-subjects.pg";
 
 export const metadata: Metadata = { title: "Arbeitsblätter" };
 
-export default function WorksheetsPage() {
+export default async function WorksheetsPage() {
+  const subjects = await getAvailableSubjects();
   return (
     <>
       <AppHeader
@@ -21,7 +23,7 @@ export default function WorksheetsPage() {
           action={null}
         />
 
-        <WorksheetContainer />
+        <WorksheetContainer subjects={subjects} />
       </div>
     </>
   );

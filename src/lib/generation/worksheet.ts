@@ -51,6 +51,8 @@ export interface WorksheetInput {
   difficulties?: WorksheetDifficulty[];
   /** Didaktische Rahmenbedingungen (z. B. „45 Minuten", „LRS-Unterstützung"). */
   constraints?: string[];
+  /** Freitext-Feinabstimmung der Lehrkraft — fließt verbindlich in den Prompt. */
+  instructions?: string;
 }
 
 export interface WorksheetResult {
@@ -173,6 +175,7 @@ export async function generateWorksheet(
     topic,
     difficulties = ["Basis"],
     constraints,
+    instructions,
   } = input;
 
   // ── 1. Validierung ────────────────────────────────────────────────────────
@@ -242,6 +245,7 @@ export async function generateWorksheet(
     confessionLabel: confessionLabel(subject, confession),
     citations,
     constraints,
+    instructions,
   });
 
   const promptHash = createHash("sha256").update(prompt).digest("hex");
@@ -267,14 +271,26 @@ export async function generateWorksheet(
     rawStatements = parsed.statements;
   } catch (err) {
     if (err instanceof StructuredParseError) {
-      rawStatements = [];
-    } else {
-      throw err;
+      // Kein verwertbares JSON → KEIN leeres Arbeitsblatt persistieren und als
+      // Erfolg ausgeben. Klarer Fehler, den die Action der Lehrkraft anzeigt.
+      throw new GenerationBlockedError(
+        "Das KI-Modell lieferte kein auswertbares Ergebnis. Bitte erneut versuchen.",
+      );
     }
+    throw err;
   }
 
   // ── 5. Grounding ──────────────────────────────────────────────────────────
   const statements = groundStatements(rawStatements, citations);
+
+  // Leeres Ergebnis (Modell lieferte 0 Aufgaben) NICHT als leeren Entwurf
+  // speichern — sonst erscheint ein „erfolgreiches" Arbeitsblatt ohne Inhalt.
+  if (statements.length === 0) {
+    throw new GenerationBlockedError(
+      "Das KI-Modell hat keine verwertbaren Aufgaben erzeugt. " +
+        "Bitte Thema oder Anweisungen anpassen und erneut versuchen.",
+    );
+  }
 
   // ── 6. DB-Transaktion ─────────────────────────────────────────────────────
   const groundedCount = statements.filter((s) => s.confidence === "GROUNDED").length;

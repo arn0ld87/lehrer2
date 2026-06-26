@@ -6,6 +6,7 @@ import {
   generateWorksheetAction,
   type WorksheetActionResult,
 } from "@/app/actions/worksheet";
+import type { SubjectOption } from "@/lib/types";
 import { BuilderPanel } from "./builder-panel";
 import { WorksheetPreview } from "./worksheet-preview";
 
@@ -15,7 +16,7 @@ import { WorksheetPreview } from "./worksheet-preview";
  *
  * Die Form-Boundary liegt hier; BuilderPanel enthält nur Inputs + Submit.
  */
-export function WorksheetContainer() {
+export function WorksheetContainer({ subjects }: { subjects: SubjectOption[] }) {
   const [state, formAction] = useActionState<WorksheetActionResult | null, FormData>(
     generateWorksheetAction,
     null,
@@ -24,7 +25,7 @@ export function WorksheetContainer() {
   return (
     <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
       <form action={formAction} noValidate>
-        <BuilderPanel />
+        <BuilderPanel subjects={subjects} />
       </form>
       <WorksheetPreview state={state} />
     </div>

@@ -23,6 +23,8 @@ export interface BuildGroundedPromptArgs {
   citations: RankedCitation[];
   /** Optionale didaktische Rahmenbedingungen (z. B. "45 Minuten", "LRS-Unterstützung"). */
   constraints?: string[];
+  /** Freitext-Feinabstimmung der Lehrkraft (verbindlich zu berücksichtigen). */
+  instructions?: string;
 }
 
 /**
@@ -82,7 +84,8 @@ function outputFormatSection(): string {
  * Bei vorhandenen citations: Quellenblock mit nummerierten Referenzen [1..n].
  */
 export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
-  const { task, subject, gradeBand, topic, confessionLabel, citations, constraints } = args;
+  const { task, subject, gradeBand, topic, confessionLabel, citations, constraints, instructions } =
+    args;
 
   const subjectLabel = confessionLabel ? `${subject} (${confessionLabel})` : subject;
 
@@ -90,12 +93,17 @@ export function buildGroundedPrompt(args: BuildGroundedPromptArgs): string {
     .map((c) => c.trim())
     .filter((c) => c.length > 0);
 
+  const cleanInstructions = instructions?.trim() ?? "";
+
   const contextHeader = [
     `Fach: ${subjectLabel}`,
     `Jahrgangsstufe / Klassenstufe: ${gradeBand}`,
     `Thema: ${topic}`,
     ...(cleanConstraints.length > 0
       ? [`Besondere Rahmenbedingungen (verbindlich berücksichtigen): ${cleanConstraints.join("; ")}`]
+      : []),
+    ...(cleanInstructions.length > 0
+      ? [`Zusätzliche Anweisungen der Lehrkraft (verbindlich berücksichtigen): ${cleanInstructions}`]
       : []),
   ].join("\n");
 

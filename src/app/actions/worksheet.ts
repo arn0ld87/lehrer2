@@ -75,6 +75,8 @@ export async function generateWorksheetAction(
   const schoolForm = formData.get('schoolForm')?.toString() ?? '';
   const gradeBand = formData.get('gradeBand')?.toString() ?? '';
   const topic = formData.get('topic')?.toString() ?? '';
+  // Freitext-Feinabstimmung (optional) — fließt in den Generierungs-Prompt
+  const instructions = formData.get('instructions')?.toString().trim() || undefined;
 
   // difficulties: mehrere Werte per getAll; nur valide Werte übernehmen
   const rawDifficulties = formData.getAll('difficulties').map(String);
@@ -103,6 +105,7 @@ export async function generateWorksheetAction(
     topic,
     difficulties: difficulties.length > 0 ? difficulties : undefined,
     constraints: constraints.length > 0 ? constraints : undefined,
+    instructions,
   };
 
   try {

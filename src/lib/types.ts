@@ -12,6 +12,12 @@
 /** Fächer — Religion wird konfessionssensibel getrennt; Ethik ist eigenes Fach. */
 export type Subject = "deutsch" | "evangelische-religion" | "katholische-religion" | "ethik";
 
+/** Auswählbares Fach für die UI (nur Fächer mit vorhandenem Lehrplan-Strang). */
+export interface SubjectOption {
+  value: Subject;
+  label: string;
+}
+
 /** Schulformen in Sachsen-Anhalt. */
 export type SchoolForm = "gemeinschaftsschule" | "gymnasialer-bildungsgang";
 

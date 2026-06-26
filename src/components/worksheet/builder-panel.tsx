@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useFormStatus } from "react-dom";
+import type { SubjectOption } from "@/lib/types";
 import { Card, CardHead, Button, Notice } from "../ui";
 
 const RELIGION_SUBJECTS = new Set(["evangelische-religion", "katholische-religion"]);
@@ -22,8 +23,8 @@ const PRESET_CONSTRAINTS = [
 ];
 
 /** Arbeitsblatt-Builder — Generierungsformular (gebunden an generateWorksheetAction). */
-export function BuilderPanel() {
-  const [subject, setSubject] = React.useState("deutsch");
+export function BuilderPanel({ subjects }: { subjects: SubjectOption[] }) {
+  const [subject, setSubject] = React.useState<string>(subjects[0]?.value ?? "deutsch");
   const [constraints, setConstraints] = React.useState<string[]>([]);
   const [customOpen, setCustomOpen] = React.useState(false);
   const [customValue, setCustomValue] = React.useState("");
@@ -55,10 +56,11 @@ export function BuilderPanel() {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           >
-            <option value="deutsch">Deutsch</option>
-            <option value="evangelische-religion">Ev. Religion</option>
-            <option value="katholische-religion">Kath. Religion</option>
-            <option value="ethik">Ethik</option>
+            {subjects.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
           </Select>
         </Field>
 
@@ -108,6 +110,17 @@ export function BuilderPanel() {
             required
             placeholder="z.B. Charakterisierung schreiben"
             className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink text-[13px] outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
+          />
+        </Field>
+
+        {/* Feinabstimmung — Freitext, fließt verbindlich in den Prompt */}
+        <Field label="Zusätzliche Anweisungen (optional)" htmlFor="ws-instructions">
+          <textarea
+            id="ws-instructions"
+            name="instructions"
+            rows={3}
+            placeholder="z.B. Fokus auf innere Monologe, genau 3 Aufgaben, mit Lösungsblatt, einfache Sprache."
+            className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink text-[13px] outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full resize-y leading-[1.5]"
           />
         </Field>
 
@@ -251,7 +264,7 @@ function Select({
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
-      className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink text-[13px] outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full appearance-none"
+      className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink text-[13px] outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
       {...rest}
     >
       {children}

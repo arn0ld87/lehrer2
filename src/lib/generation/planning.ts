@@ -316,15 +316,25 @@ export async function generatePlanning(
     rawStatements = parsed.statements;
   } catch (err) {
     if (err instanceof StructuredParseError) {
-      // Fail-closed: parse-Fehler → keine Statements, keine Fabrication
-      rawStatements = [];
-    } else {
-      throw err;
+      // Kein verwertbares JSON → KEINEN leeren Plan persistieren und als Erfolg
+      // ausgeben. Klarer Fehler, den die Action der Lehrkraft anzeigt.
+      throw new GenerationBlockedError(
+        "Das KI-Modell lieferte kein auswertbares Ergebnis. Bitte erneut versuchen.",
+      );
     }
+    throw err;
   }
 
   // ── 5. Grounding ──────────────────────────────────────────────────────────
   const statements = groundStatements(rawStatements, citations);
+
+  // Leeres Ergebnis (0 Aussagen) NICHT als leeren Entwurf speichern.
+  if (statements.length === 0) {
+    throw new GenerationBlockedError(
+      "Das KI-Modell hat keine verwertbaren Inhalte erzeugt. " +
+        "Bitte Thema oder Anweisungen anpassen und erneut versuchen.",
+    );
+  }
 
   // ── 6. DB-Transaktion ─────────────────────────────────────────────────────
   const groundedCount = statements.filter((s) => s.confidence === "GROUNDED").length;
