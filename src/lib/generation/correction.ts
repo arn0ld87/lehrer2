@@ -281,7 +281,7 @@ export async function generateCorrection(
   const prompt = buildCorrectionPrompt({ subject, gradeBand, topic, redactedWork: redactedText, citations });
   const promptHash = createHash("sha256").update(prompt).digest("hex");
 
-  let parsed: LLMCorrection = { rubricScores: [], feedback: [] };
+  let parsed: LLMCorrection;
   try {
     parsed = await deps.provider.callStructured<LLMCorrection>(prompt, CORRECTION_SCHEMA, {
       schoolId,
@@ -293,10 +293,13 @@ export async function generateCorrection(
     });
   } catch (err) {
     if (err instanceof StructuredParseError) {
-      parsed = { rubricScores: [], feedback: [] };
-    } else {
-      throw err;
+      // Kein verwertbares JSON vom Modell → KEINEN leeren Draft persistieren und
+      // nicht als Erfolg ausgeben. Klarer Fehler statt verwirrender leerer Tabellen.
+      throw new GenerationBlockedError(
+        "Das KI-Modell lieferte kein auswertbares Ergebnis. Bitte erneut versuchen.",
+      );
     }
+    throw err;
   }
 
   const rubricScores = toRubricScores(parsed.rubricScores ?? []);

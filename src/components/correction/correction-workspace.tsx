@@ -200,7 +200,7 @@ function Select({
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
-      className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink text-[13px] outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full appearance-none"
+      className="border border-line-strong bg-surface rounded-[10px] px-[11px] py-2.5 text-ink text-[13px] outline-none focus:border-focus-ring focus:shadow-focus-ring transition w-full"
       {...rest}
     >
       {children}

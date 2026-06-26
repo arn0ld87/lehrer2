@@ -124,8 +124,12 @@ export async function correctionAction(
     if (e instanceof GenerationBlockedError) {
       return { ...EMPTY, error: e.message };
     }
-    // Kein PII im Log — nur Fach/Schulform als Kontext, niemals der Schülertext.
-    console.error('[correctionAction] Korrektur fehlgeschlagen', { subject, schoolForm });
+    // Kein PII im Log — nur Fach/Schulform + Fehlermeldung, niemals der Schülertext.
+    console.error('[correctionAction] Korrektur fehlgeschlagen', {
+      subject,
+      schoolForm,
+      error: e instanceof Error ? e.message : String(e),
+    });
     return { ...EMPTY, error: 'Korrektur fehlgeschlagen', unavailable: true };
   }
 }

@@ -75,21 +75,47 @@ function scalar(rows: Array<{ n: number }>): number {
 export class PgDashboardRepository implements AsyncDashboardRepository {
   async metrics(): Promise<DashboardMetric[]> {
     try {
+      // Datenisolation: nur Artefakte der aktiven Lehrkraft zählen. Ohne Kontext
+      // (z. B. mock-Backend ohne DB) auf Mock zurückfallen statt global zu aggregieren.
+      const teacher = await getActiveTeacher();
+      if (!teacher) return mockDashboardRepository.metrics();
+      const owner = teacher.userId;
       const weekAgo = new Date(Date.now() - WEEK_MS);
       const countSel = { n: sql<number>`count(*)::int` };
       const [units, sheets, corrections, sources] = await Promise.all([
         db
           .select(countSel)
           .from(teachingUnit)
-          .where(and(isNull(teachingUnit.deletedAt), ne(teachingUnit.status, "ARCHIVED"))),
+          .where(
+            and(
+              eq(teachingUnit.ownerTeacherId, owner),
+              isNull(teachingUnit.deletedAt),
+              ne(teachingUnit.status, "ARCHIVED"),
+            ),
+          ),
         db
           .select(countSel)
           .from(worksheet)
-          .where(and(isNull(worksheet.deletedAt), gte(worksheet.createdAt, weekAgo))),
+          .where(
+            and(
+              eq(worksheet.ownerTeacherId, owner),
+              isNull(worksheet.deletedAt),
+              gte(worksheet.createdAt, weekAgo),
+            ),
+          ),
         db
           .select(countSel)
           .from(correctionDraft)
-          .where(and(isNull(correctionDraft.deletedAt), eq(correctionDraft.status, "DRAFT"))),
+          .where(
+            and(
+              eq(correctionDraft.ownerTeacherId, owner),
+              isNull(correctionDraft.deletedAt),
+              eq(correctionDraft.status, "DRAFT"),
+            ),
+          ),
+        // Quellen sind ein GETEILTES Register (amtliche Lehrpläne haben
+        // ownerTeacherId = NULL) — bewusst NICHT nach Owner gefiltert, da kein
+        // personenbezogener Wert. Owner-Filter würde alle offiziellen Quellen ausblenden.
         db.select(countSel).from(sourceRef).where(isNull(sourceRef.deletedAt)),
       ]);
 
@@ -138,6 +164,11 @@ export class PgDashboardRepository implements AsyncDashboardRepository {
 
   async recentWork(): Promise<RecentWork[]> {
     try {
+      // Datenisolation: nur eigene Einheiten/Arbeitsblätter, nie fremde.
+      const teacher = await getActiveTeacher();
+      if (!teacher) return mockDashboardRepository.recentWork();
+      const owner = teacher.userId;
+
       const units = await db
         .select({
           id: teachingUnit.id,
@@ -149,7 +180,7 @@ export class PgDashboardRepository implements AsyncDashboardRepository {
         })
         .from(teachingUnit)
         .innerJoin(curriculumStrand, eq(curriculumStrand.id, teachingUnit.strandId))
-        .where(isNull(teachingUnit.deletedAt))
+        .where(and(eq(teachingUnit.ownerTeacherId, owner), isNull(teachingUnit.deletedAt)))
         .orderBy(desc(teachingUnit.updatedAt))
         .limit(5);
 
@@ -165,7 +196,7 @@ export class PgDashboardRepository implements AsyncDashboardRepository {
         .from(worksheet)
         .innerJoin(teachingUnit, eq(teachingUnit.id, worksheet.unitId))
         .innerJoin(curriculumStrand, eq(curriculumStrand.id, teachingUnit.strandId))
-        .where(isNull(worksheet.deletedAt))
+        .where(and(eq(worksheet.ownerTeacherId, owner), isNull(worksheet.deletedAt)))
         .orderBy(desc(worksheet.updatedAt))
         .limit(5);
 
