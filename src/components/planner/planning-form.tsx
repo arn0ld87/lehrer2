@@ -12,6 +12,7 @@ import {
   type UIStatement,
   type UICitation,
 } from '@/app/actions/planning';
+import { exportPlanningAction } from '@/app/actions/export';
 import type { PlanningStep, StructurePhase, CurriculumFit } from '@/lib/types';
 
 interface PlanningFormProps {
@@ -141,6 +142,7 @@ export function PlanningForm({
   const [customOpen, setCustomOpen] = useState(false);
   const [customValue, setCustomValue] = useState('');
   const [draftNote, setDraftNote] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<null | 'docx' | 'pdf'>(null);
 
   // Entwurf explizit laden (kein mount-Effect → SSR-sicher, keine Cascading Renders).
   const loadDraft = () => {
@@ -186,6 +188,38 @@ export function PlanningForm({
       setDraftNote('Entwurf gespeichert (lokal in diesem Browser).');
     } catch {
       setDraftNote('Entwurf konnte nicht gespeichert werden.');
+    }
+  };
+
+  const exportPlan = async (format: 'docx' | 'pdf') => {
+    if (!state?.ok || state.unavailable || state.statements.length === 0) return;
+    setExporting(format);
+    try {
+      const res = await exportPlanningAction(
+        {
+          title: fields.topic || 'Unterrichtsplanung',
+          statements: state.statements.map((s) => ({
+            text: s.text,
+            citationRefs: s.citationRefs,
+          })),
+          citations: state.citations.map((c) => ({
+            title: c.title,
+            locator: c.locator,
+            license: c.license,
+          })),
+        },
+        format,
+      );
+      if (res.ok && res.base64 && res.filename) {
+        downloadBase64(res.base64, res.filename, format);
+        setDraftNote(`Export erstellt: ${res.filename}`);
+      } else {
+        setDraftNote(res.error ?? 'Export fehlgeschlagen.');
+      }
+    } catch {
+      setDraftNote('Export fehlgeschlagen.');
+    } finally {
+      setExporting(null);
     }
   };
 
@@ -437,8 +471,56 @@ export function PlanningForm({
         />
         <CurriculumFitCard items={curriculum} />
       </div>
+
+      {/* Weiter-Schritt: generierte Einheit als Dokument sichern (erscheint nach Generierung) */}
+      {hasStatements && (
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-surface border border-line rounded-[14px] px-4 py-3.5">
+          <div className="min-w-0">
+            <strong className="block text-[12px]">Weiter: Einheit sichern</strong>
+            <span className="block text-[10px] text-muted">
+              Quellengebundener Entwurf — als Dokument exportieren (mit Quellen- und Lizenz-Footer).
+            </span>
+          </div>
+          <div className="flex gap-2.5">
+            <Button
+              variant="secondary"
+              type="button"
+              disabled={!!exporting}
+              onClick={() => exportPlan('docx')}
+            >
+              {exporting === 'docx' ? 'Erstelle …' : 'Als DOCX exportieren'}
+            </Button>
+            <Button
+              variant="primary"
+              type="button"
+              disabled={!!exporting}
+              onClick={() => exportPlan('pdf')}
+            >
+              {exporting === 'pdf' ? 'Erstelle …' : 'Als PDF exportieren'}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
+
+/** Lädt eine base64-kodierte Datei (DOCX/PDF) im Browser herunter. */
+function downloadBase64(base64: string, filename: string, format: 'docx' | 'pdf') {
+  const mime =
+    format === 'docx'
+      ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      : 'application/pdf';
+  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+  const blob = new Blob([bytes], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 // ── Lokale Hilfskomponenten ──────────────────────────────────────────────────
